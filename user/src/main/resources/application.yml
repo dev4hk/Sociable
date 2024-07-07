@@ -19,3 +19,6 @@ application:
       expiration: 60000
       refresh-token:
         expiration: 3600000
+
+server:
+  port: 8081
