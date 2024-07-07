@@ -11,6 +11,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  application:
+    name: USER-SERVICE
 
 application:
   security:
@@ -22,3 +24,10 @@ application:
 
 server:
   port: 8081
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: ${TEST_EUREKA_SERVER_URL}
