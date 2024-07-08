@@ -6,6 +6,7 @@ import com.example.comment.fixture.UserFixture;
 import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import com.example.comment.repository.CommentRepository;
+import com.example.comment.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static reactor.core.publisher.Mono.when;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CommentServiceTest {
@@ -55,7 +56,7 @@ public class CommentServiceTest {
         String comment = "comment";
         Integer postId = 1;
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
-        when(postService.getPostById(postId)).thenReturn(ResponseEntity.of(Optional.of(this.testPost)));
+        when(postService.getPostById(postId, this.testToken)).thenReturn(Response.success(this.testPost));
         when(commentRepository.save(any())).thenReturn(mock(Comment.class));
 
         assertDoesNotThrow(() -> commentService.create(postId, comment, testToken));
@@ -63,11 +64,10 @@ public class CommentServiceTest {
 
     @Test
     void get_all_comments_by_post() {
-        Pageable pageable = mock(Pageable.class);
         Integer postId = 1;
-
+        Pageable pageable = mock(Pageable.class);
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
-        when(postService.getPostById(postId)).thenReturn(ResponseEntity.of(Optional.of(this.testPost)));
+        when(postService.getPostById(postId, this.testToken)).thenReturn(Response.success(this.testPost));
         when(commentRepository.findAllByPostId(postId, pageable)).thenReturn(Page.empty());
 
         assertDoesNotThrow(() -> commentService.findAllByPostId(postId, pageable));

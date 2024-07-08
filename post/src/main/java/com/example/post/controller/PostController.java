@@ -56,4 +56,9 @@ public class PostController {
         return Response.success(PostResponse.fromPostDto(postService.uploadFile(file, token, postId)));
     }
 
+    @GetMapping("/{postId}")
+    public Response<PostResponse> getPostById(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
+        return Response.success(PostResponse.fromPostDto(postService.getPostById(postId, token)));
+    }
+
 }

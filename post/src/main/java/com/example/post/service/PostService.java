@@ -87,4 +87,9 @@ public class PostService {
         post.setFileType(file.getContentType());
         return PostDto.fromEntity(postRepository.save(post));
     }
+
+    public PostDto getPostById(Integer postId, String token) {
+        User user = getUser(token);
+        return PostDto.fromEntity(this.getPost(postId));
+    }
 }
