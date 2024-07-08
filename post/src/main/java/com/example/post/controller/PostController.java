@@ -47,4 +47,13 @@ public class PostController {
         return Response.success(postService.getMyPosts(pageable, token).map(PostResponse::fromPostDto));
     }
 
+    @PostMapping(value = "/file/{postId}", consumes = "multipart/form-data")
+    public Response<PostResponse> uploadFile(
+            @PathVariable Integer postId,
+            @RequestPart MultipartFile file,
+            @RequestHeader("Authorization") String token
+    ) {
+        return Response.success(PostResponse.fromPostDto(postService.uploadFile(file, token, postId)));
+    }
+
 }

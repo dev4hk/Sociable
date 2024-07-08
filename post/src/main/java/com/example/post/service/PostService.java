@@ -11,6 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public PostDto create(String body, String token) {
@@ -72,4 +76,15 @@ public class PostService {
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
     }
 
+    public PostDto uploadFile(MultipartFile file, String token, Integer postId) {
+        Post post = getPost(postId);
+        User user = getUser(token);
+        if(!Objects.equals(post.getUserId(), user.getId())) {
+            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
+        }
+        String filePath = fileStorageService.saveFile(file, user.getId());
+        post.setFilePath(filePath);
+        post.setFileType(file.getContentType());
+        return PostDto.fromEntity(postRepository.save(post));
+    }
 }
