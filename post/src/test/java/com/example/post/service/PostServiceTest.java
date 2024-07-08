@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -159,8 +160,9 @@ public class PostServiceTest {
         Pageable pageable = mock(Pageable.class);
 
         when(postRepository.findAll(pageable)).thenReturn(Page.empty());
+        when(userService.getUserProfile(anyString())).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
 
-        Assertions.assertDoesNotThrow(() -> postService.getAllPosts(pageable));
+        Assertions.assertDoesNotThrow(() -> postService.getAllPosts(pageable, testToken));
 
     }
 

@@ -53,7 +53,8 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public Page<PostDto> getAllPosts(Pageable pageable) {
+    public Page<PostDto> getAllPosts(Pageable pageable, String token) {
+        User user = getUser(token);
         return postRepository.findAll(pageable).map(PostDto::fromEntity);
     }
 
@@ -62,8 +63,8 @@ public class PostService {
         return postRepository.findAllByUserId(user.getId(), pageable).map(PostDto::fromEntity);
     }
 
-    private User getUser(String jwt) {
-        return userService.getUserProfile(jwt).getBody();
+    private User getUser(String token) {
+        return userService.getUserProfile(token).getBody();
     }
 
     private Post getPost(Integer postId) {

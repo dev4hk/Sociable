@@ -1,18 +1,25 @@
 package com.example.post.controller;
 
+import com.example.post.dto.PostDto;
+import com.example.post.enums.ErrorCode;
+import com.example.post.exception.PostException;
+import com.example.post.fixture.PostFixture;
+import com.example.post.request.PostCreateRequest;
+import com.example.post.request.PostModifyRequest;
 import com.example.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,14 +40,23 @@ public class PostControllerTest {
     @MockBean
     private PostService postService;
 
+    private String testToken;
+
+    @BeforeEach
+    void setup() {
+        this.testToken = "AABB";
+    }
+
     @Test
     void create_post() throws Exception {
         String body = "body";
-
+        when(postService.create(eq(body), anyString()))
+                .thenReturn(PostDto.fromEntity(PostFixture.get(1, 1)));
         mockMvc.perform(
                         post("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new PostCreateRequest(body)))
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -51,12 +67,13 @@ public class PostControllerTest {
         String body = "body";
 
         when(postService.modify(eq(body), any(), any()))
-                .thenReturn(Post.fromEntity(PostEntityFixture.get("userName", 1, 1)));
+                .thenReturn(PostDto.fromEntity(PostFixture.get(1, 1)));
 
         mockMvc.perform(
                         put("/api/v1/posts/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new PostModifyRequest(body)))
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -66,12 +83,13 @@ public class PostControllerTest {
     void update_non_existing_post_returns_error() throws Exception {
         String body = "body";
 
-        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).modify(eq(body), any(), eq(1));
+        doThrow(new PostException(ErrorCode.POST_NOT_FOUND)).when(postService).modify(eq(body), any(), eq(1));
 
         mockMvc.perform(
                         put("/api/v1/posts/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new PostModifyRequest(body)))
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -82,6 +100,7 @@ public class PostControllerTest {
         mockMvc.perform(
                         delete("/api/v1/posts/1")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -89,11 +108,12 @@ public class PostControllerTest {
 
     @Test
     void delete_non_existing_post_returns_error() throws Exception {
-        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).delete(any(), any());
+        doThrow(new PostException(ErrorCode.POST_NOT_FOUND)).when(postService).delete(any(), any());
 
         mockMvc.perform(
                         delete("/api/v1/posts/1")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -101,10 +121,11 @@ public class PostControllerTest {
 
     @Test
     void get_posts() throws Exception {
-        when(postService.getAllPosts(any())).thenReturn(Page.empty());
+        when(postService.getAllPosts(any(), anyString())).thenReturn(Page.empty());
         mockMvc.perform(
                         get("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -116,6 +137,7 @@ public class PostControllerTest {
         mockMvc.perform(
                         get("/api/v1/posts/my")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
