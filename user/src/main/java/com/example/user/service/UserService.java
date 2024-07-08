@@ -1,5 +1,6 @@
 package com.example.user.service;
 
+import com.example.user.config.JwtService;
 import com.example.user.entity.User;
 import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
@@ -17,6 +18,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -31,4 +33,5 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
+
 }

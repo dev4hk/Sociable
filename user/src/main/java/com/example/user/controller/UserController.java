@@ -1,13 +1,13 @@
 package com.example.user.controller;
 
+import com.example.user.entity.User;
 import com.example.user.request.ChangePasswordRequest;
+import com.example.user.response.UserResponse;
 import com.example.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -21,6 +21,14 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
         userService.changePassword(request, connectedUser);
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponse>  getUserProfile(Principal connectedUser) {
+        return ResponseEntity.ok(
+                UserResponse.fromUser(
+                        (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()
+                ));
     }
 }
 
