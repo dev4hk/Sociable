@@ -1,15 +1,14 @@
 package com.example.user.controller;
 
-import com.example.user.entity.User;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.response.UserResponse;
 import com.example.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -24,11 +23,13 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse>  getUserProfile(Principal connectedUser) {
+    public ResponseEntity<UserResponse>  getUserProfile(@RequestHeader("Authorization") String token) {
+
         return ResponseEntity.ok(
                 UserResponse.fromUser(
-                        (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()
+                        this.userService.getUserProfile(token)
                 ));
     }
+
 }
 

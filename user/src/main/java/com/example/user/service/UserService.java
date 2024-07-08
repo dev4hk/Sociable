@@ -7,6 +7,7 @@ import com.example.user.request.ChangePasswordRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private static final String AUTH_PREFIX = "Bearer ";
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -34,4 +36,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public User getUserProfile(String token) {
+        String jwt = token.substring(AUTH_PREFIX.length());
+        String username = this.jwtService.extractUsername(jwt);
+        return this.userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+    }
 }
