@@ -11,6 +11,7 @@ public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post not found"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
+    HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Header is missing in request")
     ;
 
     private HttpStatus status;
