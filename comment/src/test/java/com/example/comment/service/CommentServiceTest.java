@@ -67,9 +67,8 @@ public class CommentServiceTest {
         Integer postId = 1;
         Pageable pageable = mock(Pageable.class);
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
-        when(postService.getPostById(postId, this.testToken)).thenReturn(Response.success(this.testPost));
         when(commentRepository.findAllByPostId(postId, pageable)).thenReturn(Page.empty());
 
-        assertDoesNotThrow(() -> commentService.findAllByPostId(postId, pageable));
+        assertDoesNotThrow(() -> commentService.findAllByPostId(postId, pageable, this.testToken));
     }
 }

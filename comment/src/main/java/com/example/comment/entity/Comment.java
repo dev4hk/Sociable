@@ -48,10 +48,10 @@ public class Comment {
         this.updatedAt = Timestamp.from(Instant.now());
     }
 
-    public static Comment of(User user, Post post, String comment) {
+    public static Comment of(Integer userId, Integer postId, String comment) {
         Comment entity = new Comment();
-        entity.setUserId(user.getId());
-        entity.setPostId(post.getId());
+        entity.setUserId(userId);
+        entity.setPostId(postId);
         entity.setComment(comment);
         return entity;
     }
