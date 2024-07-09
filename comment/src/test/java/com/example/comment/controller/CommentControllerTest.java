@@ -47,10 +47,11 @@ public class CommentControllerTest {
 
     @Test
     void create_comment() throws Exception {
-        Mockito.when(this.commentService.create(anyInt(), anyString(), anyString()))
-                        .thenReturn(any(CommentDto.class));
+        CommentDto commentDto = new CommentDto();
+        Mockito.when(this.commentService.create(1, "comment", this.testToken))
+                        .thenReturn(commentDto);
         mockMvc.perform(
-                        post("/api/v1/comments")
+                        post("/api/v1/comments/post/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new CommentRequest("comment")))
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
@@ -68,9 +69,8 @@ public class CommentControllerTest {
         Mockito.when(this.commentService.findAllByPostId(postId, pageable, this.testToken))
                 .thenReturn(Page.empty());
         mockMvc.perform(
-                        get("/api/v1/comments")
+                        get("/api/v1/comments/post/1")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(new CommentRequest("comment")))
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
 
                 )
