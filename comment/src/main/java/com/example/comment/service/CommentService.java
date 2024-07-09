@@ -44,4 +44,13 @@ public class CommentService {
         }
         this.commentRepository.delete(comment);
     }
+
+    public void deleteCommentsByPostId(Integer postId, String token) {
+        User user = this.userService.getUserProfile(token).getBody();
+        Post post = this.postService.getPostById(postId, token).getResult();
+        if(!Objects.equals(user.getId(), post.getUserId())) {
+            throw new CommentException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
+        }
+        this.commentRepository.deleteAllByPostId(postId);
+    }
 }
