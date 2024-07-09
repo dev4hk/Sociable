@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -45,6 +46,7 @@ public class CommentService {
         this.commentRepository.delete(comment);
     }
 
+    @Transactional
     public void deleteCommentsByPostId(Integer postId, String token) {
         User user = this.userService.getUserProfile(token).getBody();
         Post post = this.postService.getPostById(postId, token).getResult();

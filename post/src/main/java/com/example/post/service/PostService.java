@@ -22,6 +22,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final FileStorageService fileStorageService;
+    private final CommentService commentService;
 
     @Transactional
     public PostDto create(String body, String token) {
@@ -55,6 +56,7 @@ public class PostService {
         }
 
         postRepository.delete(post);
+        commentService.deleteAllByPost(postId, token);
     }
 
     public Page<PostDto> getAllPosts(Pageable pageable, String token) {

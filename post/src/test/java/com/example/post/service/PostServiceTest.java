@@ -7,6 +7,7 @@ import com.example.post.fixture.PostFixture;
 import com.example.post.fixture.UserFixture;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
+import com.example.post.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ public class PostServiceTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private CommentService commentService;
 
     private String testToken;
     private User testUser;
@@ -121,6 +125,7 @@ public class PostServiceTest {
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentService.deleteAllByPost(postId, this.testToken)).thenReturn(Response.success());
 
         Assertions.assertDoesNotThrow(() -> postService.delete(this.testToken, postId));
     }
