@@ -1,6 +1,7 @@
 package com.example.comment.service;
 
 import com.example.comment.entity.Comment;
+import com.example.comment.fixture.CommentFixture;
 import com.example.comment.fixture.PostFixture;
 import com.example.comment.fixture.UserFixture;
 import com.example.comment.model.Post;
@@ -9,6 +10,7 @@ import com.example.comment.repository.CommentRepository;
 import com.example.comment.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,8 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class CommentServiceTest {
@@ -44,11 +45,14 @@ public class CommentServiceTest {
 
     private Post testPost;
 
+    private Comment testComment;
+
     @BeforeEach
     void setup() {
         this.testToken = "AABB";
         this.testUser = UserFixture.get(1);
         this.testPost = PostFixture.get(1);
+        this.testComment = CommentFixture.get(1, 1, "comment");
     }
 
     @Test
@@ -70,5 +74,15 @@ public class CommentServiceTest {
         when(commentRepository.findAllByPostId(postId, pageable)).thenReturn(Page.empty());
 
         assertDoesNotThrow(() -> commentService.findAllByPostId(postId, pageable, this.testToken));
+    }
+
+    @Test
+    void delete_comment() {
+        Integer commentId = 1;
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(testUser)));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(this.testComment));
+        verify(commentRepository, times(1)).delete(this.testComment);
+
+        assertDoesNotThrow(() -> commentService.deleteComment(commentId, testToken));
     }
 }
