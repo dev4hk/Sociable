@@ -2,6 +2,8 @@ package com.example.comment.service;
 
 import com.example.comment.dto.CommentDto;
 import com.example.comment.entity.Comment;
+import com.example.comment.exception.CommentException;
+import com.example.comment.exception.ErrorCode;
 import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import com.example.comment.repository.CommentRepository;
@@ -31,5 +33,15 @@ public class CommentService {
     public Page<CommentDto> findAllByPostId(Integer postId, Pageable pageable, String token) {
         User user = this.userService.getUserProfile(token).getBody();
         return commentRepository.findAllByPostId(postId, pageable).map(CommentDto::fromEntity);
+    }
+
+    public void deleteComment(Integer commentId, String token) {
+        User user = this.userService.getUserProfile(token).getBody();
+        Comment comment = this.commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND, String.format("%s not found", commentId)));
+        if(!Objects.equals(comment.getUserId(), user.getId())) {
+            throw new CommentException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), commentId));
+        }
+        this.commentRepository.delete(comment);
     }
 }

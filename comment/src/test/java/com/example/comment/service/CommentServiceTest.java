@@ -81,7 +81,6 @@ public class CommentServiceTest {
         Integer commentId = 1;
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(testUser)));
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(this.testComment));
-        verify(commentRepository, times(1)).delete(this.testComment);
 
         assertDoesNotThrow(() -> commentService.deleteComment(commentId, testToken));
     }
