@@ -34,4 +34,22 @@ public class CommentController {
     ) {
         return Response.success(commentService.findAllByPostId(postId, pageable, token));
     }
+
+    @DeleteMapping("/{commentId}")
+    public Response<Void> deleteComment(
+            @PathVariable Integer commentId,
+            @RequestHeader("Authorization") String token
+    ) {
+        this.commentService.deleteComment(commentId, token);
+        return Response.success();
+    }
+
+    @DeleteMapping("/post/{postId}")
+    public Response<Void> deleteAllByPost(
+            @PathVariable Integer postId,
+            @RequestHeader("Authorization") String token
+    ) {
+        this.commentService.deleteCommentsByPostId(postId, token);
+        return Response.success();
+    }
 }
