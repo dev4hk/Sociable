@@ -3,11 +3,13 @@ package com.example.comment.dto;
 import com.example.comment.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommentDto {
     private Integer id;
     private Integer userId;
