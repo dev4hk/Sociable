@@ -51,7 +51,7 @@ public class CommentServiceTest {
     void setup() {
         this.testToken = "AABB";
         this.testUser = UserFixture.get(1);
-        this.testPost = PostFixture.get(1);
+        this.testPost = PostFixture.get(1, 1);
         this.testComment = CommentFixture.get(1, 1, "comment");
     }
 
@@ -81,7 +81,16 @@ public class CommentServiceTest {
         Integer commentId = 1;
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(testUser)));
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(this.testComment));
-
         assertDoesNotThrow(() -> commentService.deleteComment(commentId, testToken));
+        verify(commentRepository, times(1)).delete(this.testComment);
+    }
+
+    @Test
+    void delete_comments_by_postId() {
+        Integer postId = 1;
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(testUser)));
+        when(postService.getPostById(postId, this.testToken)).thenReturn(Response.success(this.testPost));
+        assertDoesNotThrow(() -> this.commentService.deleteCommentsByPostId(postId, testToken));
+        verify(this.commentRepository, times(1)).deleteAllByPostId(postId);
     }
 }
