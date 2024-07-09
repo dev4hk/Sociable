@@ -6,6 +6,7 @@ import com.example.post.request.PostModifyRequest;
 import com.example.post.response.PostResponse;
 import com.example.post.response.Response;
 import com.example.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +21,13 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public Response<PostResponse> create(@RequestBody PostCreateRequest request, @RequestHeader("Authorization") String token) {
+    public Response<PostResponse> create(@RequestBody @Valid PostCreateRequest request, @RequestHeader("Authorization") String token) {
         PostDto postDto = postService.create(request.getBody(), token);
         return Response.success(PostResponse.fromPostDto(postDto));
     }
 
     @PutMapping("/{postId}")
-    public Response<PostResponse> modify(@PathVariable Integer postId, @RequestBody PostModifyRequest request, @RequestHeader("Authorization") String token) {
+    public Response<PostResponse> modify(@PathVariable Integer postId, @RequestBody @Valid PostModifyRequest request, @RequestHeader("Authorization") String token) {
         PostDto postDto = postService.modify(request.getBody(), token, postId);
         return Response.success(PostResponse.fromPostDto(postDto));
     }

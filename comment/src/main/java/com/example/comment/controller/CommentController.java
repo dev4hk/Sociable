@@ -4,6 +4,7 @@ import com.example.comment.dto.CommentDto;
 import com.example.comment.request.CommentRequest;
 import com.example.comment.response.Response;
 import com.example.comment.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ public class CommentController {
     public Response<CommentDto> comment(
             @PathVariable Integer postId,
             @RequestHeader("Authorization") String token,
-            @RequestBody CommentRequest request
+            @RequestBody @Valid CommentRequest request
     ) {
         return Response.success(commentService.create(postId, request.getComment(), token));
     }
