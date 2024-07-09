@@ -3,6 +3,7 @@ package com.example.user.auth;
 import com.example.user.config.JwtService;
 import com.example.user.entity.Token;
 import com.example.user.entity.User;
+import com.example.user.enums.Role;
 import com.example.user.enums.TokenType;
 import com.example.user.repository.TokenRepository;
 import com.example.user.repository.UserRepository;
@@ -36,7 +37,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
-                .role(request.getRole())
+                .role(Role.USER)
                 .build();
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
