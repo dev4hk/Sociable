@@ -1,9 +1,10 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import SideNav from "../../components/sidenav/SideNav";
 import HomeMiddle from "../../components/home/HomeMiddle";
 import HomeRight from "../../components/home/HomeRight";
+import Profile from "../profile/Profile";
 
 const HomePage = () => {
   const location = useLocation();
@@ -21,7 +22,10 @@ const HomePage = () => {
           xs={12}
           lg={location.pathname === "/home" ? 6 : 9}
         >
-          <HomeMiddle />
+          <Routes>
+            <Route path="/" element={<HomeMiddle />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
         </Grid>
         {location.pathname === "/home" && (
           <Grid item lg={3} className="relative">
