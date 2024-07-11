@@ -2,6 +2,7 @@ import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PostCard from "../../components/post/PostCard";
+import ProfileModal from "../../components/profile/EditProfileModal";
 
 const tabs = [
   { value: "post", name: "Post" },
@@ -112,6 +113,9 @@ const Profile = () => {
           </div>
         </section>
       </div>
+      <section>
+        <ProfileModal open={open} handleClose={handleClose} />
+      </section>
     </Card>
   );
 };

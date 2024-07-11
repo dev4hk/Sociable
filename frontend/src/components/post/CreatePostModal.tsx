@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import { IModal } from "../../interfaces";
 
 const style = {
   position: "absolute",
@@ -24,11 +25,6 @@ const style = {
   borderRadius: ".6rem",
   outline: "none",
 };
-
-interface IModal {
-  handleClose: () => void;
-  open: boolean;
-}
 
 const CreatePostModal = ({ handleClose, open }: IModal) => {
   const [filePreview, setFilePreview] = useState();
