@@ -1,34 +1,21 @@
 import React, { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import { Avatar, Card, IconButton } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import ArticleIcon from "@mui/icons-material/Article";
-import StoryCircle from "./StoryCircle";
 import PostCard from "../post/PostCard";
+import CreatePostModal from "../post/CreatePostModal";
 
-const story = [1, 1, 1, 1, 1];
 const posts = [1, 1, 1, 1, 1];
 
 const HomeMiddle = () => {
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
-
+  const handleClose = () => setOpenCreatePostModal(false);
   const handleOpenCreatePostModal = () => {
     setOpenCreatePostModal(true);
   };
   return (
     <div className="px-20 w-full">
-      {/* <section className="flex items-center p-5 rounded-b-md">
-        <div className="flex flex-col items-center mr-4 cursor-pointer">
-          <Avatar sx={{ width: "5rem", height: "5rem" }}>
-            <AddIcon sx={{ fontSize: "3rem" }} />
-          </Avatar>
-          <p>New</p>
-        </div>
-        {story.map((item, index) => (
-          <StoryCircle key={index} />
-        ))}
-      </section> */}
       <section>
         <Card className="p-5 mt-5">
           <div className="flex justify-between">
@@ -69,6 +56,9 @@ const HomeMiddle = () => {
           <PostCard key={index} />
         ))}
       </section>
+      <div>
+        <CreatePostModal handleClose={handleClose} open={openCreatePostModal} />
+      </div>
     </div>
   );
 };
