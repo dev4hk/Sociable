@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import SideNav from "../../components/sidenav/SideNav";
 
 const HomePage = () => {
   const location = useLocation();
@@ -8,7 +9,9 @@ const HomePage = () => {
     <div className="px-20">
       <Grid container spacing={0}>
         <Grid item xs={0} lg={3}>
-          <div className="sticky top-0">Sidebar</div>
+          <div className="sticky top-0">
+            <SideNav />
+          </div>
         </Grid>
         <Grid
           item
