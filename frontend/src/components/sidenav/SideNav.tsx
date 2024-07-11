@@ -17,7 +17,11 @@ const navigationMenu = [
     icon: <ControlPointIcon />,
     path: "/home/create-reels",
   },
-  { title: "Notifications", icon: <NotificationsIcon />, path: "/home" },
+  {
+    title: "Notifications",
+    icon: <NotificationsIcon />,
+    path: "/home/notifications",
+  },
   { title: "Message", icon: <MessageIcon />, path: "/home/message" },
   { title: "Profile", icon: <AccountCircleIcon />, path: "/home/profile" },
 ];
@@ -32,7 +36,9 @@ const SideNav = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleNavigate = (item: any) => {};
+  const handleNavigate = (item: any) => {
+    navigate(item.path);
+  };
 
   return (
     <Card className="card h-screen flex flex-col justify-between py-5">

@@ -25,3 +25,8 @@ code {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.shadow {
+  box-shadow: rgba(215, 106, 255, 0.507) 0px 0px 15px;
+  padding: 1rem;
+}
