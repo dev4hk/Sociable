@@ -37,6 +37,12 @@ public class GlobalControllerAdvice {
                 .body(Response.error(ErrorCode.BAD_CREDENTIAL.name()));
     }
 
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<?> handleException(UserException error) {
+        return ResponseEntity.status(error.getErrorCode().getStatus())
+                .body(Response.error(error.getErrorCode().name()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleException(MethodArgumentNotValidException ex) {
         Set<String> errors = new HashSet<>();

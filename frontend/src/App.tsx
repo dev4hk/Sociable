@@ -5,9 +5,9 @@ import { ThemeProvider } from "@emotion/react";
 import { darkTheme } from "./theme/darkTheme";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuthenticatedRoute from "./auth/AuthenticatedRoute";
-import Home from "./pages/home/Home";
 import Login from "./pages/authentication/Login";
 import { isTokenValid } from "./service/AuthenticationService";
+import HomePage from "./pages/home/HomePage";
 
 function App() {
   const hasValidToken = () => {
@@ -20,9 +20,9 @@ function App() {
         <Route
           path="/home/*"
           element={
-            <AuthenticatedRoute>
-              <Home />
-            </AuthenticatedRoute>
+            // <AuthenticatedRoute>
+            <HomePage />
+            // </AuthenticatedRoute>
           }
         />
         {/* <Route path="/message" element={<Message />} /> */}

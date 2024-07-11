@@ -10,3 +10,4 @@ export function registerUser(data: IRegister) {
 export function loginUser(data: ILogin) {
   return axios.post(`${BASE_URL}/api/v1/auth/authenticate`, data);
 }
+

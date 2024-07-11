@@ -3,8 +3,10 @@ package com.example.user.auth;
 import com.example.user.config.JwtService;
 import com.example.user.entity.Token;
 import com.example.user.entity.User;
+import com.example.user.enums.ErrorCode;
 import com.example.user.enums.Role;
 import com.example.user.enums.TokenType;
+import com.example.user.exception.UserException;
 import com.example.user.repository.TokenRepository;
 import com.example.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,12 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +36,10 @@ public class AuthenticationService {
     private static final String AUTH_PREFIX = "Bearer ";
 
     public AuthenticationResponse register(RegisterRequest request) {
+        Optional<User> found = this.userRepository.findByEmail(request.getEmail());
+        if(found.isPresent()) {
+            throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
+        }
         var user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -65,7 +73,7 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
