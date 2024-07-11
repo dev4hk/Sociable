@@ -24,7 +24,11 @@ const Authentication = () => {
                   Connecting Lives, Sharing Stories: Your Social World, Your Way
                 </p>
               </div>
-              <Register />
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              </Routes>
             </Card>
           </div>
         </Grid>

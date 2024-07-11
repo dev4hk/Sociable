@@ -1,7 +1,10 @@
-import { Button, TextField } from "@mui/material";
-import React from "react";
+import { Alert, Button, TextField } from "@mui/material";
+import React, { useState } from "react";
 import { ILogin, IRegister } from "../../interfaces";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../api/api";
+import { useSetRecoilState } from "recoil";
 
 const Register = () => {
   const {
@@ -11,6 +14,9 @@ const Register = () => {
     setError,
   } = useForm<IRegister>();
 
+  const navigate = useNavigate();
+  const [serverErrors, setServerErrors] = useState();
+
   const onValid = (data: IRegister) => {
     if (data.password !== data.confirmPassword) {
       setError(
@@ -18,16 +24,28 @@ const Register = () => {
         { message: "password doesn't match" },
         { shouldFocus: true }
       );
+    } else {
+      registerUser(data)
+        .then((res) => {
+          localStorage.setItem("token", res.data.access_token);
+          navigate("/home");
+        })
+        .catch((err) => {
+          setServerErrors(err.response.data.resultCode);
+          setTimeout(() => {
+            setServerErrors(undefined);
+          }, 5000);
+        });
     }
-    console.log(data);
   };
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onValid)}>
         <div className="space-y-5">
+          {serverErrors && <Alert severity="error">{serverErrors}</Alert>}
           <div>
             <TextField
-              id="outlined-basic"
+              id="firstname"
               label="Firstname"
               variant="outlined"
               className="w-full"
@@ -45,7 +63,7 @@ const Register = () => {
           </div>
           <div>
             <TextField
-              id="outlined-basic"
+              id="lastname"
               label="Lastname"
               variant="outlined"
               className="w-full"
@@ -63,7 +81,7 @@ const Register = () => {
           </div>
           <div>
             <TextField
-              id="outlined-basic"
+              id="email"
               label="Email"
               variant="outlined"
               className="w-full"
@@ -82,7 +100,7 @@ const Register = () => {
 
           <div>
             <TextField
-              id="outlined-basic"
+              id="password"
               label="Password"
               variant="outlined"
               className="w-full"
@@ -101,7 +119,7 @@ const Register = () => {
           </div>
           <div>
             <TextField
-              id="outlined-basic"
+              id="confirmPassword"
               label="Confirm Password"
               variant="outlined"
               className="w-full"
@@ -121,10 +139,14 @@ const Register = () => {
             variant="contained"
             color="primary"
           >
-            Login
+            Register
           </Button>
         </div>
       </form>
+      <div className="flex gap-5 items-center justify-center pt-5">
+        <p>Already have an account?</p>
+        <Button onClick={() => navigate("/login")}>Login</Button>
+      </div>
     </div>
   );
 };
