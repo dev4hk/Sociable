@@ -1,8 +1,7 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
 import PostCard from "../../components/post/PostCard";
-import ProfileModal from "../../components/profile/EditProfileModal";
+import EditProfileModal from "../../components/profile/EditProfileModal";
 
 const tabs = [
   { value: "post", name: "Post" },
@@ -72,7 +71,12 @@ const Profile = () => {
           <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
             <Tabs value={value} aria-label="wrapped label tabs example">
               {tabs.map((item, index) => (
-                <Tab key={index} value={item.value} label={item.name} wrapped />
+                <Tab
+                  key={"tap" + index}
+                  value={item.value}
+                  label={item.name}
+                  wrapped
+                />
               ))}
             </Tabs>
           </Box>
@@ -84,7 +88,7 @@ const Profile = () => {
                     key={"post" + index}
                     className="border rounded-md border-slate-100"
                   >
-                    <PostCard />
+                    {/* <PostCard /> */}
                   </div>
                 ))}
               </div>
@@ -114,7 +118,7 @@ const Profile = () => {
         </section>
       </div>
       <section>
-        <ProfileModal open={open} handleClose={handleClose} />
+        <EditProfileModal open={open} handleClose={handleClose} />
       </section>
     </Card>
   );

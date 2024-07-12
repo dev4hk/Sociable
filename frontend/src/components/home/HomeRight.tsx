@@ -16,7 +16,7 @@ const HomeRight = () => {
         </div>
         <div>
           {users.map((user, index) => (
-            <UserCard key={index} />
+            <UserCard key={"usercard" + index} />
           ))}
         </div>
       </Card>

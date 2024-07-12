@@ -23,7 +23,56 @@ export interface IAuthResponse {
   refresh_token: string;
 }
 
-export interface IModal {
-  handleClose: () => void;
-  open: boolean;
+export interface IChangeUserInfo {
+  firstname: string;
+  lastname: string;
+}
+
+export interface IPost {
+  id: number;
+  body: string;
+  file: string;
+  fileType: string;
+  userId: number;
+  firstname: string;
+  lastname: string;
+  registeredAt: string;
+  updatedAt: string;
+  deletedAt: string;
+}
+
+export interface IGetAllPosts {
+  resultCode: string;
+  result: {
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+    size: number;
+    content: IPost[];
+    number: number;
+    sort: [];
+    numberOfElements: number;
+    pageable: {
+      pageNumber: number;
+      pageSize: number;
+      sort: [];
+      offset: number;
+      unpaged: boolean;
+      paged: boolean;
+    };
+    empty: boolean;
+  };
+}
+
+export interface IPostRequest {
+  body: string;
+  file: Blob;
+}
+
+export interface IPostForm {
+  errors: string;
+  body: string;
+  image: Blob;
+  video: Blob;
 }

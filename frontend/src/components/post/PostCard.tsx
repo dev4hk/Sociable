@@ -15,14 +15,19 @@ import ShareIcon from "@mui/icons-material/Share";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+import { IPost } from "../../interfaces";
 
-const PostCard = () => {
+interface IPostCard {
+  post: IPost;
+}
+
+const PostCard = ({ post }: IPostCard) => {
   return (
     <Card>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+            {post.firstname.slice(0, 1).toUpperCase()}
           </Avatar>
         }
         action={
@@ -30,23 +35,31 @@ const PostCard = () => {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Username"
-        subheader="
-        @firstname_lastname"
+        title={`${post.firstname} ${post.lastname}`}
+        subheader={`@${post.firstname.toLowerCase()}_${post.lastname.toLowerCase()}`}
       />
 
-      <CardMedia
-        component="img"
-        height="194"
-        image={`https://cdn.pixabay.com/photo/2024/02/15/15/46/cat-8575641_1280.jpg`}
-        // image={`data:${item?.contentType};base64,${item?.file}`}
-        // image={encodeURI(generateMediaURL(item.fileName, item.filePath))}
-        alt=""
-      />
+      {post?.fileType?.includes("image") && (
+        // true
+        <CardMedia
+          component="img"
+          height="194"
+          image={`data:${post?.fileType};base64,${post.file}`}
+          alt=""
+        />
+      )}
+      {post?.fileType?.includes("video") && (
+        <CardMedia
+          component="video"
+          height="194"
+          image={`data:${post?.fileType};base64,${post.file}`}
+          controls
+        />
+      )}
 
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {"Caption"}
+          {post.body}
         </Typography>
       </CardContent>
 

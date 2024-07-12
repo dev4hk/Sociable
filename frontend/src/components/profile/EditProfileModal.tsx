@@ -8,7 +8,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { IModal } from "../../interfaces";
+import { IChangeUserInfo } from "../../interfaces";
+import { useForm } from "react-hook-form";
 
 const style = {
   position: "absolute",
@@ -24,7 +25,14 @@ const style = {
   borderRadius: 3,
 };
 
-const ProfileModal = ({ open, handleClose }: IModal) => {
+const EditProfileModal = ({ open, handleClose }: any) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IChangeUserInfo>();
+
+  const onValid = (data: IChangeUserInfo) => {};
   return (
     <div>
       <Modal
@@ -34,7 +42,7 @@ const ProfileModal = ({ open, handleClose }: IModal) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <form>
+          <form onSubmit={handleSubmit(onValid)}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <IconButton onClick={handleClose}>
@@ -63,16 +71,36 @@ const ProfileModal = ({ open, handleClose }: IModal) => {
             <div className="space-y-3">
               <TextField
                 fullWidth
-                id="firstName"
-                name="firstName"
-                label="First Name"
+                id="firstname"
+                variant="outlined"
+                label="Firstname"
+                className="w-full"
+                {...register("firstname", {
+                  required: "Firstname is required",
+                  minLength: {
+                    value: 2,
+                    message: "Firstname must be at least 2 characters",
+                  },
+                })}
               />
+              <span className="text-orange-500 text-xs">
+                {errors.firstname?.message}
+              </span>
               <TextField
                 fullWidth
-                id="lastName"
-                name="lastName"
-                label="Last Name"
+                id="lastname"
+                label="Lastname"
+                {...register("lastname", {
+                  required: "Lastname is required",
+                  minLength: {
+                    value: 2,
+                    message: "Lastname must be at least 2 characters",
+                  },
+                })}
               />
+              <span className="text-orange-500 text-xs">
+                {errors.lastname?.message}
+              </span>
             </div>
           </form>
         </Box>
@@ -81,4 +109,4 @@ const ProfileModal = ({ open, handleClose }: IModal) => {
   );
 };
 
-export default ProfileModal;
+export default EditProfileModal;

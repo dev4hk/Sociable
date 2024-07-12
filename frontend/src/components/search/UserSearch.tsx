@@ -20,7 +20,10 @@ const UserSearch = () => {
         <div className="absolute w-full z-10 top-[4.5rem]">
           {username &&
             users.map((user, index) => (
-              <Card key={index} className="cursor-pointer hover:text-sky-400">
+              <Card
+                key={"user" + index}
+                className="cursor-pointer hover:text-sky-400"
+              >
                 <CardHeader
                   title={"Firstname Lastname"}
                   subheader={"@firstname_lastname"}

@@ -11,7 +11,14 @@ import {
 import React, { useState } from "react";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import { IModal } from "../../interfaces";
+import { IPostForm, IPostRequest } from "../../interfaces";
+import { useForm } from "react-hook-form";
+import { createPost } from "../../api/api";
+import { getValue } from "@testing-library/user-event/dist/utils";
+import { isTokenValid } from "../../service/AuthenticationService";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { posts } from "../../atoms";
 
 const style = {
   position: "absolute",
@@ -26,23 +33,69 @@ const style = {
   outline: "none",
 };
 
-const CreatePostModal = ({ handleClose, open }: IModal) => {
-  const [filePreview, setFilePreview] = useState();
-  const [fileType, setFileType] = useState();
-  const [isLoading, setIsLoading] = useState<boolean>();
+const CreatePostModal = ({ handleClose, open, refetch }: any) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string>();
+  const setPosts = useSetRecoilState(posts);
 
-  const handleSelectFile = (event: any) => {};
+  const navigate = useNavigate();
+  const {
+    register,
+    watch,
+    handleSubmit,
+    resetField,
+    setValue,
+    getValues,
+    reset,
+    setError,
+    formState,
+  } = useForm<IPostForm>();
+
+  const closeModal = () => {
+    reset();
+    handleClose();
+  };
+
+  const onValid = (data: IPostForm) => {
+    if (!isTokenValid(localStorage.getItem("token"))) {
+      navigate("/login");
+    }
+
+    const formData = new FormData();
+    if (data.body.length > 0) {
+      formData.append("body", data.body);
+    }
+    if (data.image) {
+      formData.append("file", data.image);
+    }
+    if (data.video) {
+      formData.append("file", data.video);
+    }
+    console.log(formData);
+    createPost(formData)
+      .then((response) => {
+        // setPosts((prev) => [response.data.result, ...prev]);
+        refetch();
+        closeModal();
+      })
+      .catch((err) => {
+        setServerError("Either caption or file must be filled");
+        setTimeout(() => {
+          setServerError(undefined);
+        }, 5000);
+      });
+  };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       className="text-white"
     >
       <Box sx={style}>
-        <form>
+        <form onSubmit={handleSubmit(onValid)}>
           <div>
             <div className="flex space-x-4 items-center">
               <Avatar />
@@ -51,21 +104,30 @@ const CreatePostModal = ({ handleClose, open }: IModal) => {
                 <p className="text-sm">@Username</p>
               </div>
             </div>
+            {}
+            {serverError && (
+              <span className="text-orange-500 text-xs">{serverError}</span>
+            )}
             <textarea
               className="outline-none w-full mt-5 p-2 bg-transparent border border-[#3b4054] rounded-sm"
-              name="caption"
               id="caption"
               placeholder="Write Caption..."
               rows={4}
+              {...register("body")}
             />
             <div className="flex space-x-5 items-center mt-5">
               <div>
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={handleSelectFile}
                   style={{ display: "none" }}
                   id="image-input"
+                  {...register("image", {
+                    onChange: (e) => {
+                      resetField("video");
+                      setValue("image", e.target.files[0]);
+                    },
+                  })}
                 />
                 <label htmlFor="image-input">
                   <IconButton color="primary" component="span">
@@ -79,9 +141,14 @@ const CreatePostModal = ({ handleClose, open }: IModal) => {
                 <input
                   type="file"
                   accept="video/*"
-                  onChange={handleSelectFile}
                   style={{ display: "none" }}
                   id="video-input"
+                  {...register("video", {
+                    onChange: (e) => {
+                      resetField("image");
+                      setValue("video", e.target.files[0]);
+                    },
+                  })}
                 />
                 <label htmlFor="video-input">
                   <IconButton color="primary" component="span">
@@ -91,11 +158,29 @@ const CreatePostModal = ({ handleClose, open }: IModal) => {
                 <span>Video</span>
               </div>
             </div>
-            {false && (
-              <div className="flex justify-center my-8">
-                <img className="h-[15rem]" src={filePreview} alt="" />
-              </div>
-            )}
+            {!formState.isSubmitting &&
+              !formState.isSubmitted &&
+              getValues("image") && (
+                <div className="flex justify-center my-8">
+                  <img
+                    className="h-[15rem]"
+                    src={URL.createObjectURL(watch().image)}
+                    alt=""
+                  />
+                </div>
+              )}
+            {!formState.isSubmitting &&
+              !formState.isSubmitted &&
+              getValues("video") && (
+                <div className="flex justify-center my-8">
+                  <video className="h-[15rem]" controls>
+                    <source
+                      src={URL.createObjectURL(getValues("video"))}
+                      type={getValues("video").type}
+                    />
+                  </video>
+                </div>
+              )}
 
             <div className="flex w-full justify-end">
               <Button
@@ -111,7 +196,7 @@ const CreatePostModal = ({ handleClose, open }: IModal) => {
 
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={isLoading!}
+          open={isLoading}
           onClick={() => setIsLoading(false)}
         >
           <CircularProgress color="inherit" />

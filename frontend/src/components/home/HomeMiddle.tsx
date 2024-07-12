@@ -5,10 +5,11 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import ArticleIcon from "@mui/icons-material/Article";
 import PostCard from "../post/PostCard";
 import CreatePostModal from "../post/CreatePostModal";
+import { IPost } from "../../interfaces";
 
 const posts = [1, 1, 1, 1, 1];
 
-const HomeMiddle = () => {
+const HomeMiddle = ({ data, refetch }: any) => {
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
   const handleClose = () => setOpenCreatePostModal(false);
   const handleOpenCreatePostModal = () => {
@@ -52,12 +53,16 @@ const HomeMiddle = () => {
         </Card>
       </section>
       <section className="mt-5 space-y-5">
-        {posts.map((index) => (
-          <PostCard key={index} />
+        {data?.map((post: IPost, index: any) => (
+          <PostCard key={"postcard" + index} post={post} />
         ))}
       </section>
       <div>
-        <CreatePostModal handleClose={handleClose} open={openCreatePostModal} />
+        <CreatePostModal
+          handleClose={handleClose}
+          open={openCreatePostModal}
+          refetch={refetch}
+        />
       </div>
     </div>
   );
