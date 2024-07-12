@@ -4,6 +4,7 @@ import com.example.user.config.JwtService;
 import com.example.user.entity.User;
 import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
+import com.example.user.request.ChangeUserInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,5 +42,12 @@ public class UserService {
         String username = this.jwtService.extractUsername(jwt);
         return this.userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+    }
+
+    public User changeUserInfo(ChangeUserInfoRequest request, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        return userRepository.save(user);
     }
 }

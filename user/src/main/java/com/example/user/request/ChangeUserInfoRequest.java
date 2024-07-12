@@ -1,6 +1,5 @@
-package com.example.user.auth;
+package com.example.user.request;
 
-import com.example.user.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,11 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class ChangeUserInfoRequest {
 
     @NotEmpty(message = "Firstname is mandatory")
     @NotNull(message = "Firstname is mandatory")
-    @Size(min = 2, message = "Firstname must be at least 2 characters")
+    @Size(min = 2, message = "Lastname must be at least 2 characters")
     private String firstname;
 
     @NotEmpty(message = "Lastname is mandatory")
@@ -26,15 +25,4 @@ public class RegisterRequest {
     @Size(min = 2, message = "Lastname must be at least 2 characters")
     private String lastname;
 
-    @Email(message = "Email is not well formatted")
-    @NotEmpty(message = "Email is mandatory")
-    @NotNull(message = "Email is mandatory")
-    private String email;
-
-    @NotEmpty(message = "Password is mandatory")
-    @NotNull(message = "Password is mandatory")
-    @Size(min = 8, message = "Password should be 8 characters long minimum")
-    private String password;
-
-//    private Role role;
 }
