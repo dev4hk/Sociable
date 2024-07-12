@@ -21,14 +21,14 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public Response<PostResponse> create(@RequestBody @Valid PostCreateRequest request, @RequestHeader("Authorization") String token) {
-        PostDto postDto = postService.create(request.getBody(), token);
+    public Response<PostResponse> create(@RequestParam(name = "body", required = false) String body, @RequestParam(name = "file", required = false) MultipartFile file, @RequestHeader("Authorization") String token) {
+        PostDto postDto = postService.create(body, file, token);
         return Response.success(PostResponse.fromPostDto(postDto));
     }
 
     @PutMapping("/{postId}")
-    public Response<PostResponse> modify(@PathVariable Integer postId, @RequestBody @Valid PostModifyRequest request, @RequestHeader("Authorization") String token) {
-        PostDto postDto = postService.modify(request.getBody(), token, postId);
+    public Response<PostResponse> modify(@PathVariable Integer postId, @RequestParam("body") String body, @RequestParam(name = "file", required = false) MultipartFile file, @RequestHeader("Authorization") String token) {
+        PostDto postDto = postService.modify(body, file, token, postId);
         return Response.success(PostResponse.fromPostDto(postDto));
     }
 
@@ -46,15 +46,6 @@ public class PostController {
     @GetMapping("/my")
     public Response<Page<PostResponse>> getMyPosts(Pageable pageable, @RequestHeader("Authorization") String token) {
         return Response.success(postService.getMyPosts(pageable, token).map(PostResponse::fromPostDto));
-    }
-
-    @PostMapping(value = "/file/{postId}", consumes = "multipart/form-data")
-    public Response<PostResponse> uploadFile(
-            @PathVariable Integer postId,
-            @RequestPart MultipartFile file,
-            @RequestHeader("Authorization") String token
-    ) {
-        return Response.success(PostResponse.fromPostDto(postService.uploadFile(file, token, postId)));
     }
 
     @GetMapping("/{postId}")

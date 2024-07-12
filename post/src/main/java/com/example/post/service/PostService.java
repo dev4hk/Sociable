@@ -25,25 +25,30 @@ public class PostService {
     private final CommentService commentService;
 
     @Transactional
-    public PostDto create(String body, String token) {
+    public PostDto create(String body, MultipartFile file, String token) {
+        if ((body == null || body.isBlank()) && (file == null || file.isEmpty())) {
+            throw new PostException(ErrorCode.INVALID_REQUEST);
+        }
         User user = getUser(token);
-        Post saved = postRepository.save(Post.of(body, user));
-        return PostDto.fromEntity(saved);
+        Post post = Post.of(body, user);
+        return uploadFile(file, post);
     }
 
     @Transactional
-    public PostDto modify(String body, String token, Integer postId) {
+    public PostDto modify(String body, MultipartFile file, String token, Integer postId) {
+        if ((body == null || body.isBlank()) && (file == null || file.isEmpty())) {
+            throw new PostException(ErrorCode.INVALID_REQUEST);
+        }
         User user = getUser(token);
         Post post = getPost(postId);
 
         if (!post.getUserId().equals(user.getId())) {
             throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
         }
-
-        post.setBody(body);
-
-        return PostDto.fromEntity(postRepository.saveAndFlush(post));
-
+        if (body != null && !body.isBlank()) {
+            post.setBody(body);
+        }
+        return uploadFile(file, post);
     }
 
     @Transactional
@@ -78,13 +83,11 @@ public class PostService {
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
     }
 
-    public PostDto uploadFile(MultipartFile file, String token, Integer postId) {
-        Post post = getPost(postId);
-        User user = getUser(token);
-        if(!Objects.equals(post.getUserId(), user.getId())) {
-            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
+    private PostDto uploadFile(MultipartFile file, Post post) {
+        if (file == null || file.isEmpty()) {
+            return PostDto.fromEntity(postRepository.save(post));
         }
-        String filePath = fileStorageService.saveFile(file, user.getId());
+        String filePath = fileStorageService.saveFile(file, post.getUserId());
         post.setFilePath(filePath);
         post.setFileType(file.getContentType());
         return PostDto.fromEntity(postRepository.save(post));
