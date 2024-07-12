@@ -17,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -53,41 +55,45 @@ public class PostServiceTest {
     @Test
     void create_post() {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.save(any())).thenReturn(mock(Post.class));
 
-        Assertions.assertDoesNotThrow(() -> postService.create(body, testToken));
+        Assertions.assertDoesNotThrow(() -> postService.create(body, file, testToken));
     }
 
     @Test
     void create_post_with_user_not_found() {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         Integer userId = 1;
 
         when(userService.getUserProfile(testToken)).thenThrow(PostException.class);
         when(postRepository.save(any())).thenReturn(mock(Post.class));
 
-        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.create(body, testToken));
+        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.create(body, file, testToken));
     }
 
     @Test
     void update_post() {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         Integer postId = 1;
 
         Post post = PostFixture.get(postId, 1);
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(postRepository.saveAndFlush(any())).thenReturn(post);
+        when(postRepository.save(any())).thenReturn(post);
 
-        Assertions.assertDoesNotThrow(() -> postService.modify(body, this.testToken, postId));
+        Assertions.assertDoesNotThrow(() -> postService.modify(body, file, this.testToken, postId));
     }
 
     @Test
     void update_non_existing_post_returns_error() {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         Integer userId = 1;
         Integer postId = 1;
 
@@ -96,13 +102,14 @@ public class PostServiceTest {
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
-        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, this.testToken, postId));
+        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
         Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
     void update_post_by_another_user_returns_error() {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         Integer userId = 1;
         Integer postId = 1;
 
@@ -112,8 +119,25 @@ public class PostServiceTest {
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(writer)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
-        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, this.testToken, postId));
+        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+    }
+
+    @Test
+    void update_with_no_contents_returns_error() {
+        String body = null;
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "".getBytes());
+        Integer userId = 1;
+        Integer postId = 1;
+
+        Post post = PostFixture.get(postId, userId);
+        User writer = UserFixture.get("email1", 2);
+
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(writer)));
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+
+        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
+        Assertions.assertEquals(ErrorCode.INVALID_REQUEST, exception.getErrorCode());
     }
 
     @Test

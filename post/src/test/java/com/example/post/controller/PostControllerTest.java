@@ -16,8 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
@@ -50,12 +55,13 @@ public class PostControllerTest {
     @Test
     void create_post() throws Exception {
         String body = "body";
-        when(postService.create(eq(body), anyString()))
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
+        when(postService.create(eq(body), eq(file), anyString()))
                 .thenReturn(PostDto.fromEntity(PostFixture.get(1, 1)));
         mockMvc.perform(
-                        post("/api/v1/posts")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(new PostCreateRequest(body)))
+                        multipart(HttpMethod.POST,"/api/v1/posts")
+                                .file(file)
+                                .param("body", body)
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
@@ -65,16 +71,17 @@ public class PostControllerTest {
     @Test
     void update_post() throws Exception {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
-        when(postService.modify(eq(body), any(), any()))
+        when(postService.modify(eq(body), eq(file), any(), any()))
                 .thenReturn(PostDto.fromEntity(PostFixture.get(1, 1)));
 
         mockMvc.perform(
-                        put("/api/v1/posts/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(new PostModifyRequest(body)))
-                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
-                )
+                multipart(HttpMethod.PUT, "/api/v1/posts/1")
+                        .file(file)
+                        .param("body", body)
+                        .header(HttpHeaders.AUTHORIZATION, this.testToken)
+        )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -82,13 +89,14 @@ public class PostControllerTest {
     @Test
     void update_non_existing_post_returns_error() throws Exception {
         String body = "body";
+        MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
 
-        doThrow(new PostException(ErrorCode.POST_NOT_FOUND)).when(postService).modify(eq(body), any(), eq(1));
+        doThrow(new PostException(ErrorCode.POST_NOT_FOUND)).when(postService).modify(eq(body), eq(file), any(), eq(1));
 
         mockMvc.perform(
-                        put("/api/v1/posts/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(new PostModifyRequest(body)))
+                        multipart(HttpMethod.PUT, "/api/v1/posts/1")
+                                .file(file)
+                                .param("body", body)
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
