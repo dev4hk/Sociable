@@ -1,6 +1,7 @@
 package com.example.post.response;
 
 import com.example.post.dto.PostDto;
+import com.example.post.model.User;
 import com.example.post.util.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class PostResponse {
     private byte[] file;
     private String fileType;
     private Integer userId;
+    private String firstname;
+    private String lastname;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -27,6 +30,8 @@ public class PostResponse {
                 FileUtils.readFileFromLocation(postDto.getFilePath()),
                 postDto.getFileType(),
                 postDto.getUserId(),
+                postDto.getFirstname(),
+                postDto.getLastname(),
                 postDto.getRegisteredAt(),
                 postDto.getUpdatedAt(),
                 postDto.getDeletedAt()

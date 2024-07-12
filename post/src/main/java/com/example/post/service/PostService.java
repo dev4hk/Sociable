@@ -43,7 +43,7 @@ public class PostService {
         Post post = getPost(postId);
 
         if (!post.getUserId().equals(user.getId())) {
-            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
+            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getId(), postId));
         }
         if (body != null && !body.isBlank()) {
             post.setBody(body);
@@ -57,7 +57,7 @@ public class PostService {
         Post post = getPost(postId);
 
         if (!post.getUserId().equals(user.getId())) {
-            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
+            throw new PostException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getId(), postId));
         }
 
         postRepository.delete(post);

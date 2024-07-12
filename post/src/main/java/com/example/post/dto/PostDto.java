@@ -16,6 +16,8 @@ public class PostDto {
     private String filePath;
     private String fileType;
     private Integer userId;
+    private String firstname;
+    private String lastname;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -28,6 +30,8 @@ public class PostDto {
                 entity.getFilePath(),
                 entity.getFileType(),
                 entity.getUserId(),
+                entity.getFirstname(),
+                entity.getLastname(),
                 entity.getRegisteredAt(),
                 entity.getUpdatedAt(),
                 entity.getDeletedAt()

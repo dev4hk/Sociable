@@ -31,6 +31,10 @@ public class Post {
 
     private Integer userId;
 
+    private String firstname;
+
+    private String lastname;
+
     @Column(name = "registered_at")
     private Timestamp registeredAt;
 
@@ -54,6 +58,8 @@ public class Post {
         Post entity = new Post();
         entity.setBody(body);
         entity.setUserId(user.getId());
+        entity.setFirstname(user.getFirstname());
+        entity.setLastname(user.getLastname());
         return entity;
     }
 

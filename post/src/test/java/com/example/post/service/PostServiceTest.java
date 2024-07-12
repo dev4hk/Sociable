@@ -48,7 +48,7 @@ public class PostServiceTest {
     @BeforeEach
     void setup() {
         this.testToken = "AABB";
-        this.testUser = UserFixture.get("email@email.com", 1);
+        this.testUser = UserFixture.get(1);
 
     }
 
@@ -114,7 +114,7 @@ public class PostServiceTest {
         Integer postId = 1;
 
         Post post = PostFixture.get(postId, userId);
-        User writer = UserFixture.get("email1", 2);
+        User writer = UserFixture.get(2);
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(writer)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
@@ -131,7 +131,7 @@ public class PostServiceTest {
         Integer postId = 1;
 
         Post post = PostFixture.get(postId, userId);
-        User writer = UserFixture.get("email1", 2);
+        User writer = UserFixture.get(2);
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(writer)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
@@ -174,7 +174,7 @@ public class PostServiceTest {
         Integer postId = 1;
 
         Post post = PostFixture.get(postId, userId);
-        User writer = UserFixture.get("email1", 2);
+        User writer = UserFixture.get(2);
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(writer)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
