@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import React, { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import SideNav from "../../components/sidenav/SideNav";
 import HomeMiddle from "../../components/home/HomeMiddle";
 import HomeRight from "../../components/home/HomeRight";
@@ -8,13 +8,15 @@ import Profile from "../profile/Profile";
 import { getAllPosts } from "../../api/api";
 import { IGetAllPosts, IPost } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
+import { isTokenValid } from "../../service/AuthenticationService";
 
 const page = 0;
 const size = 10;
 
 const HomePage = () => {
   const location = useLocation();
-  const { isLoading, data, refetch } = useQuery<IGetAllPosts>({
+  const navigate = useNavigate();
+  const { isLoading, data, refetch, isError } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getAllPosts(page, size),
   });
@@ -37,7 +39,10 @@ const HomePage = () => {
             <Route
               path="/"
               element={
-                <HomeMiddle data={data?.result?.content} refetch={refetch} />
+                <HomeMiddle
+                  data={data?.data?.result?.content}
+                  refetch={refetch}
+                />
               }
             />
             <Route path="/profile" element={<Profile />} />
