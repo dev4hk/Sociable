@@ -13,6 +13,9 @@ import java.sql.Timestamp;
 public class CommentDto {
     private Integer id;
     private Integer userId;
+    private String firstname;
+    private String lastname;
+    private String email;
     private Integer postId;
     private String comment;
     private Timestamp registeredAt;
@@ -23,6 +26,9 @@ public class CommentDto {
         return new CommentDto(
                 comment.getId(),
                 comment.getUserId(),
+                comment.getFirstname(),
+                comment.getLastname(),
+                comment.getEmail(),
                 comment.getPostId(),
                 comment.getComment(),
                 comment.getRegisteredAt(),

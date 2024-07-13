@@ -24,6 +24,12 @@ public class Comment {
 
     private Integer userId;
 
+    private String firstname;
+
+    private String lastname;
+
+    private String email;
+
     private Integer postId;
 
     @Column(name = "comment")
@@ -48,9 +54,12 @@ public class Comment {
         this.updatedAt = Timestamp.from(Instant.now());
     }
 
-    public static Comment of(Integer userId, Integer postId, String comment) {
+    public static Comment of(User user, Integer postId, String comment) {
         Comment entity = new Comment();
-        entity.setUserId(userId);
+        entity.setUserId(user.getId());
+        entity.setFirstname(user.getFirstname());
+        entity.setLastname(user.getLastname());
+        entity.setEmail(user.getEmail());
         entity.setPostId(postId);
         entity.setComment(comment);
         return entity;

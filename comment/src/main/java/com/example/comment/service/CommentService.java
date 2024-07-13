@@ -26,7 +26,7 @@ public class CommentService {
     public CommentDto create(Integer postId, String comment, String token) {
         User user = this.userService.getUserProfile(token).getBody();
         Post post = this.postService.getPostById(postId, token).getResult();
-        Comment toCreate = Comment.of(user.getId(), post.getId(), comment);
+        Comment toCreate = Comment.of(user, post.getId(), comment);
         return CommentDto.fromEntity(commentRepository.save(toCreate));
 
     }
