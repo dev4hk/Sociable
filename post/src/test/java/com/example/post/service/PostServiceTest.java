@@ -217,6 +217,7 @@ public class PostServiceTest {
         when(userService.getUserProfile(any())).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(postRepository.save(post)).thenReturn(post);
+        postService.likeUnlikePost(postId, this.testToken);
         assertEquals(1, post.getLikedBy().size());
         assertTrue(post.getLikedBy().contains(1));
     }
