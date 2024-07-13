@@ -88,3 +88,9 @@ export function changeUserInfo(data: IChangeUserInfo) {
     })
     .then((res) => res.data);
 }
+
+export function logout() {
+  return axios.get(`${BASE_URL}/api/v1/auth/logout`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+}

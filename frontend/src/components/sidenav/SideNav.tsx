@@ -10,6 +10,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
+import { logout } from "../../api/api";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },
@@ -39,6 +40,17 @@ const SideNav = () => {
     } else {
       navigate(item.path);
     }
+  };
+
+  const toProfilePage = () => {
+    navigate(`/home/profile/${userProfile.id}`);
+  };
+
+  const handleLogout = () => {
+    logout().then((res) => {
+      localStorage.removeItem("token");
+      navigate("/login");
+    });
   };
 
   return (
@@ -89,9 +101,9 @@ const SideNav = () => {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={toProfilePage}>Profile</MenuItem>
               <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
         </div>
