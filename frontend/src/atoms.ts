@@ -1,22 +1,12 @@
 import { atom } from "recoil";
-import { IPost, IToken } from "./interfaces";
-
-export const token = atom({
-  key: "token",
-  default: null,
-});
-
-export const decodedToken = atom<IToken>({
-  key: "decodedToken",
-  default: {
-    exp: null,
-    iat: null,
-    id: null,
-    username: null,
-  },
-});
+import { IPost, IProfile, IToken } from "./interfaces";
 
 export const posts = atom<IPost[]>({
   key: "posts",
   default: [],
+});
+
+export const profile = atom<IProfile>({
+  key: "profile",
+  default: {},
 });

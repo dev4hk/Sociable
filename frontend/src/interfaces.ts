@@ -10,6 +10,17 @@ export interface ILogin {
   password: string;
 }
 
+export interface IProfile {
+  id?: number;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+}
+
+export interface IAuthResponse {
+  access_token: string;
+}
+
 export interface IRegister {
   firstname: string;
   lastname: string;

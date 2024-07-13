@@ -9,6 +9,8 @@ import { getAllPosts } from "../../api/api";
 import { IGetAllPosts, IPost } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { isTokenValid } from "../../service/AuthenticationService";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { posts, profile } from "../../atoms";
 
 const page = 0;
 const size = 10;
@@ -16,9 +18,11 @@ const size = 10;
 const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoading, data, refetch, isError } = useQuery({
+  const setPostsAtom = useSetRecoilState(posts);
+  const getUserInfo = useRecoilValue(profile);
+  const { isLoading, data, refetch, isError, isFetched } = useQuery({
     queryKey: ["posts"],
-    queryFn: () => getAllPosts(page, size),
+    queryFn: () => getAllPosts(),
   });
 
   return (
@@ -45,7 +49,7 @@ const HomePage = () => {
                 />
               }
             />
-            <Route path="/profile" element={<Profile />} />
+            <Route path={`/profile/:id`} element={<Profile />} />
           </Routes>
         </Grid>
         {location.pathname === "/home" && (

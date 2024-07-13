@@ -74,7 +74,6 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
     console.log(formData);
     createPost(formData)
       .then((response) => {
-        // setPosts((prev) => [response.data.result, ...prev]);
         refetch();
         closeModal();
       })

@@ -1,19 +1,29 @@
 import axios from "axios";
-import { ILogin, IPost, IRegister } from "../interfaces";
+import { IChangeUserInfo, ILogin, IPost, IRegister } from "../interfaces";
 
 const BASE_URL = "http://localhost:8888";
 
 export function registerUser(data: IRegister) {
-  return axios.post(`${BASE_URL}/api/v1/auth/register`, data);
+  return axios
+    .post(`${BASE_URL}/api/v1/auth/register`, data)
+    .then((res) => res.data);
 }
 
 export function loginUser(data: ILogin) {
-  return axios.post(`${BASE_URL}/api/v1/auth/authenticate`, data);
+  return axios
+    .post(`${BASE_URL}/api/v1/auth/authenticate`, data)
+    .then((res) => res.data);
 }
 
-export function getAllPosts(page: number, size: number) {
+export function getAllPosts() {
+  return axios.get(`${BASE_URL}/api/v1/posts?sort=registeredAt,desc`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+}
+
+export function getAllPostByUserId(userId: number) {
   return axios.get(
-    `${BASE_URL}/api/v1/posts?page=${page}&size=${size}&sort=registeredAt,desc`,
+    `${BASE_URL}/api/v1/posts/user/${userId}?sort=registeredAt,desc`,
     {
       headers: { Authorization: `Bearer ${getToken()}` },
     }
@@ -50,6 +60,30 @@ export function getCommentsByPost<ICommentsResponse>(
 export function createComment(request: any, postId: number) {
   return axios
     .post(`${BASE_URL}/api/v1/comments/post/${postId}`, request, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data);
+}
+
+export function getUserProfile(token: string) {
+  return axios
+    .get(`${BASE_URL}/api/v1/users/profile`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data);
+}
+
+export function getAnotherUserInfo(id: number, token: string) {
+  return axios
+    .get(`${BASE_URL}/api/v1/users/${id}/profile`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data);
+}
+
+export function changeUserInfo(data: IChangeUserInfo) {
+  return axios
+    .put(`${BASE_URL}/api/v1/users/change/info`, data, {
       headers: { Authorization: `Bearer ${getToken()}` },
     })
     .then((res) => res.data);

@@ -8,6 +8,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MessageIcon from "@mui/icons-material/Message";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useRecoilValue } from "recoil";
+import { profile } from "../../atoms";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },
@@ -27,6 +29,7 @@ const navigationMenu = [
 ];
 
 const SideNav = () => {
+  const getUserProfile = useRecoilValue(profile);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -37,7 +40,11 @@ const SideNav = () => {
     setAnchorEl(null);
   };
   const handleNavigate = (item: any) => {
-    navigate(item.path);
+    if (item.title === "Profile") {
+      navigate(item.path + `/${getUserProfile.id}`);
+    } else {
+      navigate(item.path);
+    }
   };
 
   return (

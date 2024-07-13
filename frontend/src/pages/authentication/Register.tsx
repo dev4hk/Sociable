@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { ILogin, IRegister } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../api/api";
+import { getUserProfile, registerUser } from "../../api/api";
 import { useSetRecoilState } from "recoil";
+import { profile } from "../../atoms";
 
 const Register = () => {
   const {
@@ -16,6 +17,7 @@ const Register = () => {
 
   const navigate = useNavigate();
   const [serverErrors, setServerErrors] = useState();
+  const setProfile = useSetRecoilState(profile);
 
   const onValid = (data: IRegister) => {
     if (data.password !== data.confirmPassword) {
@@ -27,7 +29,11 @@ const Register = () => {
     } else {
       registerUser(data)
         .then((res) => {
-          localStorage.setItem("token", res.data.access_token);
+          const token = res.access_token;
+          localStorage.setItem("token", token);
+          getUserProfile(token).then((profile) =>
+            setProfile((prev) => profile)
+          );
           navigate("/home");
         })
         .catch((err) => {

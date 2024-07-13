@@ -10,6 +10,9 @@ import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IChangeUserInfo } from "../../interfaces";
 import { useForm } from "react-hook-form";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { profile } from "../../atoms";
+import { changeUserInfo } from "../../api/api";
 
 const style = {
   position: "absolute",
@@ -26,13 +29,24 @@ const style = {
 };
 
 const EditProfileModal = ({ open, handleClose }: any) => {
+  const setUserInfo = useSetRecoilState(profile);
+  const getUserInfo = useRecoilValue(profile);
+
+  const userFirstname = getUserInfo.firstname;
+  const userLastname = getUserInfo.lastname;
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IChangeUserInfo>();
-
-  const onValid = (data: IChangeUserInfo) => {};
+  } = useForm<IChangeUserInfo>({
+    defaultValues: { firstname: userFirstname, lastname: userLastname },
+  });
+  const onValid = (data: IChangeUserInfo) => {
+    changeUserInfo(data).then((res) => {
+      setUserInfo((prev) => res);
+    });
+    handleClose();
+  };
   return (
     <div>
       <Modal

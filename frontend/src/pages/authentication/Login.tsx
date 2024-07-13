@@ -1,9 +1,11 @@
-import { Button, TextField } from "@mui/material";
-import React from "react";
+import { Alert, Button, TextField } from "@mui/material";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ILogin } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../api/api";
+import { getUserProfile, loginUser } from "../../api/api";
+import { useSetRecoilState } from "recoil";
+import { profile } from "../../atoms";
 
 const Login = () => {
   const {
@@ -13,19 +15,29 @@ const Login = () => {
   } = useForm<ILogin>();
 
   const navigate = useNavigate();
+  const setProfile = useSetRecoilState(profile);
+  const [serverErrors, setServerErrors] = useState();
 
   const onValid = (data: ILogin) => {
     loginUser(data)
       .then((res) => {
-        localStorage.setItem("token", res.data.access_token);
+        const token = res.access_token;
+        localStorage.setItem("token", token);
+        getUserProfile(token).then((profile) => setProfile((prev) => profile));
         navigate("/home");
       })
-      .catch((err) => console.log(err.response.data.resultCode));
+      .catch((err) => {
+        setServerErrors(err.response.data.resultCode);
+        setTimeout(() => {
+          setServerErrors(undefined);
+        }, 5000);
+      });
   };
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onValid)}>
         <div className="space-y-5">
+          {serverErrors && <Alert severity="error">{serverErrors}</Alert>}
           <div>
             <TextField
               id="email"

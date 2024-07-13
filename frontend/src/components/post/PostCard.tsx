@@ -110,8 +110,8 @@ const PostCard = ({ post }: IPostCard) => {
             <ShareIcon />
           </IconButton>
 
-          <IconButton>
-            <ChatBubbleIcon onClick={handleShowComments} />
+          <IconButton onClick={handleShowComments}>
+            <ChatBubbleIcon />
           </IconButton>
         </div>
 
