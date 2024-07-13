@@ -21,6 +21,8 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -102,7 +104,7 @@ public class PostServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
-        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class PostServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
-        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
     }
 
     @Test
@@ -136,7 +138,7 @@ public class PostServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.modify(body, file, this.testToken, postId));
-        Assertions.assertEquals(ErrorCode.INVALID_REQUEST, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_REQUEST, exception.getErrorCode());
     }
 
     @Test
@@ -164,7 +166,7 @@ public class PostServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.delete(this.testToken, postId));
-        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -179,7 +181,7 @@ public class PostServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.delete(this.testToken, postId));
-        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
     }
 
     @Test
@@ -205,6 +207,18 @@ public class PostServiceTest {
 
         Assertions.assertDoesNotThrow(() -> postService.getAllPostsByUserId(userId, pageable, ""));
 
+    }
+
+    @Test
+    void like_Post() {
+        Integer postId = 1;
+        Integer userId = 1;
+        Post post = PostFixture.get(1, userId);
+        when(userService.getUserProfile(any())).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(postRepository.save(post)).thenReturn(post);
+        assertEquals(1, post.getLikedBy().size());
+        assertTrue(post.getLikedBy().contains(1));
     }
 
 }
