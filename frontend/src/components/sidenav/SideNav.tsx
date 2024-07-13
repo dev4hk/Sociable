@@ -13,12 +13,6 @@ import { profile } from "../../atoms";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },
-  { title: "Reels", icon: <ExploreIcon />, path: "/home/reels" },
-  {
-    title: "Create Reels",
-    icon: <ControlPointIcon />,
-    path: "/home/create-reels",
-  },
   {
     title: "Notifications",
     icon: <NotificationsIcon />,
@@ -29,7 +23,7 @@ const navigationMenu = [
 ];
 
 const SideNav = () => {
-  const getUserProfile = useRecoilValue(profile);
+  const userProfile = useRecoilValue(profile);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -41,7 +35,7 @@ const SideNav = () => {
   };
   const handleNavigate = (item: any) => {
     if (item.title === "Profile") {
-      navigate(item.path + `/${getUserProfile.id}`);
+      navigate(item.path + `/${userProfile.id}`);
     } else {
       navigate(item.path);
     }
@@ -72,8 +66,8 @@ const SideNav = () => {
           <div className="flex items-center space-x-3">
             <Avatar />
             <div>
-              <p className="font-bold">Name</p>
-              <p className="opacity079">@ Username</p>
+              <p className="font-bold">{`${userProfile.firstname} ${userProfile.lastname}`}</p>
+              <p className="opacity079">{`@${userProfile.firstname?.toLowerCase()}_${userProfile.lastname?.toLowerCase()}`}</p>
             </div>
           </div>
           <div>
