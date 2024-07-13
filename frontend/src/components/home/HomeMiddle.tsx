@@ -54,7 +54,7 @@ const HomeMiddle = ({ data, refetch }: any) => {
       </section>
       <section className="mt-5 space-y-5">
         {data?.map((post: IPost, index: any) => (
-          <PostCard key={"postcard" + index} post={post} />
+          <PostCard key={"postcard" + index} post={post} refetch={refetch} />
         ))}
       </section>
       <div>

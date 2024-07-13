@@ -47,6 +47,7 @@ export interface IPost {
   userId: number;
   firstname: string;
   lastname: string;
+  likedBy: Array<number>;
   registeredAt: string;
   updatedAt: string;
   deletedAt: string;

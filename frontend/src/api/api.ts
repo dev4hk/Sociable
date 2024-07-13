@@ -94,3 +94,13 @@ export function logout() {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
 }
+
+export function likeUnlikePost(postId: number) {
+  return axios.patch(
+    `${BASE_URL}/api/v1/posts/${postId}/like`,
+    {},
+    {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    }
+  );
+}

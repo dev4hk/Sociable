@@ -12,24 +12,32 @@ import {
 import { red } from "@mui/material/colors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { IComment, ICommentsResponse, IPost } from "../../interfaces";
-import { useState } from "react";
-import { createComment, getCommentsByPost } from "../../api/api";
+import { useEffect, useState } from "react";
+import {
+  createComment,
+  getCommentsByPost,
+  likeUnlikePost,
+} from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { posts, profile } from "../../atoms";
 
 interface IPostCard {
   post: IPost;
+  refetch?: () => void;
 }
 
 const page = 0;
 const size = 10;
 
-const PostCard = ({ post }: IPostCard) => {
+const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
   const [showComments, setShowComments] = useState(false);
   const handleShowComments = () => {
     setShowComments(!showComments);
@@ -38,26 +46,31 @@ const PostCard = ({ post }: IPostCard) => {
   const {
     data: comments,
     isFetched,
-    refetch,
+    refetch: refetchComments,
   } = useQuery<ICommentsResponse>({
     queryKey: [`${post.id}:comments`],
     queryFn: () => getCommentsByPost(post.id, page, size),
   });
 
+  const userAtom = useRecoilValue(profile);
+  const setPostsAtom = useSetRecoilState(posts);
+  const postsAtom = useRecoilValue(posts);
   const { register, watch, getValues, resetField } = useForm();
 
   const handleCreateComment = () => {
     const request = { comment: getValues("comment") };
     createComment(request, post.id).then(() => {
       resetField("comment");
-      refetch();
+      refetchComments();
     });
   };
-  // const handleCreateComment = (comment: string) => {
-  //   const request = { comment: comment };
-  //   createComment(request, post.id);
-  //   refetch();
-  // };
+
+  const handleLike = () => {
+    likeUnlikePost(post.id).then((res) => {
+      const updated = res.data.result;
+      refetchPosts!();
+    });
+  };
 
   return (
     <Card>
@@ -102,8 +115,12 @@ const PostCard = ({ post }: IPostCard) => {
 
       <CardActions className="flex justify-between" disableSpacing>
         <div>
-          <IconButton>
-            <FavoriteIcon />
+          <IconButton onClick={handleLike}>
+            {post.likedBy.includes(userAtom.id!) ? (
+              <FavoriteIcon />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
           </IconButton>
 
           <IconButton>
@@ -121,6 +138,11 @@ const PostCard = ({ post }: IPostCard) => {
           </IconButton>
         </div>
       </CardActions>
+      <CardContent sx={{ paddingY: 0 }}>
+        <Typography variant="body2" color="text.secondary">
+          {`${post.likedBy.length} likes`}
+        </Typography>
+      </CardContent>
       {isFetched && showComments && (
         <section>
           <div className="flex items-center space-x-5 mx-3 my-5">
