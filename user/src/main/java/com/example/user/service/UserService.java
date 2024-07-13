@@ -44,6 +44,12 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
+    public User getOtherUserInfo(Integer id, String token) {
+        this.getUserProfile(token);
+        return this.userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+    }
+
     public User changeUserInfo(ChangeUserInfoRequest request, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         user.setFirstname(request.getFirstname());

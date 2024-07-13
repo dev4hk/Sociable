@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -204,7 +203,7 @@ public class PostServiceTest {
         when(userService.getUserProfile(any())).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findAllByUserId(userId, pageable)).thenReturn(Page.empty());
 
-        Assertions.assertDoesNotThrow(() -> postService.getMyPosts(pageable, ""));
+        Assertions.assertDoesNotThrow(() -> postService.getAllPostsByUserId(userId, pageable, ""));
 
     }
 

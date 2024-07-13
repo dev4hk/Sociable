@@ -4,8 +4,6 @@ import com.example.post.dto.PostDto;
 import com.example.post.enums.ErrorCode;
 import com.example.post.exception.PostException;
 import com.example.post.fixture.PostFixture;
-import com.example.post.request.PostCreateRequest;
-import com.example.post.request.PostModifyRequest;
 import com.example.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
@@ -140,10 +135,10 @@ public class PostControllerTest {
     }
 
     @Test
-    void get_my_posts() throws Exception {
-        when(postService.getMyPosts(any(), any())).thenReturn(Page.empty());
+    void get_user_posts() throws Exception {
+        when(postService.getAllPostsByUserId(any(), any(), any())).thenReturn(Page.empty());
         mockMvc.perform(
-                        get("/api/v1/posts/my")
+                        get("/api/v1/posts/user/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )

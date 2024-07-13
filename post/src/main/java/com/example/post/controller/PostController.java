@@ -1,12 +1,9 @@
 package com.example.post.controller;
 
 import com.example.post.dto.PostDto;
-import com.example.post.request.PostCreateRequest;
-import com.example.post.request.PostModifyRequest;
 import com.example.post.response.PostResponse;
 import com.example.post.response.Response;
 import com.example.post.service.PostService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,9 +40,9 @@ public class PostController {
         return Response.success(postService.getAllPosts(pageable, token).map(PostResponse::fromPostDto));
     }
 
-    @GetMapping("/my")
-    public Response<Page<PostResponse>> getMyPosts(Pageable pageable, @RequestHeader("Authorization") String token) {
-        return Response.success(postService.getMyPosts(pageable, token).map(PostResponse::fromPostDto));
+    @GetMapping("/user/{id}")
+    public Response<Page<PostResponse>> getAllPostsByUserId(@PathVariable Integer id, Pageable pageable, @RequestHeader("Authorization") String token) {
+        return Response.success(postService.getAllPostsByUserId(id, pageable, token).map(PostResponse::fromPostDto));
     }
 
     @GetMapping("/{postId}")

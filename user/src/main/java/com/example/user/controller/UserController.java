@@ -38,5 +38,14 @@ public class UserController {
                 ));
     }
 
+    @GetMapping("/{id}/profile")
+    public ResponseEntity<UserResponse>  getOtherUserInfo(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                UserResponse.fromUser(
+                        this.userService.getOtherUserInfo(id, token)
+                ));
+    }
+
 }
 

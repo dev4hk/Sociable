@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
-
 @RequiredArgsConstructor
 @Service
 public class PostService {
@@ -69,9 +67,9 @@ public class PostService {
         return postRepository.findAll(pageable).map(PostDto::fromEntity);
     }
 
-    public Page<PostDto> getMyPosts(Pageable pageable, String token) {
+    public Page<PostDto> getAllPostsByUserId(Integer id, Pageable pageable, String token) {
         User user = getUser(token);
-        return postRepository.findAllByUserId(user.getId(), pageable).map(PostDto::fromEntity);
+        return postRepository.findAllByUserId(id, pageable).map(PostDto::fromEntity);
     }
 
     private User getUser(String token) {
