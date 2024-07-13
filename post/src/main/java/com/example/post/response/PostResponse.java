@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
@@ -19,6 +20,7 @@ public class PostResponse {
     private Integer userId;
     private String firstname;
     private String lastname;
+    private Set<Integer> likedBy;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -32,6 +34,7 @@ public class PostResponse {
                 postDto.getUserId(),
                 postDto.getFirstname(),
                 postDto.getLastname(),
+                postDto.getLikedBy(),
                 postDto.getRegisteredAt(),
                 postDto.getUpdatedAt(),
                 postDto.getDeletedAt()
