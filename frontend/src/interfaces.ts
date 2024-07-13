@@ -76,3 +76,37 @@ export interface IPostForm {
   image: Blob;
   video: Blob;
 }
+
+export interface IComment {
+  id: number;
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postId: number;
+  comment: string;
+}
+
+export interface ICommentsResponse {
+  resultCode: string;
+  result: {
+    totalPages: number;
+    totalElements: number;
+    first: boolean;
+    last: boolean;
+    size: number;
+    content: IComment[];
+    number: number;
+    sort: [];
+    numberOfElements: number;
+    pageable: {
+      pageNumber: number;
+      pageSize: number;
+      sort: [];
+      offset: number;
+      paged: boolean;
+      unpaged: boolean;
+    };
+    empty: boolean;
+  };
+}
