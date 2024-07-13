@@ -146,4 +146,17 @@ public class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void like_post() throws Exception {
+        Integer postId = 1;
+        when(postService.likeUnlikePost(postId, this.testToken)).thenReturn(PostDto.fromEntity(PostFixture.get(1, 1)));
+        mockMvc.perform(
+                        get("/api/v1/posts/1/like")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
