@@ -50,4 +50,10 @@ public class PostController {
         return Response.success(PostResponse.fromPostDto(postService.getPostById(postId, token)));
     }
 
+    @PatchMapping("/{postId}/like")
+    public Response<PostResponse> likePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
+        return Response.success(PostResponse.fromPostDto(postService.likeUnlikePost(postId, token)));
+    }
+
+
 }
