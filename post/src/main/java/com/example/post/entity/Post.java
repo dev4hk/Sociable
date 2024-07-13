@@ -8,6 +8,8 @@ import org.hibernate.annotations.Where;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -34,6 +36,8 @@ public class Post {
     private String firstname;
 
     private String lastname;
+
+    private Set<Integer> likedBy = new HashSet<>();
 
     @Column(name = "registered_at")
     private Timestamp registeredAt;

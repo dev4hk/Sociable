@@ -95,4 +95,17 @@ public class PostService {
         User user = getUser(token);
         return PostDto.fromEntity(this.getPost(postId));
     }
+
+    public PostDto likeUnlikePost(Integer postId, String token) {
+        User user = getUser(token);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
+        if(post.getLikedBy().contains(user.getId())) {
+            post.getLikedBy().remove(user.getId());
+        }
+        else {
+            post.getLikedBy().add(user.getId());
+        }
+        return PostDto.fromEntity(postRepository.save(post));
+    }
 }
