@@ -1,6 +1,5 @@
 package com.example.chat.entity;
 
-import com.example.chat.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,6 +21,7 @@ public class Chat {
 
     private String image;
 
+    @ElementCollection
     private List<User> users = new ArrayList<>();
 
     @Column(name = "registered_at")

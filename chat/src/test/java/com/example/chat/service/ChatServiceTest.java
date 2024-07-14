@@ -3,6 +3,7 @@ package com.example.chat.service;
 import com.example.chat.entity.Chat;
 import com.example.chat.fixture.UserFixture;
 import com.example.chat.entity.User;
+import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ public class ChatServiceTest {
 
     private User user1;
     private User user2;
+    private UserModel userModel;
     private Chat chat;
     private String testToken;
 
@@ -41,6 +43,7 @@ public class ChatServiceTest {
     void setup() {
         user1 = UserFixture.get(1);
         user2 = UserFixture.get(2);
+        userModel = new UserModel();
         chat = new Chat();
         chat.setUsers(List.of(user1, user2));
         testToken = "AABB";
@@ -51,28 +54,26 @@ public class ChatServiceTest {
 
         when(chatRepository.findChatByUsers(user1, user2)).thenReturn(Optional.empty());
         when(chatRepository.save(chat)).thenReturn(chat);
-        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
+        when(userService.getOtherUserInfo(any(), any())).thenReturn(ResponseEntity.of(Optional.of(mock(UserModel.class))));
 
-        assertDoesNotThrow(() -> chatService.create(1, 2, testToken));
-        assertEquals(2, chat.getUsers().size() == 2);
+        assertDoesNotThrow(() -> chatService.create(2, testToken));
+        assertEquals(2, chat.getUsers().size());
     }
 
     @Test
     void find_chat_by_id() {
         when(chatRepository.findById(anyLong())).thenReturn(Optional.ofNullable(mock(Chat.class)));
-        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
-        assertDoesNotThrow(() -> chatService.findChatById(1, testToken));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
+        assertDoesNotThrow(() -> chatService.findChatById(1L, testToken));
     }
 
     @Test
     void find_chats_by_user() {
         when(chatRepository.findByUsersId(1)).thenReturn(List.of());
-        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
-        assertDoesNotThrow(() -> chatService.findChatsByUser(1, testToken));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
+        assertDoesNotThrow(() -> chatService.findChatsByUser(testToken));
     }
-
-
-
 
 
 }
