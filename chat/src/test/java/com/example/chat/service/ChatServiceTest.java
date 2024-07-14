@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +30,13 @@ public class ChatServiceTest {
     @MockBean
     private ChatRepository chatRepository;
 
+    @MockBean
+    private UserService userService;
+
     private User user1;
     private User user2;
     private Chat chat;
+    private String testToken;
 
     @BeforeEach
     void setup() {
@@ -39,26 +44,31 @@ public class ChatServiceTest {
         user2 = UserFixture.get(2);
         chat = new Chat();
         chat.setUsers(List.of(user1, user2));
+        testToken = "AABB";
     }
 
     @Test
     void create_chatroom() {
+
         when(chatRepository.findChatByUsers(user1, user2)).thenReturn(Optional.empty());
         when(chatRepository.save(any())).thenReturn(mock(Chat.class));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
 
-        assertDoesNotThrow(() -> chatService.create(1, 2));
+        assertDoesNotThrow(() -> chatService.create(1, 2, testToken));
     }
 
     @Test
     void find_chat_by_id() {
         when(chatRepository.findById(anyInt())).thenReturn(mock(Chat.class));
-        assertDoesNotThrow(() -> chatService.findChatById(1));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
+        assertDoesNotThrow(() -> chatService.findChatById(1, testToken));
     }
 
     @Test
     void find_chats_by_user() {
         when(chatRepository.findChatByUser(user1)).thenReturn(List.of());
-        assertDoesNotThrow(() -> chatService.findChatsByUser(user1.getId()));
+        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(user1)));
+        assertDoesNotThrow(() -> chatService.findChatsByUser(user1.getId(), testToken));
     }
 
 
