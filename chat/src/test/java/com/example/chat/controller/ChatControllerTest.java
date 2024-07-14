@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class ChatControllerTest {
         when(chatService.create(request.getUserId(), testToken)).thenReturn(testChat);
         mockMvc.perform(
                         post("/api/v1/chats")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(request))
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
@@ -61,7 +63,7 @@ public class ChatControllerTest {
     @Test
     void get_user_chats() throws Exception {
         when(chatService.findChatsByUser(testToken)).thenReturn(List.of());
-        mockMvc.perform(get("api/v1/chats")
+        mockMvc.perform(get("/api/v1/chats")
                         .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
