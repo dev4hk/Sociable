@@ -1,5 +1,6 @@
 package com.example.chat.entity;
 
+import com.example.chat.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

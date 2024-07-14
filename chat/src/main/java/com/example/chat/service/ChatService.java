@@ -1,7 +1,7 @@
 package com.example.chat.service;
 
 import com.example.chat.entity.Chat;
-import com.example.chat.entity.User;
+import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;

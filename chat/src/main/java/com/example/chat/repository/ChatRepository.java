@@ -1,7 +1,7 @@
 package com.example.chat.repository;
 
 import com.example.chat.entity.Chat;
-import com.example.chat.entity.User;
+import com.example.chat.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,5 @@
 package com.example.chat.model;
 
-import com.example.chat.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
