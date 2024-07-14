@@ -46,7 +46,7 @@ public class ChatServiceTest {
         when(chatRepository.findChatByUsers(user1, user2)).thenReturn(Optional.empty());
         when(chatRepository.save(any())).thenReturn(mock(Chat.class));
 
-        assertDoesNotThrow(() -> chatService.create(user1, user2));
+        assertDoesNotThrow(() -> chatService.create(1, 2));
     }
 
     @Test
