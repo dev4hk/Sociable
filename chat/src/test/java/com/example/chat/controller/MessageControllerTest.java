@@ -57,7 +57,7 @@ public class MessageControllerTest {
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
