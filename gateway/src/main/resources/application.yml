@@ -21,6 +21,11 @@ spring:
             lb://COMMENT-SERVICE
           predicates:
             - Path=/api/v1/comments/**
+        - id: CHAT-SERVICE
+          uri:
+            lb://CHAT-SERVICE
+          predicates:
+            - Path=/api/v1/chats/**, /api/v1/messages/**, /chat/**
       default-filters:
         DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
