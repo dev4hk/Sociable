@@ -3,6 +3,8 @@ package com.example.post.entity;
 import com.example.post.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -11,7 +13,8 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "post")
 @SQLDelete(sql = "UPDATE post SET deleted_at = NOW() where id=?")

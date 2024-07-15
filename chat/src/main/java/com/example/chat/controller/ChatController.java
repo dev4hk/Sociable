@@ -12,17 +12,19 @@ import java.util.List;
 
 @RequestMapping("/api/v1/chats")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
     public Response<Chat> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) {
-        return Response.success(chatService.create(request.getUserId(), token));
+        Chat chat = chatService.create(request.getUserId(), token);
+        return Response.success(chat);
     }
 
     @GetMapping
     public Response<List<Chat>> findChatsByUser(@RequestHeader("Authorization") String token) {
         return Response.success(chatService.findChatsByUser(token));
     }
+
 }

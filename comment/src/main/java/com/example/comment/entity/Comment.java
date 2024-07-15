@@ -4,13 +4,16 @@ import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "\"comment\"", indexes = {
         @Index(name = "post_id_idx", columnList = "post_id")
