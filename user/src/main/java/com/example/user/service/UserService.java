@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -48,6 +49,10 @@ public class UserService {
         this.getUserProfile(token);
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+    }
+    public List<User> getOtherUsersInfo(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return this.userRepository.findOtherUsers(user.getId());
     }
 
     public User changeUserInfo(ChangeUserInfoRequest request, Principal connectedUser) {

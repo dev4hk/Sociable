@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -45,6 +46,11 @@ public class UserController {
                 UserResponse.fromUser(
                         this.userService.getOtherUserInfo(id, token)
                 ));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> getOtherUsersInfo(Principal connectedUser) {
+        return ResponseEntity.ok(this.userService.getOtherUsersInfo(connectedUser).stream().map(UserResponse::fromUser).toList());
     }
 
 }
