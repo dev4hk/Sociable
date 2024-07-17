@@ -49,8 +49,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getOtherUsersInfo(Principal connectedUser) {
-        return ResponseEntity.ok(this.userService.getOtherUsersInfo(connectedUser).stream().map(UserResponse::fromUser).toList());
+    public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, Principal connectedUser) {
+        return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
     }
 
 }

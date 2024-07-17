@@ -50,9 +50,9 @@ public class UserService {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
-    public List<User> getOtherUsersInfo(Principal connectedUser) {
+    public List<User> getOtherUsersInfo(String query, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        return this.userRepository.findOtherUsers(user.getId());
+        return this.userRepository.findOtherUsers(user.getId(), query);
     }
 
     public User changeUserInfo(ChangeUserInfoRequest request, Principal connectedUser) {
