@@ -12,8 +12,6 @@ public class MessageResponse {
 
     private String content;
 
-    private String fileName;
-
     private String filePath;
 
     private String contentType;
@@ -24,7 +22,6 @@ public class MessageResponse {
         return new MessageResponse(
                 message.getId(),
                 message.getContent(),
-                message.getFileName(),
                 message.getFilePath(),
                 message.getContentType(),
                 message.getUser()
