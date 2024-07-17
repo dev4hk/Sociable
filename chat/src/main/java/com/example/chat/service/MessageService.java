@@ -6,13 +6,12 @@ import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
-import com.example.chat.util.FileUtil;
+import com.example.chat.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,7 +28,7 @@ public class MessageService {
 
     private final ChatRepository chatRepository;
 
-    private final FileUtil fileUtil;
+    private final FileUtils fileUtils;
 
     public Message createMessage(String token, Long chatId, String content, MultipartFile file) throws IOException {
         User user = UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
@@ -44,7 +43,7 @@ public class MessageService {
 
         Map<String, String> fileMap = null;
         if(file != null && file.getSize() != 0) {
-            fileMap = fileUtil.upload(user, chatId, file);
+            fileMap = fileUtils.upload(user, chatId, file);
         }
 
         Message message = Message.builder()
@@ -68,5 +67,10 @@ public class MessageService {
     public List<Message> findMessageByChatId(Long chatId, String token) {
         chatService.findChatById(chatId, token);
         return messageRepository.findByChatId(chatId);
+    }
+
+    public byte[] getFile(String filePath, String token) {
+        User user = UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
+        return fileUtils.readFileFromLocation(filePath);
     }
 }

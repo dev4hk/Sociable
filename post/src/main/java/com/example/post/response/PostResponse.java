@@ -15,7 +15,7 @@ public class PostResponse {
 
     private Integer id;
     private String body;
-    private byte[] file;
+    private String filePath;
     private String fileType;
     private Integer userId;
     private String firstname;
@@ -29,7 +29,7 @@ public class PostResponse {
         return new PostResponse(
                 postDto.getId(),
                 postDto.getBody(),
-                FileUtils.readFileFromLocation(postDto.getFilePath()),
+                postDto.getFilePath(),
                 postDto.getFileType(),
                 postDto.getUserId(),
                 postDto.getFirstname(),

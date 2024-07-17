@@ -31,4 +31,9 @@ public class MessageController {
     public ResponseEntity<List<Message>> findMessageByChat(@PathVariable Long chatId, @RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(messageService.findMessageByChatId(chatId, token), HttpStatus.OK);
     }
+
+    @GetMapping("/file/{filePath}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String filePath, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(messageService.getFile(filePath, token), HttpStatus.OK);
+    }
 }

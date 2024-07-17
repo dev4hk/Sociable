@@ -1,5 +1,7 @@
 package com.example.post.util;
 
+import com.example.post.enums.ErrorCode;
+import com.example.post.exception.PostException;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +21,7 @@ public class FileUtils {
             return Files.readAllBytes(filePath);
         } catch (IOException ex) {
             log.warn("No file found in the path {}", fileUrl);
+            throw new PostException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        return null;
     }
 }

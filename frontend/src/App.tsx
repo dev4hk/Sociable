@@ -8,6 +8,7 @@ import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import Login from "./pages/authentication/Login";
 import { isTokenValid } from "./service/AuthenticationService";
 import HomePage from "./pages/home/HomePage";
+import Message from "./pages/Message";
 
 function App() {
   const hasValidToken = () => {
@@ -25,7 +26,7 @@ function App() {
             // </AuthenticatedRoute>
           }
         />
-        {/* <Route path="/message" element={<Message />} /> */}
+        <Route path="/home/message" element={<Message />} />
         <Route
           path="/*"
           element={

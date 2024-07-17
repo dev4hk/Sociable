@@ -9,7 +9,7 @@ import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
-import com.example.chat.util.FileUtil;
+import com.example.chat.util.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +43,7 @@ public class MessageServiceTest {
     private ChatRepository chatRepository;
 
     @MockBean
-    private FileUtil fileUtil;
+    private FileUtils fileUtils;
 
     @MockBean
     private UserService userService;
@@ -63,7 +63,7 @@ public class MessageServiceTest {
 
         MockMultipartFile testFile = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         when(chatService.findChatById(chatId, testToken)).thenReturn(chat);
-        when(fileUtil.upload(user1, chatId, testFile)).thenReturn(Map.of());
+        when(fileUtils.upload(user1, chatId, testFile)).thenReturn(Map.of());
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
         when(messageRepository.save(message)).thenReturn(message);
         when(chatRepository.save(chat)).thenReturn(chat);

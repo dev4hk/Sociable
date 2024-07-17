@@ -6,6 +6,7 @@ import com.example.post.entity.Post;
 import com.example.post.exception.PostException;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
+import com.example.post.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -107,5 +108,10 @@ public class PostService {
             post.getLikedBy().add(user.getId());
         }
         return PostDto.fromEntity(postRepository.save(post));
+    }
+
+    public byte[] getFile(String filePath, String token) {
+        User user = getUser(token);
+        return FileUtils.readFileFromLocation(filePath);
     }
 }
