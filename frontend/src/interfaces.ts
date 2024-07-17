@@ -42,7 +42,7 @@ export interface IChangeUserInfo {
 export interface IPost {
   id: number;
   body: string;
-  file: string;
+  filePath: string;
   fileType: string;
   userId: number;
   firstname: string;
@@ -121,4 +121,8 @@ export interface ICommentsResponse {
     };
     empty: boolean;
   };
+}
+
+export interface IFile {
+  file: string;
 }

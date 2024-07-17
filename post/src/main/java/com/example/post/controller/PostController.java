@@ -55,8 +55,8 @@ public class PostController {
         return Response.success(PostResponse.fromPostDto(postService.likeUnlikePost(postId, token)));
     }
 
-    @GetMapping("/file/{filePath}")
-    public Response<byte[]> getFile(@PathVariable String filePath, @RequestHeader("Authorization") String token) {
+    @GetMapping("/file")
+    public Response<byte[]> getFile(@RequestParam String filePath, @RequestHeader("Authorization") String token) {
         return Response.success(postService.getFile(filePath, token));
     }
 }

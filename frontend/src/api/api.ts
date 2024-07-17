@@ -104,3 +104,12 @@ export function likeUnlikePost(postId: number) {
     }
   );
 }
+
+export function getPostFile(filePath: string) {
+  return axios
+    .get(`${BASE_URL}/api/v1/posts/file`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+      params: { filePath: filePath },
+    })
+    .then((res) => res.data.result);
+}
