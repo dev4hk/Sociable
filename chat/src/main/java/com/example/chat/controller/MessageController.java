@@ -1,6 +1,8 @@
 package com.example.chat.controller;
 
 import com.example.chat.entity.Message;
+import com.example.chat.response.MessageResponse;
+import com.example.chat.response.Response;
 import com.example.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,21 +21,21 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping("/chat/{chatId}")
-    public ResponseEntity<Message> createMessage(
+    public Response<MessageResponse> createMessage(
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestHeader("Authorization") String token,
             @PathVariable Long chatId) throws IOException {
-        return new ResponseEntity<>(messageService.createMessage(token, chatId, content, file), HttpStatus.CREATED);
+        return Response.success(MessageResponse.fromMessage(messageService.createMessage(token, chatId, content, file)));
     }
 
     @GetMapping("/chat/{chatId}")
-    public ResponseEntity<List<Message>> findMessageByChat(@PathVariable Long chatId, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(messageService.findMessageByChatId(chatId, token), HttpStatus.OK);
+    public Response<List<MessageResponse>> findMessageByChat(@PathVariable Long chatId, @RequestHeader("Authorization") String token) {
+        return Response.success(messageService.findMessageByChatId(chatId, token).stream().map(MessageResponse::fromMessage).toList());
     }
 
     @GetMapping("/file")
-    public ResponseEntity<byte[]> getFile(@RequestParam String filePath, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(messageService.getFile(filePath, token), HttpStatus.OK);
+    public Response<byte[]> getFile(@RequestParam String filePath, @RequestHeader("Authorization") String token) {
+        return Response.success(messageService.getFile(filePath, token));
     }
 }

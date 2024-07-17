@@ -24,10 +24,6 @@ public class Chat {
     @Column(name = "chat_id")
     private Long id;
 
-    private String name;
-
-    private String image;
-
     @ElementCollection
     private List<User> users = new ArrayList<>();
 

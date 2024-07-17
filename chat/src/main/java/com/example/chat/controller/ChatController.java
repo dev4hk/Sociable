@@ -2,6 +2,7 @@ package com.example.chat.controller;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.request.CreateChatRequest;
+import com.example.chat.response.ChatResponse;
 import com.example.chat.response.Response;
 import com.example.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,14 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public Response<Chat> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) {
+    public Response<ChatResponse> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) {
         Chat chat = chatService.create(request.getUserId(), token);
-        return Response.success(chat);
+        return Response.success(ChatResponse.fromChat(chat));
     }
 
     @GetMapping
-    public Response<List<Chat>> findChatsByUser(@RequestHeader("Authorization") String token) {
-        return Response.success(chatService.findChatsByUser(token));
+    public Response<List<ChatResponse>> findChatsByUser(@RequestHeader("Authorization") String token) {
+        return Response.success(chatService.findChatsByUser(token).stream().map(ChatResponse::fromChat).toList());
     }
 
 }
