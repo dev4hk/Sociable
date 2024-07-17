@@ -1,13 +1,41 @@
 import { Avatar, Card, CardHeader } from "@mui/material";
-import { useState } from "react";
-
-const users = [1, 1, 1, 1, 1];
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { chats } from "../../atoms";
+import { useQuery } from "@tanstack/react-query";
+import { IUser } from "../../interfaces";
+import { createChat, getOtherUsers } from "../../api/api";
 
 const UserSearch = () => {
-  const [username, setUsername] = useState("");
+  const [query, setQuery] = useState("");
+  const {
+    data: usersData,
+    isLoading: isUsersDataLoading,
+    refetch: refetchUsersData,
+    isSuccess: isUsersDataSuccess,
+  } = useQuery<IUser[]>({
+    queryKey: ["users", query],
+    queryFn: () => getOtherUsers(query),
+    enabled: false,
+  });
+  const [chatsAtom, setChatsAtom] = useRecoilState(chats);
   const handleSearchUser = (event: any) => {
-    setUsername(event.target.value);
+    setQuery(event.target.value);
   };
+  useEffect(() => {
+    refetchUsersData();
+  }, [query]);
+
+  const handleUserClick = (id: number) => {
+    createChat(id).then((res) => {
+      if (chatsAtom.filter((chat) => chat.id === res.id).length === 0) {
+        setChatsAtom((prev) => [res, ...prev]);
+      }
+    });
+    setQuery("");
+  };
+
+  console.log(usersData);
   return (
     <div>
       <div className="py-5 relative">
@@ -15,14 +43,17 @@ const UserSearch = () => {
           type="text"
           className="bg-transparent border border-[#3b4054] outline-none w-full px-5 py-3 rounded-full text-white"
           placeholder="Search User..."
-          onKeyDown={handleSearchUser}
+          onChange={handleSearchUser}
+          value={query}
         />
         <div className="absolute w-full z-10 top-[4.5rem]">
-          {username &&
-            users.map((user, index) => (
+          {query &&
+            isUsersDataSuccess &&
+            usersData?.map((user) => (
               <Card
-                key={"user" + index}
+                key={"user" + user.id}
                 className="cursor-pointer hover:text-sky-400"
+                onClick={() => handleUserClick(user.id)}
               >
                 <CardHeader
                   title={"Firstname Lastname"}

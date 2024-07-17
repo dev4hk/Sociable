@@ -126,3 +126,23 @@ export interface ICommentsResponse {
 export interface IFile {
   file: string;
 }
+
+export interface IChat {
+  id: number;
+  users: IUser[];
+}
+
+export interface IUser {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
+
+export interface IMessage {
+  id: number;
+  content: string;
+  filePath: string;
+  contentType: string;
+  user: IUser;
+}

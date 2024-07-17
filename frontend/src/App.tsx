@@ -8,7 +8,7 @@ import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import Login from "./pages/authentication/Login";
 import { isTokenValid } from "./service/AuthenticationService";
 import HomePage from "./pages/home/HomePage";
-import Message from "./pages/Message";
+import Message from "./pages/message/Message";
 
 function App() {
   const hasValidToken = () => {

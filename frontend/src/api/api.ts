@@ -113,3 +113,56 @@ export function getPostFile(filePath: string) {
     })
     .then((res) => res.data.result);
 }
+
+export function getAllChats() {
+  return axios
+    .get(`${BASE_URL}/api/v1/chats`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data.result);
+}
+
+export function getMessagesInChat(chatId: number) {
+  return axios
+    .get(`${BASE_URL}/api/v1/messages/chat/${chatId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data.result);
+}
+
+export function getOtherUsers(query: string) {
+  return axios
+    .get(`${BASE_URL}/api/v1/users?query=${query}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data);
+}
+
+export function createChat(userId: number) {
+  return axios
+    .post(
+      `${BASE_URL}/api/v1/chats`,
+      { userId: userId },
+      {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      }
+    )
+    .then((res) => res.data.result);
+}
+
+export function getMessageFile(filePath: string) {
+  return axios
+    .get(`${BASE_URL}/api/v1/messages/file`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+      params: { filePath: filePath },
+    })
+    .then((res) => res.data.result);
+}
+
+export function createMessage(formData: FormData, chatId: number) {
+  return axios
+    .post(`${BASE_URL}/api/v1/messages/chat/${chatId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data.result);
+}
