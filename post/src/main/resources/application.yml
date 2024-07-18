@@ -13,10 +13,6 @@ spring:
         format_sql: true
   application:
     name: POST-SERVICE
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
 
 server:
   port: 8082
@@ -28,7 +24,3 @@ eureka:
     serviceUrl:
       defaultZone: ${TEST_EUREKA_SERVER_URL}
 
-application:
-  file:
-    upload:
-      files-output-path: ./uploads

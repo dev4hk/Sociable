@@ -13,10 +13,6 @@ spring:
         format_sql: true
   application:
     name: CHAT-SERVICE
-  servlet:
-    multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
 
 server:
   port: 8084
