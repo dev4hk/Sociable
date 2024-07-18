@@ -1,5 +1,6 @@
 package com.example.chat.entity;
 
+import com.example.chat.model.FileInfo;
 import com.example.chat.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -21,9 +22,7 @@ public class Message {
 
     private String content;
 
-    private String fileName;
-
-    private String filePath;
+    private FileInfo fileInfo;
 
     private String contentType;
 

@@ -1,8 +1,8 @@
 package com.example.post.entity;
 
+import com.example.post.model.FileInfo;
 import com.example.post.model.User;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -28,11 +28,7 @@ public class Post {
     @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
-    @Column(name = "file_path")
-    private String filePath;
-
-    @Column(name = "file_type")
-    private String fileType;
+    private FileInfo fileInfo;
 
     private Integer userId;
 

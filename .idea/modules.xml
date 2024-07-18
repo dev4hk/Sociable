@@ -6,6 +6,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/comment.main.iml" filepath="$PROJECT_DIR$/.idea/modules/comment.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/post.main.iml" filepath="$PROJECT_DIR$/.idea/modules/post.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/sns-microservice.iml" filepath="$PROJECT_DIR$/sns-microservice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sns-microservice.storage.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sns-microservice.storage.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/storage.iml" filepath="$PROJECT_DIR$/.idea/modules/storage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/storage.main.iml" filepath="$PROJECT_DIR$/.idea/modules/storage.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/storage.test.iml" filepath="$PROJECT_DIR$/.idea/modules/storage.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user.main.iml" />
     </modules>
   </component>

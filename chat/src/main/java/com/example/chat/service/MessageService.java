@@ -6,14 +6,13 @@ import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
-import com.example.chat.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -28,22 +27,23 @@ public class MessageService {
 
     private final ChatRepository chatRepository;
 
-    private final FileUtils fileUtils;
+    private final FileService fileService;
 
+
+    @Transactional
     public Message createMessage(String token, Long chatId, String content, MultipartFile file) throws IOException {
         User user = UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
         Chat chat = chatService.findChatById(chatId, token);
 
-        if(content == null && file == null) {
+        if (content == null && file == null) {
             throw new RuntimeException("Cannot create message because content and file are empty");
         }
-        if(Objects.requireNonNull(content).isBlank() && Objects.requireNonNull(file).getSize() == 0) {
+        if (Objects.requireNonNull(content).isBlank() && Objects.requireNonNull(file).getSize() == 0) {
             throw new RuntimeException("Cannot create message because content and file are empty");
         }
 
-        Map<String, String> fileMap = null;
-        if(file != null && file.getSize() != 0) {
-            fileMap = fileUtils.upload(user, chatId, file);
+        if (file != null && !file.isEmpty()) {
+
         }
 
         Message message = Message.builder()
@@ -51,12 +51,10 @@ public class MessageService {
                 .content(content)
                 .user(user)
                 .build();
-
-        if(fileMap != null) {
-            message.setFilePath(fileMap.get("filePath"));
-            message.setFileName(fileMap.get("fileName"));
-            message.setContentType(fileMap.get("contentType"));
+        if (file != null && !file.isEmpty()) {
+            message.setFileInfo(this.fileService.upload(file, token).getResult());
         }
+
         Message saved = messageRepository.save(message);
         chat.getMessages().add(saved);
         chatRepository.save(chat);
@@ -70,7 +68,6 @@ public class MessageService {
     }
 
     public byte[] getFile(String filePath, String token) {
-        User user = UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
-        return fileUtils.readFileFromLocation(filePath);
+        return this.fileService.download(filePath, token).getResult();
     }
 }

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: STORAGE-SERVICE
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: ${TEST_EUREKA_SERVER_URL}
+
+application:
+  file:
+    upload:
+      files-output-path: ./uploads

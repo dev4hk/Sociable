@@ -1,6 +1,7 @@
 package com.example.chat.response;
 
 import com.example.chat.entity.Message;
+import com.example.chat.model.FileInfo;
 import com.example.chat.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +13,7 @@ public class MessageResponse {
 
     private String content;
 
-    private String filePath;
-
-    private String contentType;
+    private FileInfo fileInfo;
 
     private User user;
 
@@ -22,8 +21,7 @@ public class MessageResponse {
         return new MessageResponse(
                 message.getId(),
                 message.getContent(),
-                message.getFilePath(),
-                message.getContentType(),
+                message.getFileInfo(),
                 message.getUser()
         );
     }

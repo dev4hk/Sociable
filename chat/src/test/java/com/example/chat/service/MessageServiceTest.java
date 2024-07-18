@@ -9,7 +9,6 @@ import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
-import com.example.chat.util.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,11 +18,11 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -43,7 +42,7 @@ public class MessageServiceTest {
     private ChatRepository chatRepository;
 
     @MockBean
-    private FileUtils fileUtils;
+    private FileService fileService;
 
     @MockBean
     private UserService userService;
@@ -63,7 +62,7 @@ public class MessageServiceTest {
 
         MockMultipartFile testFile = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         when(chatService.findChatById(chatId, testToken)).thenReturn(chat);
-        when(fileUtils.upload(user1, chatId, testFile)).thenReturn(Map.of());
+        when(fileService.upload(any(), any())).thenReturn(any());
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
         when(messageRepository.save(message)).thenReturn(message);
         when(chatRepository.save(chat)).thenReturn(chat);

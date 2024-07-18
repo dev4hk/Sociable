@@ -1,8 +1,7 @@
 package com.example.post.response;
 
 import com.example.post.dto.PostDto;
-import com.example.post.model.User;
-import com.example.post.util.FileUtils;
+import com.example.post.model.FileInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,8 +14,7 @@ public class PostResponse {
 
     private Integer id;
     private String body;
-    private String filePath;
-    private String fileType;
+    private FileInfo fileInfo;
     private Integer userId;
     private String firstname;
     private String lastname;
@@ -29,8 +27,7 @@ public class PostResponse {
         return new PostResponse(
                 postDto.getId(),
                 postDto.getBody(),
-                postDto.getFilePath(),
-                postDto.getFileType(),
+                postDto.getFileInfo(),
                 postDto.getUserId(),
                 postDto.getFirstname(),
                 postDto.getLastname(),

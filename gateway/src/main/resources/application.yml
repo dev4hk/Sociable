@@ -26,6 +26,11 @@ spring:
             lb://CHAT-SERVICE
           predicates:
             - Path=/api/v1/chats/**, /api/v1/messages/**, /chat/**
+        - id: STORAGE-SERVICE
+          uri:
+            lb://STORAGE-SERVICE
+          predicates:
+            - Path=/api/v1/files/**
       default-filters:
         DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:

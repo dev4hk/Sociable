@@ -1,12 +1,12 @@
 package com.example.post.service;
 
-import com.example.post.enums.ErrorCode;
 import com.example.post.dto.PostDto;
 import com.example.post.entity.Post;
+import com.example.post.enums.ErrorCode;
 import com.example.post.exception.PostException;
+import com.example.post.model.FileInfo;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
-import com.example.post.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +20,9 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
-    private final FileStorageService fileStorageService;
+    private final FileService fileService;
     private final CommentService commentService;
+
 
     @Transactional
     public PostDto create(String body, MultipartFile file, String token) {
@@ -30,7 +31,10 @@ public class PostService {
         }
         User user = getUser(token);
         Post post = Post.of(body, user);
-        return uploadFile(file, post);
+        if(file != null && !file.isEmpty()) {
+            post.setFileInfo(this.fileService.upload(file, token).getResult());
+        }
+        return PostDto.fromEntity(this.postRepository.save(post));
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class PostService {
         if (body != null && !body.isBlank()) {
             post.setBody(body);
         }
-        return uploadFile(file, post);
+        FileInfo fileInfo = this.fileService.upload(file, token).getResult();
+        post.setFileInfo(fileInfo);
+        return PostDto.fromEntity(this.postRepository.save(post));
     }
 
     @Transactional
@@ -82,16 +88,6 @@ public class PostService {
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
     }
 
-    private PostDto uploadFile(MultipartFile file, Post post) {
-        if (file == null || file.isEmpty()) {
-            return PostDto.fromEntity(postRepository.save(post));
-        }
-        String filePath = fileStorageService.saveFile(file, post.getUserId());
-        post.setFilePath(filePath);
-        post.setFileType(file.getContentType());
-        return PostDto.fromEntity(postRepository.save(post));
-    }
-
     public PostDto getPostById(Integer postId, String token) {
         User user = getUser(token);
         return PostDto.fromEntity(this.getPost(postId));
@@ -111,7 +107,6 @@ public class PostService {
     }
 
     public byte[] getFile(String filePath, String token) {
-        User user = getUser(token);
-        return FileUtils.readFileFromLocation(filePath);
+        return this.fileService.download(filePath, token).getResult();
     }
 }

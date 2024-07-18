@@ -1,7 +1,7 @@
 package com.example.post.dto;
 
 import com.example.post.entity.Post;
-import com.example.post.model.User;
+import com.example.post.model.FileInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,8 +14,7 @@ public class PostDto {
 
     private Integer id;
     private String body;
-    private String filePath;
-    private String fileType;
+    private FileInfo fileInfo;
     private Integer userId;
     private String firstname;
     private String lastname;
@@ -29,8 +28,7 @@ public class PostDto {
         return new PostDto(
                 entity.getId(),
                 entity.getBody(),
-                entity.getFilePath(),
-                entity.getFileType(),
+                entity.getFileInfo(),
                 entity.getUserId(),
                 entity.getFirstname(),
                 entity.getLastname(),
