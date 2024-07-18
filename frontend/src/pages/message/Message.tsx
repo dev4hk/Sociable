@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { IChat, IMessage } from "../../interfaces";
-import { getAllChats, getMessagesInChat } from "../../api/api";
+import { createMessage, getAllChats, getMessagesInChat } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chats, profile } from "../../atoms";
 import { Avatar, Grid } from "@mui/material";
 import WestIcon from "@mui/icons-material/West";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import UserSearch from "../../components/search/UserSearch";
 import UserChatCard from "../../components/message/UserChatCard";
 import { useNavigate } from "react-router-dom";
-import MessageContainer from "../../components/message/MessageContainer";
+import Stomp, { Client } from "stompjs";
+import SockJS from "sockjs-client";
+import ChatMessage from "../../components/message/ChatMessage";
 
 const Message = () => {
   const profileAtom = useRecoilValue(profile);
@@ -37,10 +40,105 @@ const Message = () => {
   useEffect(() => {
     if (isChatsSuccess) {
       setChatsAtom(chatsData);
+      refetchMessages();
     }
   }, [chatsData]);
 
-  console.log(chatsData);
+  const [content, setContent] = useState("");
+  const [selectedFile, setSelectedFile] = useState<any>();
+  // const [messagesAtom, setMessagesAtom] = useRecoilState(messages);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const {
+    data: messagesData,
+    isLoading: isMessagesDataLoading,
+    isSuccess: isMessagesDataSuccess,
+    refetch: refetchMessages,
+  } = useQuery<IMessage[]>({
+    queryKey: ["messages", currentChat?.id],
+    queryFn: () => getMessagesInChat(currentChat!.id),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (isMessagesDataSuccess && messagesData) {
+      // setMessagesAtom(messagesData);
+      setMessages(messagesData);
+    }
+  }, [messagesData]);
+
+  const [stompClient, setStompClient] = useState<Client>();
+  useEffect(() => {
+    const sock = new SockJS("http://localhost:8084/ws");
+    const stomp = Stomp.over(sock);
+    setStompClient(stomp);
+    stomp.connect({}, onConnect, onError);
+  }, []);
+
+  useEffect(() => {
+    if (stompClient && profileAtom && currentChat) {
+      const subscription = stompClient.subscribe(
+        `/user/${currentChat?.id}/private`,
+        onMessageReceive
+      );
+    }
+  });
+
+  const sendMessageToServer = (newMessage: any) => {
+    if (stompClient && newMessage) {
+      stompClient.send(
+        `/app/chat/${currentChat?.id.toString()}`,
+        {},
+        JSON.stringify(newMessage)
+      );
+    }
+  };
+
+  const onConnect = () => {
+    console.log("websocket connected...");
+  };
+
+  const onError = (error: any) => {
+    console.log("websocket connect error...", error);
+  };
+
+  const onMessageReceive = (message: any) => {
+    console.log("received message...", message);
+    const receivedMessage = JSON.parse(message.body);
+    console.log("message received from websocket...", receivedMessage);
+    setMessages([...messages, receivedMessage]);
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setContent(e.currentTarget.value);
+  };
+
+  const handleSelectFile = ({
+    currentTarget,
+  }: ChangeEvent<HTMLInputElement>) => {
+    if (currentTarget.files) {
+      setSelectedFile(currentTarget.files[0]);
+    }
+  };
+
+  const handleCreateMessage = () => {
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("file", selectedFile);
+    createMessage(formData, currentChat!.id).then((res) =>
+      // setMessagesAtom((prev) => [...prev, res])
+      sendMessageToServer(res)
+    );
+    setContent("");
+    setSelectedFile("");
+  };
+
+  const chatContainerRef = useRef<any>(null);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div className="text-white">
@@ -91,7 +189,57 @@ const Message = () => {
                   </p>
                 </div>
               </div>
-              <MessageContainer chatId={currentChat.id} />
+              <div
+                className="no-scrollbar overflow-y-scroll h-[82vh] px-2 space-y-5 py-5"
+                ref={chatContainerRef}
+              >
+                {messages.map((message, index) => (
+                  <ChatMessage key={index} message={message} />
+                ))}
+              </div>
+              <div className="sticky bottom-0 border-l">
+                {selectedFile && selectedFile.type.includes("image") && (
+                  <img
+                    className="w-[5rem] h-[5rem] object-cover px-2"
+                    src={URL.createObjectURL(selectedFile)}
+                    alt=""
+                  />
+                )}
+                {selectedFile && selectedFile.type.includes("video") && (
+                  <video className="w-[5rem] h-[5rem] object-cover px-2">
+                    <source
+                      src={URL.createObjectURL(selectedFile)}
+                      type={selectedFile.type}
+                    />
+                  </video>
+                )}
+                <div className="py-5 flex items-center justify-center space-x-5">
+                  <input
+                    type="text"
+                    className="bg-transparent border border-[#3b4054] rounded-full w-[90%] py-3 px-5"
+                    placeholder="Type Message..."
+                    onChange={handleInputChange}
+                    value={content}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleCreateMessage();
+                      }
+                    }}
+                  />
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleSelectFile}
+                      className="hidden"
+                      id="file-input"
+                    />
+                    <label htmlFor="file-input" className="cursor-pointer">
+                      <AddPhotoAlternateIcon />
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="h-full space-y-5 flex flex-col justify-center items-center">
