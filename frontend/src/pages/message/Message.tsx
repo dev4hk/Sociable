@@ -121,6 +121,9 @@ const Message = () => {
   };
 
   const handleCreateMessage = () => {
+    if (!content && !selectedFile) {
+      return;
+    }
     const formData = new FormData();
     formData.append("content", content);
     formData.append("file", selectedFile);
