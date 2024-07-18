@@ -2,6 +2,8 @@ package com.example.chat.service;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
+import com.example.chat.enums.ErrorCode;
+import com.example.chat.exception.ChatException;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
@@ -36,14 +38,10 @@ public class MessageService {
         Chat chat = chatService.findChatById(chatId, token);
 
         if (content == null && file == null) {
-            throw new RuntimeException("Cannot create message because content and file are empty");
+            throw new ChatException(ErrorCode.INVALID_REQUEST);
         }
         if (Objects.requireNonNull(content).isBlank() && Objects.requireNonNull(file).getSize() == 0) {
-            throw new RuntimeException("Cannot create message because content and file are empty");
-        }
-
-        if (file != null && !file.isEmpty()) {
-
+            throw new ChatException(ErrorCode.INVALID_REQUEST);
         }
 
         Message message = Message.builder()
