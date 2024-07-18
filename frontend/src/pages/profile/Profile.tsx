@@ -15,7 +15,6 @@ import {
 
 const tabs = [
   { value: "post", name: "Post" },
-  { value: "reels", name: "Reels" },
   { value: "saved", name: "Saved" },
 ];
 
@@ -134,14 +133,6 @@ const Profile = () => {
                     </div>
                   )
                 )}
-              </div>
-            )}
-
-            {value === "reels" && (
-              <div className="flex flex-wrap gap-2 justify-center my-10">
-                {/* {reels.map((item, index) => (
-                  <UserReelCard key={index} />
-                ))} */}
               </div>
             )}
 

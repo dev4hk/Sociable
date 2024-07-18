@@ -42,8 +42,7 @@ export interface IChangeUserInfo {
 export interface IPost {
   id: number;
   body: string;
-  filePath: string;
-  fileType: string;
+  fileInfo: IFileInfo;
   userId: number;
   firstname: string;
   lastname: string;
@@ -142,7 +141,11 @@ export interface IUser {
 export interface IMessage {
   id: number;
   content: string;
-  filePath: string;
-  contentType: string;
+  fileInfo: IFileInfo;
   user: IUser;
+}
+
+export interface IFileInfo {
+  filePath: string;
+  fileType: string;
 }

@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 import { IFile, IMessage } from "../../interfaces";
 import { useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
-import { getMessageFile } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
+import { getFile } from "../../api/api";
 
 interface IChatMessageProp {
   message: IMessage;
@@ -20,12 +20,12 @@ const ChatMessage = ({ message }: IChatMessageProp) => {
     refetch: refetchFileData,
   } = useQuery<IFile>({
     queryKey: ["file", message.id],
-    queryFn: () => getMessageFile(message.filePath),
+    queryFn: () => getFile(message?.fileInfo?.filePath),
     enabled: false,
   });
 
   useEffect(() => {
-    if (message.filePath) {
+    if (message?.fileInfo?.filePath) {
       refetchFileData();
     }
   }, []);
@@ -38,16 +38,17 @@ const ChatMessage = ({ message }: IChatMessageProp) => {
     >
       <div
         className={`p-1 bg-[#191c29] ${
-          message.contentType ? "rounded-md " : "px-5 rounded-full"
+          message?.fileInfo?.fileType ? "rounded-md " : "px-5 rounded-full"
         }`}
       >
-        {message?.contentType?.includes("image") && isFileDataSuccess && (
-          <img
-            src={`data:${message?.contentType};base64,${fileData}`}
-            alt=""
-            className="w-[12rem] h-[17rem] object-cover rounded-md"
-          />
-        )}
+        {message?.fileInfo?.fileType?.includes("image") &&
+          isFileDataSuccess && (
+            <img
+              src={`data:${message?.fileInfo?.fileType};base64,${fileData}`}
+              alt=""
+              className="w-[12rem] h-[17rem] object-cover rounded-md"
+            />
+          )}
         {/* 
           {item?.contentType?.includes("video") && (
             <video
@@ -60,17 +61,18 @@ const ChatMessage = ({ message }: IChatMessageProp) => {
               />
             </video>
           )} */}
-        {message?.contentType?.includes("video") && isFileDataSuccess && (
-          <CardMedia
-            component="video"
-            sx={{ maxWidth: "20rem" }}
-            image={`data:${message?.contentType};base64,${fileData}`}
-            // image={encodeURI(generateMediaURL(item.fileName, item.filePath))}
-            controls
-          />
-        )}
+        {message?.fileInfo?.fileType?.includes("video") &&
+          isFileDataSuccess && (
+            <CardMedia
+              component="video"
+              sx={{ maxWidth: "20rem" }}
+              image={`data:${message?.fileInfo?.fileType};base64,${fileData}`}
+              // image={encodeURI(generateMediaURL(item.fileName, item.filePath))}
+              controls
+            />
+          )}
         {message?.content.length > 0 && (
-          <p className={`${message.contentType ? "py-2" : "py-1"}`}>
+          <p className={`${message?.fileInfo?.fileType ? "py-2" : "py-1"}`}>
             {message?.content}
           </p>
         )}

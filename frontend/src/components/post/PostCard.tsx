@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import {
   createComment,
   getCommentsByPost,
-  getPostFile,
+  getFile,
   likeUnlikePost,
 } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
@@ -59,7 +59,7 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
     isSuccess: isFileSuccess,
   } = useQuery<Blob>({
     queryKey: [`${post.id}:file`],
-    queryFn: () => getPostFile(post?.filePath),
+    queryFn: () => getFile(post?.fileInfo?.filePath),
   });
 
   const userAtom = useRecoilValue(profile);
@@ -99,20 +99,20 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
         subheader={`@${post.firstname.toLowerCase()}_${post.lastname.toLowerCase()}`}
       />
 
-      {post?.fileType?.includes("image") && isFileSuccess && (
+      {post?.fileInfo?.fileType?.includes("image") && isFileSuccess && (
         // true
         <CardMedia
           component="img"
           height="194"
-          image={`data:${post?.fileType};base64,${file}`}
+          image={`data:${post?.fileInfo?.fileType};base64,${file}`}
           alt=""
         />
       )}
-      {post?.fileType?.includes("video") && isFileSuccess && (
+      {post?.fileInfo?.fileType?.includes("video") && isFileSuccess && (
         <CardMedia
           component="video"
           height="194"
-          image={`data:${post?.fileType};base64,${file}`}
+          image={`data:${post?.fileInfo?.fileType};base64,${file}`}
           controls
         />
       )}

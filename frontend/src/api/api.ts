@@ -105,9 +105,9 @@ export function likeUnlikePost(postId: number) {
   );
 }
 
-export function getPostFile(filePath: string) {
+export function getFile(filePath: string) {
   return axios
-    .get(`${BASE_URL}/api/v1/posts/file`, {
+    .get(`${BASE_URL}/api/v1/files`, {
       headers: { Authorization: `Bearer ${getToken()}` },
       params: { filePath: filePath },
     })
@@ -147,15 +147,6 @@ export function createChat(userId: number) {
         headers: { Authorization: `Bearer ${getToken()}` },
       }
     )
-    .then((res) => res.data.result);
-}
-
-export function getMessageFile(filePath: string) {
-  return axios
-    .get(`${BASE_URL}/api/v1/messages/file`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-      params: { filePath: filePath },
-    })
     .then((res) => res.data.result);
 }
 
