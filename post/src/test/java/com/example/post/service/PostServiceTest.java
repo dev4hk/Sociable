@@ -3,6 +3,7 @@ package com.example.post.service;
 import com.example.post.enums.ErrorCode;
 import com.example.post.entity.Post;
 import com.example.post.exception.PostException;
+import com.example.post.fixture.FileFixture;
 import com.example.post.fixture.PostFixture;
 import com.example.post.fixture.UserFixture;
 import com.example.post.model.User;
@@ -43,6 +44,9 @@ public class PostServiceTest {
     @MockBean
     private CommentService commentService;
 
+    @MockBean
+    private FileService fileService;
+
     private String testToken;
     private User testUser;
 
@@ -60,6 +64,7 @@ public class PostServiceTest {
 
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.save(any())).thenReturn(mock(Post.class));
+        when(fileService.upload(file, testToken)).thenReturn(Response.success(FileFixture.get()));
 
         Assertions.assertDoesNotThrow(() -> postService.create(body, file, testToken));
     }
@@ -87,6 +92,7 @@ public class PostServiceTest {
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(postRepository.save(any())).thenReturn(post);
+        when(fileService.upload(file, testToken)).thenReturn(Response.success(FileFixture.get()));
 
         Assertions.assertDoesNotThrow(() -> postService.modify(body, file, this.testToken, postId));
     }

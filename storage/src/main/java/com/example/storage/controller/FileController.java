@@ -3,6 +3,7 @@ package com.example.storage.controller;
 import com.example.storage.response.FileResponse;
 import com.example.storage.response.Response;
 import com.example.storage.service.FileService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +24,4 @@ public class FileController {
     public Response<byte[]> download(@RequestParam("filePath") String filePath, @RequestHeader("Authorization") String token) {
         return Response.success(this.fileService.download(filePath, token));
     }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
-
 }
