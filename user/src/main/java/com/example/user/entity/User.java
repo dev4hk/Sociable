@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,6 +39,16 @@ public class User implements UserDetails {
     private String email;
 
     private String password;
+
+    private String filePath;
+
+    private String contentType;
+
+    private String description;
+
+    private Set<Integer> followings = new HashSet<>();
+
+    private Set<Integer> followers = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private Role role;

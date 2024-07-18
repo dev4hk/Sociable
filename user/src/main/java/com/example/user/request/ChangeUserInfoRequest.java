@@ -25,4 +25,6 @@ public class ChangeUserInfoRequest {
     @Size(min = 2, message = "Lastname must be at least 2 characters")
     private String lastname;
 
+    private String description;
+
 }

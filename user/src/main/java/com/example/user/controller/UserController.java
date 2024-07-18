@@ -8,7 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class UserController {
     }
 
     @PutMapping("/change/info")
-    public ResponseEntity<?> changeUserInfo(@RequestBody @Valid ChangeUserInfoRequest request, Principal connectedUser) {
-        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(request, connectedUser)));
+    public ResponseEntity<?> changeUserInfo(@RequestParam @Valid ChangeUserInfoRequest request, @RequestParam MultipartFile image, Principal connectedUser) throws IOException {
+        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(request, image, connectedUser)));
 
     }
 
@@ -51,6 +53,11 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, Principal connectedUser) {
         return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
+    }
+
+    @GetMapping("/file")
+    public ResponseEntity<byte[]> getProfileImage(@RequestParam String filePath) {
+        return ResponseEntity.ok(this.userService.getProfileImage(filePath));
     }
 
 }
