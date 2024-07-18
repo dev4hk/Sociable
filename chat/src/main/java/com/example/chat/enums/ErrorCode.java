@@ -12,8 +12,8 @@ public enum ErrorCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "Request is invalid"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
     BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "Email and / or password is incorrect"),
-    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "User already exists")
-    ;
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "User already exists"),
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "Chat not found");
 
     private HttpStatus status;
     private String message;

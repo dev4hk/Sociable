@@ -1,6 +1,8 @@
 package com.example.chat.service;
 
 import com.example.chat.entity.Chat;
+import com.example.chat.enums.ErrorCode;
+import com.example.chat.exception.ChatException;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
@@ -39,7 +41,7 @@ public class ChatService {
 
     public Chat findChatById(Long chatId, String token) {
         return chatRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new ChatException(ErrorCode.CHAT_NOT_FOUND));
     }
 
     public List<Chat> findChatsByUser(String token) {

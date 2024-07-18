@@ -105,8 +105,4 @@ public class MessageServiceTest {
         assertEquals(ErrorCode.INVALID_REQUEST, exception.getErrorCode());
     }
 
-
-
-
-
 }

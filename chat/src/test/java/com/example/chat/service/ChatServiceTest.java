@@ -1,6 +1,7 @@
 package com.example.chat.service;
 
 import com.example.chat.entity.Chat;
+import com.example.chat.exception.ChatException;
 import com.example.chat.fixture.UserFixture;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
@@ -73,6 +74,12 @@ public class ChatServiceTest {
         when(chatRepository.findByUsersId(1)).thenReturn(List.of());
         when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(userModel)));
         assertDoesNotThrow(() -> chatService.findChatsByUser(testToken));
+    }
+
+    @Test
+    void find_non_existing_chat_throw_error() {
+        when(chatRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ChatException.class, () -> chatService.findChatById(1L, testToken));
     }
 
 
