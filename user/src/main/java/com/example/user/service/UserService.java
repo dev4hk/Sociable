@@ -2,10 +2,10 @@ package com.example.user.service;
 
 import com.example.user.config.JwtService;
 import com.example.user.entity.User;
+import com.example.user.model.FileInfo;
 import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
-import com.example.user.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -26,6 +25,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final FileService fileService;
     private static final String AUTH_PREFIX = "Bearer ";
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
@@ -59,20 +59,16 @@ public class UserService {
         return this.userRepository.findOtherUsers(user.getId(), query);
     }
 
-    public User changeUserInfo(ChangeUserInfoRequest request, MultipartFile image, Principal connectedUser) throws IOException {
+    public User changeUserInfo(ChangeUserInfoRequest request, MultipartFile image, Principal connectedUser, String token) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         user.setDescription(request.getDescription());
         if(image != null && !image.isEmpty()) {
-            Map<String, String> fileMap = FileUtils.upload(user.getId(), image);
-            user.setFilePath(fileMap.get("filePath"));
-            user.setContentType(fileMap.get("contentType"));
+            FileInfo fileInfo = fileService.upload(image, token).getResult();
+            user.setFileInfo(fileInfo);
         }
         return userRepository.save(user);
     }
 
-    public byte[] getProfileImage(String filePath) {
-        return FileUtils.readFileFromLocation(filePath);
-    }
 }

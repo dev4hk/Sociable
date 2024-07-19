@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @PutMapping("/change/info")
-    public ResponseEntity<?> changeUserInfo(@RequestParam @Valid ChangeUserInfoRequest request, @RequestParam MultipartFile image, Principal connectedUser) throws IOException {
-        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(request, image, connectedUser)));
+    public ResponseEntity<?> changeUserInfo(@RequestParam @Valid ChangeUserInfoRequest request, @RequestParam MultipartFile image, Principal connectedUser, @RequestHeader("Authorization") String token) throws IOException {
+        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(request, image, connectedUser, token)));
 
     }
 
@@ -53,11 +53,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, Principal connectedUser) {
         return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
-    }
-
-    @GetMapping("/file")
-    public ResponseEntity<byte[]> getProfileImage(@RequestParam String filePath) {
-        return ResponseEntity.ok(this.userService.getProfileImage(filePath));
     }
 
 }

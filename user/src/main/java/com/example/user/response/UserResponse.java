@@ -1,6 +1,7 @@
 package com.example.user.response;
 
 import com.example.user.entity.User;
+import com.example.user.model.FileInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +18,7 @@ public class UserResponse {
     private String firstname;
     private String lastname;
     private String email;
-    private String filePath;
-    private String contentType;
+    private FileInfo fileInfo;
     private String description;
     private Set<Integer> followings;
     private Set<Integer> followers;
@@ -28,8 +28,7 @@ public class UserResponse {
                 user.getFirstname(),
                 user.getLastname(),
                 user.getEmail(),
-                user.getFilePath(),
-                user.getContentType(),
+                user.getFileInfo(),
                 user.getDescription(),
                 user.getFollowings(),
                 user.getFollowers()

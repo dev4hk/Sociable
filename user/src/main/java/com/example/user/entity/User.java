@@ -1,6 +1,7 @@
 package com.example.user.entity;
 
 import com.example.user.enums.Role;
+import com.example.user.model.FileInfo;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -40,9 +41,7 @@ public class User implements UserDetails {
 
     private String password;
 
-    private String filePath;
-
-    private String contentType;
+    private FileInfo fileInfo;
 
     private String description;
 
