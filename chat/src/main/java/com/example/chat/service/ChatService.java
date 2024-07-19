@@ -6,9 +6,7 @@ import com.example.chat.exception.ChatException;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
-import com.example.chat.response.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,35 +25,11 @@ public class ChatService {
 
     @Transactional
     public Chat create(Integer userId2, String token) throws JsonProcessingException {
-        UserModel userModel1;
-        try {
-            userModel1 = userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            if(((FeignException) e).status() == 404) {
-                throw new ChatException(ErrorCode.USER_NOT_FOUND);
-            }
-            else {
-                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        UserModel userModel2;
-        try {
-            userModel2 = userService.getOtherUserInfo(userId2, token).getBody();
-        } catch (Exception e) {
-            if(((FeignException) e).status() == 404) {
-                throw new ChatException(ErrorCode.USER_NOT_FOUND);
-            }
-            else {
-                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-
-        }
-        User user1 = UserModel.toEntity(Objects.requireNonNull(userModel1));
-        User user2 = UserModel.toEntity(Objects.requireNonNull(userModel2));
+        User user1 = getUser(token);
+        User user2 = getOtherUser(userId2, token);
         Optional<Chat> optChat = chatRepository.findChatByUsers(user1, user2);
 
-        if(optChat.isPresent()) {
+        if (optChat.isPresent()) {
             return optChat.get();
         }
 
@@ -72,7 +46,32 @@ public class ChatService {
     }
 
     public List<Chat> findChatsByUser(String token) {
-        UserModel userModel = userService.getUserProfile(token).getBody();
-        return chatRepository.findByUsersId(userModel.getId());
+        User user = getUser(token);
+        return chatRepository.findByUsersId(user.getId());
+    }
+
+    private User getUser(String token) {
+        try {
+            return UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    private User getOtherUser(Integer userId, String token) {
+        try {
+            return UserModel.toEntity(Objects.requireNonNull(userService.getOtherUserInfo(userId, token).getBody()));
+        } catch (Exception e) {
+            if (((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+
+        }
     }
 }

@@ -35,18 +35,7 @@ public class MessageService {
 
     @Transactional
     public Message createMessage(String token, Long chatId, String content, MultipartFile file) throws IOException {
-        UserModel userModel;
-        try {
-            userModel = userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            if(((FeignException) e).status() == 404) {
-                throw new ChatException(ErrorCode.USER_NOT_FOUND);
-            }
-            else {
-                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
-        User user = UserModel.toEntity(Objects.requireNonNull(userModel));
+        User user = getUser(token);
         Chat chat = chatService.findChatById(chatId, token);
 
         if (content == null && file == null) {
@@ -75,6 +64,18 @@ public class MessageService {
     public List<Message> findMessageByChatId(Long chatId, String token) {
         chatService.findChatById(chatId, token);
         return messageRepository.findByChatId(chatId);
+    }
+
+    private User getUser(String token) {
+        try {
+            return UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
 }
