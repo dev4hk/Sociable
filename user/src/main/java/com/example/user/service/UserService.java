@@ -2,6 +2,8 @@ package com.example.user.service;
 
 import com.example.user.config.JwtService;
 import com.example.user.entity.User;
+import com.example.user.enums.ErrorCode;
+import com.example.user.exception.UserException;
 import com.example.user.model.FileInfo;
 import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
@@ -32,10 +34,10 @@ public class UserService {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Wrong password");
+            throw new UserException(ErrorCode.BAD_CREDENTIAL, "Wrong Password");
         }
         if(!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new BadCredentialsException("Password are not the same");
+            throw new UserException(ErrorCode.INVALID_REQUEST, "Passwords are not matching");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -46,13 +48,13 @@ public class UserService {
         String jwt = token.substring(AUTH_PREFIX.length());
         String username = this.jwtService.extractUsername(jwt);
         return this.userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
     }
 
     public User getOtherUserInfo(Integer id, String token) {
         this.getUserProfile(token);
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
     }
     public List<User> getOtherUsersInfo(String query, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();

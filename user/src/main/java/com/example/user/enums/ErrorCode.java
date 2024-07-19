@@ -12,7 +12,7 @@ public enum ErrorCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "Request is invalid"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
     BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "Email and / or password is incorrect"),
-    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "User already exists")
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "User already exists"),
     ;
 
     private HttpStatus status;
