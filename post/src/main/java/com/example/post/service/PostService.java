@@ -7,6 +7,7 @@ import com.example.post.exception.PostException;
 import com.example.post.model.FileInfo;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,7 +81,15 @@ public class PostService {
     }
 
     private User getUser(String token) {
-        return userService.getUserProfile(token).getBody();
+        try {
+            return userService.getUserProfile(token).getBody();
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new PostException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     private Post getPost(Integer postId) {

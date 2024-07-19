@@ -4,6 +4,7 @@ import com.example.storage.enums.ErrorCode;
 import com.example.storage.exception.FileException;
 import com.example.storage.model.User;
 import com.example.storage.response.FileResponse;
+import feign.FeignException;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +29,7 @@ public class FileService {
     private final UserService userService;
 
     public FileResponse upload(MultipartFile file, String token) {
-        User user = null;
-        try {
-            user = this.userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            throw new FileException(ErrorCode.INVALID_REQUEST, "Error getting user info");
-        }
+        User user = getUser(token);
 
         if (file == null || file.isEmpty()) {
             return null;
@@ -72,12 +68,7 @@ public class FileService {
     }
 
     public byte[] download(String filePath, String token) {
-        User user = null;
-        try {
-            user = this.userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            throw new FileException(ErrorCode.INVALID_REQUEST, "Error getting user info");
-        }
+        User user = getUser(token);
         if (StringUtils.isBlank(filePath)) {
             return null;
         }
@@ -87,6 +78,18 @@ public class FileService {
         } catch (IOException ex) {
 
             throw new FileException(ErrorCode.FILE_NOT_FOUND, "File not found");
+        }
+    }
+
+    private User getUser(String token) {
+        try {
+            return userService.getUserProfile(token).getBody();
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new FileException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new FileException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ import com.example.chat.exception.ChatException;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
