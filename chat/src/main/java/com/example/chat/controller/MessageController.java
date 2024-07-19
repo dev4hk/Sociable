@@ -25,7 +25,7 @@ public class MessageController {
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestHeader("Authorization") String token,
-            @PathVariable Long chatId) throws IOException {
+            @PathVariable Long chatId) {
         return Response.success(MessageResponse.fromMessage(messageService.createMessage(token, chatId, content, file)));
     }
 

@@ -19,7 +19,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public Response<ChatResponse> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) throws JsonProcessingException {
+    public Response<ChatResponse> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) {
         Chat chat = chatService.create(request.getUserId(), token);
         return Response.success(ChatResponse.fromChat(chat));
     }

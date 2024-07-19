@@ -34,7 +34,7 @@ public class MessageService {
 
 
     @Transactional
-    public Message createMessage(String token, Long chatId, String content, MultipartFile file) throws IOException {
+    public Message createMessage(String token, Long chatId, String content, MultipartFile file) {
         User user = getUser(token);
         Chat chat = chatService.findChatById(chatId, token);
 

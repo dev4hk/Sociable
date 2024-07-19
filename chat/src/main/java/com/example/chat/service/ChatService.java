@@ -24,7 +24,7 @@ public class ChatService {
     private final UserService userService;
 
     @Transactional
-    public Chat create(Integer userId2, String token) throws JsonProcessingException {
+    public Chat create(Integer userId2, String token) {
         User user1 = getUser(token);
         User user2 = getOtherUser(userId2, token);
         Optional<Chat> optChat = chatRepository.findChatByUsers(user1, user2);
