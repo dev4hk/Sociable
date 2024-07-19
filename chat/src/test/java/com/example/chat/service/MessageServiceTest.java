@@ -13,8 +13,14 @@ import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.response.Response;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,25 +37,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
 public class MessageServiceTest {
 
-    @Autowired
+    @InjectMocks
     private MessageService messageService;
 
-    @MockBean
+    @Mock
     private MessageRepository messageRepository;
 
-    @MockBean
+    @Mock
     private ChatService chatService;
 
-    @MockBean
+    @Mock
     private ChatRepository chatRepository;
 
-    @MockBean
+    @Mock
     private FileService fileService;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
     private Long chatId;
@@ -63,6 +69,7 @@ public class MessageServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
         chatId = 1L;
         testToken = "AABB";
         userModel = new UserModel();
@@ -103,6 +110,13 @@ public class MessageServiceTest {
         when(chatService.findChatById(chatId, testToken)).thenReturn(chat);
         ChatException exception = assertThrows(ChatException.class, () -> messageService.createMessage(testToken, 1L, null, null));
         assertEquals(ErrorCode.INVALID_REQUEST, exception.getErrorCode());
+    }
+
+    @Test
+    void create_message_for_non_existing_user_throws_exception() {
+        Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/profile", new HashMap<>(), null, new RequestTemplate());
+        when(userService.getUserProfile(testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
+        assertThrows(ChatException.class, () -> messageService.createMessage(testToken, 1L, content, file));
     }
 
 }
