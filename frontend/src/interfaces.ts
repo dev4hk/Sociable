@@ -15,6 +15,8 @@ export interface IProfile {
   firstname?: string;
   lastname?: string;
   email?: string;
+  fileInfo?: IFileInfo;
+  description: string;
 }
 
 export interface IAuthResponse {
