@@ -65,7 +65,4 @@ public class MessageService {
         return messageRepository.findByChatId(chatId);
     }
 
-    public byte[] getFile(String filePath, String token) {
-        return this.fileService.download(filePath, token).getResult();
-    }
 }

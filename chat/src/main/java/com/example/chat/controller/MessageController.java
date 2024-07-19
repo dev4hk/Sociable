@@ -34,8 +34,4 @@ public class MessageController {
         return Response.success(messageService.findMessageByChatId(chatId, token).stream().map(MessageResponse::fromMessage).toList());
     }
 
-    @GetMapping("/file")
-    public Response<byte[]> getFile(@RequestParam String filePath, @RequestHeader("Authorization") String token) {
-        return Response.success(messageService.getFile(filePath, token));
-    }
 }

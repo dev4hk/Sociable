@@ -106,7 +106,4 @@ public class PostService {
         return PostDto.fromEntity(postRepository.save(post));
     }
 
-    public byte[] getFile(String filePath, String token) {
-        return this.fileService.download(filePath, token).getResult();
-    }
 }
