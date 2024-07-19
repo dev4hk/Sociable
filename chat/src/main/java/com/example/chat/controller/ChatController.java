@@ -5,6 +5,7 @@ import com.example.chat.request.CreateChatRequest;
 import com.example.chat.response.ChatResponse;
 import com.example.chat.response.Response;
 import com.example.chat.service.ChatService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public Response<ChatResponse> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) {
+    public Response<ChatResponse> createChat(@RequestBody CreateChatRequest request, @RequestHeader("Authorization") String token) throws JsonProcessingException {
         Chat chat = chatService.create(request.getUserId(), token);
         return Response.success(ChatResponse.fromChat(chat));
     }

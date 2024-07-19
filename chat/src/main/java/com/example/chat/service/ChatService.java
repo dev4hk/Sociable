@@ -6,11 +6,16 @@ import com.example.chat.exception.ChatException;
 import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
+import com.example.chat.response.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,11 +26,33 @@ public class ChatService {
     private final UserService userService;
 
     @Transactional
-    public Chat create(Integer userId2, String token) {
-        UserModel userModel1 = userService.getUserProfile(token).getBody();
-        UserModel userModel2 = userService.getOtherUserInfo(userId2, token).getBody();
-        User user1 = UserModel.toEntity(userModel1);
-        User user2 = UserModel.toEntity(userModel2);
+    public Chat create(Integer userId2, String token) throws JsonProcessingException {
+        UserModel userModel1;
+        try {
+            userModel1 = userService.getUserProfile(token).getBody();
+        } catch (Exception e) {
+            if(((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            }
+            else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        UserModel userModel2;
+        try {
+            userModel2 = userService.getOtherUserInfo(userId2, token).getBody();
+        } catch (Exception e) {
+            if(((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            }
+            else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+
+        }
+        User user1 = UserModel.toEntity(Objects.requireNonNull(userModel1));
+        User user2 = UserModel.toEntity(Objects.requireNonNull(userModel2));
         Optional<Chat> optChat = chatRepository.findChatByUsers(user1, user2);
 
         if(optChat.isPresent()) {

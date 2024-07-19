@@ -8,6 +8,7 @@ import com.example.chat.model.User;
 import com.example.chat.model.UserModel;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,18 @@ public class MessageService {
 
     @Transactional
     public Message createMessage(String token, Long chatId, String content, MultipartFile file) throws IOException {
-        User user = UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
+        UserModel userModel;
+        try {
+            userModel = userService.getUserProfile(token).getBody();
+        } catch (Exception e) {
+            if(((FeignException) e).status() == 404) {
+                throw new ChatException(ErrorCode.USER_NOT_FOUND);
+            }
+            else {
+                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+        User user = UserModel.toEntity(Objects.requireNonNull(userModel));
         Chat chat = chatService.findChatById(chatId, token);
 
         if (content == null && file == null) {
