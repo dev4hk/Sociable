@@ -1,5 +1,7 @@
 package com.example.storage.service;
 
+import com.example.storage.enums.ErrorCode;
+import com.example.storage.exception.FileException;
 import com.example.storage.model.User;
 import com.example.storage.response.FileResponse;
 import io.micrometer.common.util.StringUtils;
@@ -30,7 +32,7 @@ public class FileService {
         try {
             user = this.userService.getUserProfile(token).getBody();
         } catch (Exception e) {
-            throw new RuntimeException("Error getting user info");
+            throw new FileException(ErrorCode.INVALID_REQUEST, "Error getting user info");
         }
 
         if (file == null || file.isEmpty()) {
@@ -74,7 +76,7 @@ public class FileService {
         try {
             user = this.userService.getUserProfile(token).getBody();
         } catch (Exception e) {
-            throw new RuntimeException("Error getting user info");
+            throw new FileException(ErrorCode.INVALID_REQUEST, "Error getting user info");
         }
         if (StringUtils.isBlank(filePath)) {
             return null;
@@ -84,7 +86,7 @@ public class FileService {
             return Files.readAllBytes(path);
         } catch (IOException ex) {
 
-            throw new RuntimeException("File Not Found");
+            throw new FileException(ErrorCode.FILE_NOT_FOUND, "File not found");
         }
     }
 }

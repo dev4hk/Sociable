@@ -24,7 +24,7 @@ public class Response<T> {
         return new Response<>("SUCCESS", result);
     }
 
-    public String toStream() {
+    public String toString() {
         if(result == null) {
             return "{"
                     + "\"resultCode\":" + "\"" + resultCode + "\","
