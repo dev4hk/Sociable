@@ -122,4 +122,10 @@ public class PostService {
             throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public Page<PostDto> getSavedPosts(Pageable pageable, String token) {
+        User user = getUser(token);
+        return this.postRepository.findAllSavedPosts(user.getSavedPosts(), pageable).map(PostDto::fromEntity);
+    }
+
 }

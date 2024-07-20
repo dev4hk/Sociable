@@ -59,10 +59,15 @@ public class PostController {
         return Response.success(PostResponse.fromPostDto(postService.likeUnlikePost(postId, token)));
     }
 
-    @PatchMapping("/saveUnsave/{postId}")
+    @PatchMapping("/save/{postId}")
     public Response<Void> saveUnsavePost(@PathVariable Integer postId) {
         this.postService.saveUnsavePost(postId);
         return Response.success();
+    }
+
+    @GetMapping("/saved")
+    public Response<Page<PostResponse>> getSavedPosts(Pageable pageable, @RequestHeader("Authorization") String token) {
+        return Response.success(this.postService.getSavedPosts(pageable, token).map(PostResponse::fromPostDto));
     }
 
 }

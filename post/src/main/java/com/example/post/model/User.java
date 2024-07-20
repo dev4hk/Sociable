@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,4 +15,5 @@ public class User {
     private Integer id;
     private String firstname;
     private String lastname;
+    private Set<Integer> savedPosts;
 }
