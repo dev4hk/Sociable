@@ -40,13 +40,13 @@ public class AuthenticationService {
         if(found.isPresent()) {
             throw new UserException(ErrorCode.USER_ALREADY_EXISTS);
         }
-        var user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
-                .role(Role.USER)
-                .build();
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setRole(Role.USER);
+
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);

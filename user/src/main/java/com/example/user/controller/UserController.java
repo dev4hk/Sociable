@@ -1,5 +1,6 @@
 package com.example.user.controller;
 
+import com.example.user.entity.User;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
 import com.example.user.response.UserResponse;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
