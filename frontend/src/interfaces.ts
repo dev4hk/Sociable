@@ -16,7 +16,10 @@ export interface IProfile {
   lastname?: string;
   email?: string;
   fileInfo?: IFileInfo;
-  description: string;
+  description?: string;
+  followings?: Set<number>;
+  followers?: Set<number>;
+  savedPosts?: Set<number>;
 }
 
 export interface IAuthResponse {

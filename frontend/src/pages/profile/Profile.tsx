@@ -4,7 +4,7 @@ import PostCard from "../../components/post/PostCard";
 import EditProfileModal from "../../components/profile/EditProfileModal";
 import { useRecoilValue } from "recoil";
 import { posts, profile } from "../../atoms";
-import { IPost } from "../../interfaces";
+import { IPost, IProfile } from "../../interfaces";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -32,7 +32,7 @@ const Profile = () => {
     data: userInfo,
     isLoading: isUserInfoLoading,
     isError: isUserInfoError,
-  } = useQuery({
+  } = useQuery<IProfile>({
     queryKey: ["userInfo"],
     queryFn: () => getAnotherUserInfo(+id!, token!),
   });
@@ -54,8 +54,6 @@ const Profile = () => {
   };
 
   console.log(userInfo);
-  console.log(userPosts);
-
   return (
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
@@ -93,8 +91,14 @@ const Profile = () => {
           </div>
           <div className="flex gap-2 item-center py-3">
             <span>{userPosts?.data.result.content.length} post</span>
-            <span>35 followers</span>
-            <span>5 followings</span>
+            <span>
+              {userInfo?.followers === null ? 0 : userInfo?.followers?.size}{" "}
+              followers
+            </span>
+            <span>
+              {userInfo?.followings === null ? 0 : userInfo?.followings?.size}{" "}
+              followings
+            </span>
           </div>
           <div>
             <p>
