@@ -76,7 +76,6 @@ public class FileService {
             Path path = new File(filePath).toPath();
             return Files.readAllBytes(path);
         } catch (IOException ex) {
-
             throw new FileException(ErrorCode.FILE_NOT_FOUND, "File not found");
         }
     }

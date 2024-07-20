@@ -1,6 +1,7 @@
 package com.example.comment.service;
 
 import com.example.comment.entity.Comment;
+import com.example.comment.exception.CommentException;
 import com.example.comment.fixture.CommentFixture;
 import com.example.comment.fixture.PostFixture;
 import com.example.comment.fixture.UserFixture;
@@ -8,35 +9,40 @@ import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import com.example.comment.repository.CommentRepository;
 import com.example.comment.response.Response;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 public class CommentServiceTest {
 
-    @Autowired
+    @InjectMocks
     private CommentService commentService;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
-    @MockBean
+    @Mock
     private PostService postService;
 
-    @MockBean
+    @Mock
     private CommentRepository commentRepository;
 
     private String testToken;
@@ -49,6 +55,7 @@ public class CommentServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
         this.testToken = "AABB";
         this.testUser = UserFixture.get(1);
         this.testPost = PostFixture.get(1, 1);
@@ -64,6 +71,16 @@ public class CommentServiceTest {
         when(commentRepository.save(any())).thenReturn(mock(Comment.class));
 
         assertDoesNotThrow(() -> commentService.create(postId, comment, testToken));
+    }
+
+    @Test
+    void create_comment_with_non_existing_user() {
+        String comment = "comment";
+        Integer postId = 1;
+        Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/profile", new HashMap<>(), null, new RequestTemplate());
+        when(userService.getUserProfile(null)).thenThrow(new FeignException.NotFound(null, request, null, null));
+        CommentException exception = Assertions.assertThrows(CommentException.class, () -> commentService.create(postId, comment, null));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getErrorCode().getStatus());
     }
 
     @Test

@@ -9,9 +9,15 @@ import com.example.post.fixture.UserFixture;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
 import com.example.post.response.Response;
+import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,22 +36,21 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class PostServiceTest {
 
-    @Autowired
+    @InjectMocks
     private PostService postService;
 
-    @MockBean
+    @Mock
     private PostRepository postRepository;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
-    @MockBean
+    @Mock
     private CommentService commentService;
 
-    @MockBean
+    @Mock
     private FileService fileService;
 
     private String testToken;
@@ -52,6 +58,7 @@ public class PostServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
         this.testToken = "AABB";
         this.testUser = UserFixture.get(1);
 
@@ -75,7 +82,8 @@ public class PostServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "orig", null, "bar".getBytes());
         Integer userId = 1;
 
-        when(userService.getUserProfile(testToken)).thenThrow(PostException.class);
+        Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/profile", new HashMap<>(), null, new RequestTemplate());
+        when(userService.getUserProfile(testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
         when(postRepository.save(any())).thenReturn(mock(Post.class));
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.create(body, file, testToken));
