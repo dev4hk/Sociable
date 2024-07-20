@@ -49,6 +49,8 @@ public class User implements UserDetails {
 
     private Set<Integer> followers = new HashSet<>();
 
+    private Set<Integer> savedPosts = new HashSet<>();
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

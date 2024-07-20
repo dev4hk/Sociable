@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -73,4 +74,48 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public void followUnfollowUser(Principal connectedUser, Integer userId) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var otherUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        if(!user.getFollowings().contains(userId)) {
+            followUser(user, otherUser);
+        }
+        else {
+            unfollowUser(user, otherUser);
+        }
+        userRepository.save(user);
+        userRepository.save(otherUser);
+    }
+
+    public List<User> getFollowings(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return userRepository.getFollowings(user.getFollowings());
+    }
+
+    public List<User> getFollowers(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return userRepository.getFollowers(user.getFollowers());
+    }
+
+    private void followUser(User from, User to) {
+        from.getFollowings().add(to.getId());
+        to.getFollowers().add(from.getId());
+    }
+
+    private void unfollowUser(User from, User to) {
+        from.getFollowings().remove(to.getId());
+        to.getFollowers().remove(from.getId());
+    }
+
+    public void saveUnsavePost(Integer postId, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        if(user.getSavedPosts().contains(postId)) {
+            user.getSavedPosts().remove(postId);
+        }
+        else {
+            user.getSavedPosts().add(postId);
+        }
+    }
 }

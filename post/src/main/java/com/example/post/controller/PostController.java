@@ -7,8 +7,12 @@ import com.example.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -53,6 +57,12 @@ public class PostController {
     @PatchMapping("/{postId}/like")
     public Response<PostResponse> likePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
         return Response.success(PostResponse.fromPostDto(postService.likeUnlikePost(postId, token)));
+    }
+
+    @PatchMapping("/saveUnsave/{postId}")
+    public Response<Void> saveUnsavePost(@PathVariable Integer postId) {
+        this.postService.saveUnsavePost(postId);
+        return Response.success();
     }
 
 }

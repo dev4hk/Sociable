@@ -6,6 +6,7 @@ import com.example.user.response.UserResponse;
 import com.example.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +54,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, Principal connectedUser) {
         return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
+    }
+
+    @PatchMapping("/followUnfollow/{userId}")
+    public ResponseEntity<Void> followUnFollowUser(@PathVariable Integer userId, Principal connectedUser) {
+        this.userService.followUnfollowUser(connectedUser, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/post/saveUnsave/{postId}")
+    public ResponseEntity<Void> saveUnsavePost(@PathVariable Integer postId, Principal connectedUser) {
+        this.userService.saveUnsavePost(postId, connectedUser);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

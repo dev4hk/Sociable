@@ -22,6 +22,7 @@ public class UserResponse {
     private String description;
     private Set<Integer> followings;
     private Set<Integer> followers;
+    private Set<Integer> savedPosts;
     public static UserResponse fromUser(User user) {
         return new UserResponse(
                 user.getId(),
@@ -31,7 +32,8 @@ public class UserResponse {
                 user.getFileInfo(),
                 user.getDescription(),
                 user.getFollowings(),
-                user.getFollowers()
+                user.getFollowers(),
+                user.getSavedPosts()
         );
     }
 }

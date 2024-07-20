@@ -32,7 +32,7 @@ public class PostService {
         }
         User user = getUser(token);
         Post post = Post.of(body, user);
-        if(file != null && !file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             post.setFileInfo(this.fileService.upload(file, token).getResult());
         }
         return PostDto.fromEntity(this.postRepository.save(post));
@@ -106,13 +106,20 @@ public class PostService {
         User user = getUser(token);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
-        if(post.getLikedBy().contains(user.getId())) {
+        if (post.getLikedBy().contains(user.getId())) {
             post.getLikedBy().remove(user.getId());
-        }
-        else {
+        } else {
             post.getLikedBy().add(user.getId());
         }
         return PostDto.fromEntity(postRepository.save(post));
     }
 
+    public void saveUnsavePost(Integer postId) {
+        Post post = getPost(postId);
+        try {
+            userService.saveUnsavePost(postId);
+        } catch (Exception e) {
+            throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
