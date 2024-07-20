@@ -41,6 +41,7 @@ const Profile = () => {
     data: userPosts,
     isLoading: isUserPostsLoading,
     isError: isUserPostsError,
+    refetch,
   } = useQuery({
     queryKey: ["userPosts"],
     queryFn: () => getAllPostByUserId(+id!),
@@ -133,7 +134,7 @@ const Profile = () => {
                       key={"myPost" + index}
                       className="border rounded-md border-slate-100"
                     >
-                      <PostCard post={post} />
+                      <PostCard post={post} refetch={refetch} />
                     </div>
                   )
                 )}

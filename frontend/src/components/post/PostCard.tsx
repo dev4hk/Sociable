@@ -32,7 +32,7 @@ import { posts, profile } from "../../atoms";
 
 interface IPostCard {
   post: IPost;
-  refetch?: () => void;
+  refetch: () => void;
 }
 
 const page = 0;
