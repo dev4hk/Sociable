@@ -18,21 +18,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -234,6 +231,14 @@ public class PostServiceTest {
         postService.likeUnlikePost(postId, this.testToken);
         assertEquals(1, post.getLikedBy().size());
         assertTrue(post.getLikedBy().contains(1));
+    }
+
+    @Test
+    void get_saved_post() {
+        Pageable pageable = mock(Pageable.class);
+        when(userService.getUserProfile(this.testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
+        when(postRepository.findAllSavedPosts(anySet(), any())).thenReturn(Page.empty());
+        assertDoesNotThrow(() -> postService.getSavedPosts(pageable, testToken));
     }
 
 }

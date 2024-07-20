@@ -159,4 +159,15 @@ public class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void get_saved_posts() throws Exception {
+        when(postService.getSavedPosts(any(), anyString())).thenReturn(Page.empty());
+        mockMvc.perform(
+                        get("/api/v1/posts/saved")
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
