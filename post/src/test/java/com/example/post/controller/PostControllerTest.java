@@ -20,8 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -168,6 +167,30 @@ public class PostControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void save_post() throws Exception {
+        Integer postId = 1;
+        doNothing().when(postService).saveUnsavePost(postId);
+        mockMvc.perform(
+                        patch("/api/v1/posts/save/1")
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void save_post_with_post_service_error_throws_error() throws Exception {
+        Integer postId = 1;
+        doThrow(new PostException(ErrorCode.USER_NOT_FOUND)).when(postService).saveUnsavePost(postId);
+        mockMvc.perform(
+                        patch("/api/v1/posts/save/1")
+                                .header(HttpHeaders.AUTHORIZATION, this.testToken)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }
