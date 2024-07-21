@@ -54,9 +54,17 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
     data: file,
     isLoading: isFileLoading,
     isSuccess: isFileSuccess,
+    refetch: refetchFile,
   } = useQuery<Blob>({
     queryKey: [`${post.id}:file`],
     queryFn: () => getFile(post?.fileInfo?.filePath),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (post.fileInfo) {
+      refetchFile();
+    }
   });
 
   const userAtom = useRecoilValue(profile);
