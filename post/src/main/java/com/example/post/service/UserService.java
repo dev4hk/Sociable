@@ -14,7 +14,7 @@ public interface UserService {
     @GetMapping("/api/v1/users/profile")
     ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String token);
 
-    @PatchMapping("/post/saveUnsave/{postId}")
+    @PatchMapping("/post/save/{postId}")
     ResponseEntity<Void> saveUnsavePost(@PathVariable Integer postId);
 
 }

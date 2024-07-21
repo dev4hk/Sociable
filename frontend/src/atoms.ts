@@ -20,3 +20,8 @@ export const messages = atom<IMessage[]>({
   key: "messages",
   default: [],
 });
+
+export const savedPosts = atom<IPost[]>({
+  key: "SavedPosts",
+  default: [],
+});

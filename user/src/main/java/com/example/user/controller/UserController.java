@@ -1,6 +1,5 @@
 package com.example.user.controller;
 
-import com.example.user.entity.User;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
 import com.example.user.response.UserResponse;
@@ -9,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,15 +56,15 @@ public class UserController {
         return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
     }
 
-    @PatchMapping("/followUnfollow/{userId}")
-    public ResponseEntity<Void> followUnFollowUser(@PathVariable Integer userId, Principal connectedUser) {
-        this.userService.followUnfollowUser(connectedUser, userId);
+    @PatchMapping("/follow/{userId}")
+    public ResponseEntity<Void> followUser(@PathVariable Integer userId, Principal connectedUser) {
+        this.userService.followUser(connectedUser, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/post/saveUnsave/{postId}")
-    public ResponseEntity<Void> saveUnsavePost(@PathVariable Integer postId, Principal connectedUser) {
-        this.userService.saveUnsavePost(postId, connectedUser);
+    @PatchMapping("/post/save/{postId}")
+    public ResponseEntity<Void> savePost(@PathVariable Integer postId, Principal connectedUser) {
+        this.userService.savePost(postId, connectedUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -9,15 +9,12 @@ import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -75,7 +72,7 @@ public class UserService {
     }
 
     @Transactional
-    public void followUnfollowUser(Principal connectedUser, Integer userId) {
+    public void followUser(Principal connectedUser, Integer userId) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         var otherUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
@@ -109,7 +106,7 @@ public class UserService {
         to.getFollowers().remove(from.getId());
     }
 
-    public void saveUnsavePost(Integer postId, Principal connectedUser) {
+    public void savePost(Integer postId, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         if(user.getSavedPosts().contains(postId)) {
             user.getSavedPosts().remove(postId);

@@ -265,7 +265,7 @@ public class PostServiceTest {
         Integer postId = 1;
         Integer userId = 1;
         Post post = PostFixture.get(1, userId);
-        Request request = Request.create(Request.HttpMethod.GET, "/post/saveUnsave/1", new HashMap<>(), null, new RequestTemplate());
+        Request request = Request.create(Request.HttpMethod.GET, "/post/save/1", new HashMap<>(), null, new RequestTemplate());
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(userService.saveUnsavePost(postId)).thenThrow(new FeignException.NotFound(null, request, null, null));
         PostException exception = assertThrows(PostException.class, () -> postService.saveUnsavePost(postId));
