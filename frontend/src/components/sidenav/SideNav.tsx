@@ -48,7 +48,7 @@ const SideNav = () => {
 
   const handleLogout = () => {
     logout().then((res) => {
-      localStorage.removeItem("token");
+      localStorage.clear();
       navigate("/login");
     });
   };
