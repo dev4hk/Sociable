@@ -1,5 +1,8 @@
 import { atom } from "recoil";
 import { IChat, IMessage, IPost, IProfile, IToken } from "./interfaces";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist();
 
 export const posts = atom<IPost[]>({
   key: "posts",
@@ -9,6 +12,7 @@ export const posts = atom<IPost[]>({
 export const profile = atom<IProfile>({
   key: "profile",
   default: {},
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const chats = atom<IChat[]>({
