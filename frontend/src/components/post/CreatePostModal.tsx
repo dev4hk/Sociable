@@ -13,12 +13,12 @@ import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { IPostForm, IPostRequest } from "../../interfaces";
 import { useForm } from "react-hook-form";
-import { createPost } from "../../api/api";
 import { getValue } from "@testing-library/user-event/dist/utils";
 import { isTokenValid } from "../../service/AuthenticationService";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { posts } from "../../atoms";
+import { createPost } from "../../api/postApi";
 
 const style = {
   position: "absolute",

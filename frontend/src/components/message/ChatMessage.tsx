@@ -4,7 +4,7 @@ import { IFile, IMessage } from "../../interfaces";
 import { useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
 import { useQuery } from "@tanstack/react-query";
-import { getFile } from "../../api/api";
+import { getFile } from "../../api/fileApi";
 
 interface IChatMessageProp {
   message: IMessage;

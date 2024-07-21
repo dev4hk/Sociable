@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ILogin } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile, loginUser } from "../../api/api";
 import { useSetRecoilState } from "recoil";
 import { profile } from "../../atoms";
+import { getUserProfile } from "../../api/userApi";
+import { loginUser } from "../../api/authApi";
 
 const Login = () => {
   const {

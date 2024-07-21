@@ -4,7 +4,8 @@ import { useRecoilState } from "recoil";
 import { chats } from "../../atoms";
 import { useQuery } from "@tanstack/react-query";
 import { IUser } from "../../interfaces";
-import { createChat, getOtherUsers } from "../../api/api";
+import { getOtherUsers } from "../../api/userApi";
+import { createChat } from "../../api/chatApi";
 
 const UserSearch = () => {
   const [query, setQuery] = useState("");

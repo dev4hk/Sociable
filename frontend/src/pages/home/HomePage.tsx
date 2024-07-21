@@ -5,12 +5,12 @@ import SideNav from "../../components/sidenav/SideNav";
 import HomeMiddle from "../../components/home/HomeMiddle";
 import HomeRight from "../../components/home/HomeRight";
 import Profile from "../profile/Profile";
-import { getAllPosts } from "../../api/api";
 import { IGetAllPosts, IPost } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { isTokenValid } from "../../service/AuthenticationService";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { posts, profile } from "../../atoms";
+import { getAllPosts } from "../../api/postApi";
 
 const page = 0;
 const size = 10;

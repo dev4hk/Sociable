@@ -22,10 +22,6 @@ export interface IProfile {
   savedPosts?: Set<number>;
 }
 
-export interface IAuthResponse {
-  access_token: string;
-}
-
 export interface IRegister {
   firstname: string;
   lastname: string;

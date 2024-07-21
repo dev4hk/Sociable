@@ -12,7 +12,7 @@ import { IChangeUserInfo } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { profile } from "../../atoms";
-import { changeUserInfo } from "../../api/api";
+import { changeUserInfo } from "../../api/userApi";
 
 const style = {
   position: "absolute",

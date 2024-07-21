@@ -1,11 +1,12 @@
 import { Alert, Button, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { ILogin, IRegister } from "../../interfaces";
+import { IAuthResponse, ILogin, IRegister } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile, registerUser } from "../../api/api";
 import { useSetRecoilState } from "recoil";
 import { profile } from "../../atoms";
+import { getUserProfile } from "../../api/userApi";
+import { registerUser } from "../../api/authApi";
 
 const Register = () => {
   const {
@@ -28,7 +29,7 @@ const Register = () => {
       );
     } else {
       registerUser(data)
-        .then((res) => {
+        .then((res: IAuthResponse) => {
           const token = res.access_token;
           localStorage.setItem("token", token);
           getUserProfile(token).then((profile) =>
@@ -36,7 +37,7 @@ const Register = () => {
           );
           navigate("/home");
         })
-        .catch((err) => {
+        .catch((err: any) => {
           setServerErrors(err.response.data.resultCode);
           setTimeout(() => {
             setServerErrors(undefined);

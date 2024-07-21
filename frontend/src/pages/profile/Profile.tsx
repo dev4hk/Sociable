@@ -7,11 +7,8 @@ import { posts, profile } from "../../atoms";
 import { IPost, IProfile } from "../../interfaces";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getAllPostByUserId,
-  getAnotherUserInfo,
-  getUserProfile,
-} from "../../api/api";
+import { getAllPostByUserId } from "../../api/postApi";
+import { getAnotherUserInfo } from "../../api/userApi";
 
 const tabs = [
   { value: "post", name: "Post" },

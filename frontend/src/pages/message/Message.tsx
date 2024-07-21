@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { IChat, IMessage } from "../../interfaces";
-import { createMessage, getAllChats, getMessagesInChat } from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chats, profile } from "../../atoms";
@@ -14,6 +13,11 @@ import { useNavigate } from "react-router-dom";
 import Stomp, { Client } from "stompjs";
 import SockJS from "sockjs-client";
 import ChatMessage from "../../components/message/ChatMessage";
+import {
+  createMessage,
+  getAllChats,
+  getMessagesInChat,
+} from "../../api/chatApi";
 
 const Message = () => {
   const profileAtom = useRecoilValue(profile);

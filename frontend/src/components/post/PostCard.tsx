@@ -19,16 +19,13 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { IComment, ICommentsResponse, IPost } from "../../interfaces";
 import { useEffect, useState } from "react";
-import {
-  createComment,
-  getCommentsByPost,
-  getFile,
-  likeUnlikePost,
-} from "../../api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { posts, profile } from "../../atoms";
+import { createComment, getCommentsByPost } from "../../api/commentApi";
+import { likePost } from "../../api/postApi";
+import { getFile } from "../../api/fileApi";
 
 interface IPostCard {
   post: IPost;
@@ -76,7 +73,7 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
   };
 
   const handleLike = () => {
-    likeUnlikePost(post.id).then((res) => {
+    likePost(post.id).then((res) => {
       const updated = res.data.result;
       refetchPosts!();
     });

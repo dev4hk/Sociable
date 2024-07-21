@@ -10,7 +10,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
-import { logout } from "../../api/api";
+import { logout } from "../../api/authApi";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },
