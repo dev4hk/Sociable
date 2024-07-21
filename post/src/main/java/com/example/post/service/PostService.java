@@ -114,10 +114,10 @@ public class PostService {
         return PostDto.fromEntity(postRepository.save(post));
     }
 
-    public void saveUnsavePost(Integer postId) {
+    public void savePost(Integer postId, String token) {
         Post post = getPost(postId);
         try {
-            userService.saveUnsavePost(postId);
+            userService.saveUnsavePost(postId, token);
         } catch (Exception e) {
             throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
         }

@@ -7,12 +7,8 @@ import com.example.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.security.Principal;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -60,8 +56,8 @@ public class PostController {
     }
 
     @PatchMapping("/save/{postId}")
-    public Response<Void> saveUnsavePost(@PathVariable Integer postId) {
-        this.postService.saveUnsavePost(postId);
+    public Response<Void> savePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
+        this.postService.savePost(postId, token);
         return Response.success();
     }
 

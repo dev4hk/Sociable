@@ -172,9 +172,9 @@ public class PostControllerTest {
     @Test
     void save_post() throws Exception {
         Integer postId = 1;
-        doNothing().when(postService).saveUnsavePost(postId);
+        doNothing().when(postService).savePost(postId, testToken);
         mockMvc.perform(
-                        patch("/api/v1/posts/save/1")
+                        put("/api/v1/posts/save/1")
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())
@@ -184,9 +184,9 @@ public class PostControllerTest {
     @Test
     void save_post_with_post_service_error_throws_error() throws Exception {
         Integer postId = 1;
-        doThrow(new PostException(ErrorCode.USER_NOT_FOUND)).when(postService).saveUnsavePost(postId);
+        doThrow(new PostException(ErrorCode.USER_NOT_FOUND)).when(postService).savePost(postId, testToken);
         mockMvc.perform(
-                        patch("/api/v1/posts/save/1")
+                        put("/api/v1/posts/save/1")
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)
                 )
                 .andDo(print())

@@ -56,13 +56,13 @@ public class UserController {
         return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
     }
 
-    @PatchMapping("/follow/{userId}")
+    @PutMapping("/follow/{userId}")
     public ResponseEntity<Void> followUser(@PathVariable Integer userId, Principal connectedUser) {
         this.userService.followUser(connectedUser, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/post/save/{postId}")
+    @PutMapping("/post/save/{postId}")
     public ResponseEntity<Void> savePost(@PathVariable Integer postId, Principal connectedUser) {
         this.userService.savePost(postId, connectedUser);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -25,9 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -247,16 +245,16 @@ public class PostServiceTest {
         Integer userId = 1;
         Post post = PostFixture.get(1, userId);
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(userService.saveUnsavePost(postId)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
-        postService.saveUnsavePost(postId);
-        verify(userService, times(1)).saveUnsavePost(postId);
+        when(userService.saveUnsavePost(postId, testToken)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        postService.savePost(postId, testToken);
+        verify(userService, times(1)).saveUnsavePost(postId, testToken);
     }
 
     @Test
     void save_non_existing_post_throws_error() {
         Integer postId = 1;
         when(postRepository.findById(postId)).thenThrow(new PostException(ErrorCode.POST_NOT_FOUND));
-        PostException exception = assertThrows(PostException.class, () -> postService.saveUnsavePost(postId));
+        PostException exception = assertThrows(PostException.class, () -> postService.savePost(postId, testToken));
         assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
     }
 
@@ -265,10 +263,10 @@ public class PostServiceTest {
         Integer postId = 1;
         Integer userId = 1;
         Post post = PostFixture.get(1, userId);
-        Request request = Request.create(Request.HttpMethod.GET, "/post/save/1", new HashMap<>(), null, new RequestTemplate());
+        Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/post/save/1", new HashMap<>(), null, new RequestTemplate());
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(userService.saveUnsavePost(postId)).thenThrow(new FeignException.NotFound(null, request, null, null));
-        PostException exception = assertThrows(PostException.class, () -> postService.saveUnsavePost(postId));
+        when(userService.saveUnsavePost(postId, testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
+        PostException exception = assertThrows(PostException.class, () -> postService.savePost(postId, testToken));
         assertEquals(ErrorCode.INTERNAL_SERVER_ERROR, exception.getErrorCode());
     }
 
