@@ -6,7 +6,9 @@ import com.example.user.response.UserResponse;
 import com.example.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,9 +29,18 @@ public class UserController {
         return ResponseEntity.accepted().build();
     }
 
-    @PutMapping("/change/info")
-    public ResponseEntity<?> changeUserInfo(@RequestParam @Valid ChangeUserInfoRequest request, @RequestParam MultipartFile image, Principal connectedUser, @RequestHeader("Authorization") String token) throws IOException {
-        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(request, image, connectedUser, token)));
+    @PutMapping(value = "/change/info")
+    public ResponseEntity<?> changeUserInfo(
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("request") ChangeUserInfoRequest request,
+            Principal connectedUser,
+            @RequestHeader("Authorization") String token
+    ) {
+        return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(
+                file,
+                request,
+                connectedUser,
+                token)));
 
     }
 

@@ -59,7 +59,7 @@ public class UserService {
         return this.userRepository.findOtherUsers(user.getId(), query);
     }
 
-    public User changeUserInfo(ChangeUserInfoRequest request, MultipartFile image, Principal connectedUser, String token) {
+    public User changeUserInfo(MultipartFile image, ChangeUserInfoRequest request, Principal connectedUser, String token) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
