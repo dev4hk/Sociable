@@ -37,7 +37,6 @@ const UserSearch = () => {
     setQuery("");
   };
 
-  console.log(usersData);
   return (
     <div>
       <div className="py-5 relative ">
@@ -52,7 +51,11 @@ const UserSearch = () => {
           {query &&
             isUsersDataSuccess &&
             usersData?.map((user) => (
-              <UserSearchCard user={user} handleUserClick={handleUserClick} />
+              <UserSearchCard
+                key={user.id}
+                user={user}
+                handleUserClick={handleUserClick}
+              />
             ))}
         </div>
       </div>

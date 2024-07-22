@@ -50,7 +50,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo?.fileInfo) {
       refetchProfileImage();
     }
   }, [userInfo]);
@@ -114,8 +114,8 @@ const Profile = () => {
         </div>
         <div className="p-5">
           <div>
-            <h1 className="py-1 font-bold text-xl">{`${userAtom.firstname} ${userAtom.lastname}`}</h1>
-            <p>{`@${userAtom.firstname?.toLowerCase()}_${userAtom.lastname?.toLowerCase()}`}</p>
+            <h1 className="py-1 font-bold text-xl">{`${userInfo?.firstname} ${userInfo?.lastname}`}</h1>
+            <p>{`@${userInfo?.firstname?.toLowerCase()}_${userInfo?.lastname?.toLowerCase()}`}</p>
           </div>
           <div className="flex gap-2 item-center py-3">
             <span>{userPosts?.data.result.content.length} post</span>
