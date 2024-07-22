@@ -17,9 +17,9 @@ export interface IProfile {
   email?: string;
   fileInfo?: IFileInfo;
   description?: string;
-  followings?: Set<number>;
-  followers?: Set<number>;
-  savedPosts?: Set<number>;
+  followings?: Array<number>;
+  followers?: Array<number>;
+  savedPosts?: Array<number>;
 }
 
 export interface IRegister {
@@ -38,6 +38,8 @@ export interface IAuthResponse {
 export interface IChangeUserInfo {
   firstname: string;
   lastname: string;
+  description: string;
+  file: Blob;
 }
 
 export interface IPost {

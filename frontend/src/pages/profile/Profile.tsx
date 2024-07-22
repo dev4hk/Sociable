@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PostCard from "../../components/post/PostCard";
 import EditProfileModal from "../../components/profile/EditProfileModal";
 import { useRecoilValue } from "recoil";
@@ -7,24 +7,21 @@ import { posts, profile } from "../../atoms";
 import { IPost, IProfile } from "../../interfaces";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getAllPostByUserId } from "../../api/postApi";
+import { getAllPostByUserId, getSavedPost } from "../../api/postApi";
 import { getAnotherUserInfo } from "../../api/userApi";
+import { getFile } from "../../api/fileApi";
 
 const tabs = [
   { value: "post", name: "Post" },
   { value: "saved", name: "Saved" },
 ];
 
-const reels = [1, 1, 1, 1];
-const savedPost = [1, 1, 1, 1];
-
 const Profile = () => {
   const { id } = useParams();
   const [value, setValue] = useState("post");
   const token = localStorage.getItem("token");
 
-  const allPosts = useRecoilValue(posts);
-  const myInfo = useRecoilValue(profile);
+  const userAtom = useRecoilValue(profile);
   const {
     data: userInfo,
     isLoading: isUserInfoLoading,
@@ -44,6 +41,30 @@ const Profile = () => {
     queryFn: () => getAllPostByUserId(+id!),
   });
 
+  const { data: profileImage, refetch: refetchProfileImage } = useQuery({
+    queryKey: ["profileImage", userInfo?.id],
+    queryFn: () => getFile(userInfo?.fileInfo?.filePath!),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (userInfo) {
+      refetchProfileImage();
+    }
+  }, [userInfo]);
+
+  const { data: savedPosts, refetch: refetchSavedPosts } = useQuery({
+    queryKey: ["savedPosts", id],
+    queryFn: getSavedPost,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (id === userAtom.id) {
+      refetchSavedPosts();
+    }
+  });
+
   const [open, setOpen] = useState(false);
   const handleOpenProfileModal = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -51,7 +72,6 @@ const Profile = () => {
     setValue(newValue);
   };
 
-  console.log(userInfo);
   return (
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
@@ -63,12 +83,20 @@ const Profile = () => {
           />
         </div>
         <div className="px-5 flex justify-between items-start mt-5 h-[5rem]">
-          <Avatar
-            src="https://cdn.pixabay.com/photo/2022/10/01/21/25/woman-7492273_1280.jpg"
-            className="transform -translate-y-24"
-            sx={{ width: "10rem", height: "10rem" }}
-          />
-          {myInfo?.id === userInfo?.id ? (
+          {profileImage ? (
+            <Avatar
+              src={`data:${userInfo?.fileInfo?.fileType};base64,${profileImage}`}
+              className="transform -translate-y-24"
+              sx={{ width: "10rem", height: "10rem" }}
+            />
+          ) : (
+            <Avatar
+              className="transform -translate-y-24"
+              sx={{ width: "10rem", height: "10rem" }}
+            />
+          )}
+
+          {userAtom?.id === userInfo?.id ? (
             <Button
               variant="outlined"
               sx={{ borderRadius: "20px" }}
@@ -84,25 +112,16 @@ const Profile = () => {
         </div>
         <div className="p-5">
           <div>
-            <h1 className="py-1 font-bold text-xl">{`${myInfo.firstname} ${myInfo.lastname}`}</h1>
-            <p>{`@${myInfo.firstname?.toLowerCase()}_${myInfo.lastname?.toLowerCase()}`}</p>
+            <h1 className="py-1 font-bold text-xl">{`${userAtom.firstname} ${userAtom.lastname}`}</h1>
+            <p>{`@${userAtom.firstname?.toLowerCase()}_${userAtom.lastname?.toLowerCase()}`}</p>
           </div>
           <div className="flex gap-2 item-center py-3">
             <span>{userPosts?.data.result.content.length} post</span>
-            <span>
-              {userInfo?.followers === null ? 0 : userInfo?.followers?.size}{" "}
-              followers
-            </span>
-            <span>
-              {userInfo?.followings === null ? 0 : userInfo?.followings?.size}{" "}
-              followings
-            </span>
+            <span>{userInfo?.followers?.length} followers</span>
+            <span>{userInfo?.followings?.length} followings</span>
           </div>
           <div>
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat,
-              laboriosam, fuga exercitationem alias aliquam culpa.
-            </p>
+            <p>{userInfo?.description}</p>
           </div>
         </div>
         <section>
@@ -112,14 +131,10 @@ const Profile = () => {
               aria-label="wrapped label tabs example"
               onChange={handleChange}
             >
-              {tabs.map((item, index) => (
-                <Tab
-                  key={"tap" + index}
-                  value={item.value}
-                  label={item.name}
-                  wrapped
-                />
-              ))}
+              <Tab value="post" label="Post" wrapped />
+              {id === userAtom?.id?.toString() && (
+                <Tab value="saved" label="Saved" wrapped />
+              )}
             </Tabs>
           </Box>
           <div className="flex justify-center">
@@ -154,7 +169,11 @@ const Profile = () => {
         </section>
       </div>
       <section>
-        <EditProfileModal open={open} handleClose={handleClose} />
+        <EditProfileModal
+          open={open}
+          handleClose={handleClose}
+          image={profileImage}
+        />
       </section>
     </Card>
   );

@@ -6,13 +6,15 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IChangeUserInfo } from "../../interfaces";
 import { useForm } from "react-hook-form";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { profile } from "../../atoms";
 import { changeUserInfo } from "../../api/userApi";
+import { getFile } from "../../api/fileApi";
+import { useQuery } from "@tanstack/react-query";
 
 const style = {
   position: "absolute",
@@ -28,30 +30,61 @@ const style = {
   borderRadius: 3,
 };
 
-const EditProfileModal = ({ open, handleClose }: any) => {
-  const setUserInfo = useSetRecoilState(profile);
-  const getUserInfo = useRecoilValue(profile);
+const EditProfileModal = ({ open, handleClose, image }: any) => {
+  const [profileAtom, setProfileAtom] = useRecoilState(profile);
 
-  const userFirstname = getUserInfo.firstname;
-  const userLastname = getUserInfo.lastname;
+  // const {
+  //   data: file,
+  //   isLoading: isFileLoading,
+  //   refetch: refetchFile,
+  //   isSuccess: isFileSuccess,
+  // } = useQuery({
+  //   queryKey: ["userFile", profileAtom.id],
+  //   queryFn: () => getFile(profileAtom.fileInfo?.filePath!),
+  //   enabled: false,
+  // });
+
+  // useEffect(() => {
+  //   if (profileAtom.fileInfo) {
+  //     refetchFile();
+  //   }
+  // });
+
+  useEffect(() => {
+    getFile(profileAtom.fileInfo?.filePath!).then((res) => console.log(res));
+  });
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IChangeUserInfo>({
-    defaultValues: { firstname: userFirstname, lastname: userLastname },
+    defaultValues: {
+      firstname: profileAtom.firstname,
+      lastname: profileAtom.lastname,
+      description: profileAtom.description,
+    },
   });
   const onValid = (data: IChangeUserInfo) => {
-    changeUserInfo(data).then((res) => {
-      setUserInfo((prev) => res);
-    });
+    const formData = new FormData();
+    formData.append("firstname", data.firstname);
+    formData.append("lastname", data.lastname);
+    formData.append("description", data.description);
+    changeUserInfo(formData, data.file).then((res) => console.log(res));
     handleClose();
   };
+
+  const handleModalClose = () => {
+    reset();
+    handleClose();
+  };
+
   return (
     <div>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={handleModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -59,7 +92,7 @@ const EditProfileModal = ({ open, handleClose }: any) => {
           <form onSubmit={handleSubmit(onValid)}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <IconButton onClick={handleClose}>
+                <IconButton onClick={handleModalClose}>
                   <CloseIcon />
                 </IconButton>
                 <p className="text-white">Edit Profile</p>
@@ -75,11 +108,18 @@ const EditProfileModal = ({ open, handleClose }: any) => {
                 />
               </div>
               <div className="pl-5">
-                <Avatar
-                  className="transform -translate-y-24"
-                  sx={{ width: "10rem", height: "10rem" }}
-                  src="https://cdn.pixabay.com/photo/2022/10/01/21/25/woman-7492273_1280.jpg"
-                />
+                {/* {isFileSuccess ? (
+                  <Avatar
+                    className="transform -translate-y-24"
+                    sx={{ width: "10rem", height: "10rem" }}
+                    src={URL.createObjectURL(file)}
+                  />
+                ) : (
+                  <Avatar
+                    className="transform -translate-y-24"
+                    sx={{ width: "10rem", height: "10rem" }}
+                  />
+                )} */}
               </div>
             </div>
             <div className="space-y-3">
@@ -115,6 +155,12 @@ const EditProfileModal = ({ open, handleClose }: any) => {
               <span className="text-orange-500 text-xs">
                 {errors.lastname?.message}
               </span>
+              <TextField
+                fullWidth
+                id="description"
+                label="Description"
+                {...register("description")}
+              />
             </div>
           </form>
         </Box>
