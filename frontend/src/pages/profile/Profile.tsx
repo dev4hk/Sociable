@@ -22,10 +22,12 @@ const Profile = () => {
   const token = localStorage.getItem("token");
 
   const userAtom = useRecoilValue(profile);
+
   const {
     data: userInfo,
     isLoading: isUserInfoLoading,
     isError: isUserInfoError,
+    refetch: refetchUserInfo,
   } = useQuery<IProfile>({
     queryKey: ["userInfo"],
     queryFn: () => getAnotherUserInfo(+id!, token!),
@@ -54,7 +56,7 @@ const Profile = () => {
   }, [userInfo]);
 
   const { data: savedPosts, refetch: refetchSavedPosts } = useQuery({
-    queryKey: ["savedPosts", id],
+    queryKey: [`savedPosts:${id}`],
     queryFn: getSavedPost,
     enabled: false,
   });
@@ -173,6 +175,8 @@ const Profile = () => {
           open={open}
           handleClose={handleClose}
           image={profileImage}
+          fileType={userInfo?.fileInfo?.fileType}
+          refetchUserInfo={refetchUserInfo}
         />
       </section>
     </Card>

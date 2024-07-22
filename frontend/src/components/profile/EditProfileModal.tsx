@@ -6,7 +6,7 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { IChangeUserInfo } from "../../interfaces";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ import { profile } from "../../atoms";
 import { changeUserInfo } from "../../api/userApi";
 import { getFile } from "../../api/fileApi";
 import { useQuery } from "@tanstack/react-query";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const style = {
   position: "absolute",
@@ -30,35 +31,33 @@ const style = {
   borderRadius: 3,
 };
 
-const EditProfileModal = ({ open, handleClose, image }: any) => {
+interface IEditProfileModal {
+  open: boolean;
+  handleClose: () => void;
+  image?: Blob;
+  fileType?: string;
+  refetchUserInfo: () => void;
+}
+
+const EditProfileModal = ({
+  open,
+  handleClose,
+  image,
+  fileType,
+  refetchUserInfo,
+}: IEditProfileModal) => {
   const [profileAtom, setProfileAtom] = useRecoilState(profile);
 
-  // const {
-  //   data: file,
-  //   isLoading: isFileLoading,
-  //   refetch: refetchFile,
-  //   isSuccess: isFileSuccess,
-  // } = useQuery({
-  //   queryKey: ["userFile", profileAtom.id],
-  //   queryFn: () => getFile(profileAtom.fileInfo?.filePath!),
-  //   enabled: false,
-  // });
-
-  // useEffect(() => {
-  //   if (profileAtom.fileInfo) {
-  //     refetchFile();
-  //   }
-  // });
-
-  useEffect(() => {
-    getFile(profileAtom.fileInfo?.filePath!).then((res) => console.log(res));
-  });
+  const [selectedFile, setSelectedFile] = useState<any>();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState,
+    getValues,
+    watch,
+    setValue,
   } = useForm<IChangeUserInfo>({
     defaultValues: {
       firstname: profileAtom.firstname,
@@ -68,16 +67,29 @@ const EditProfileModal = ({ open, handleClose, image }: any) => {
   });
   const onValid = (data: IChangeUserInfo) => {
     const formData = new FormData();
-    formData.append("firstname", data.firstname);
-    formData.append("lastname", data.lastname);
-    formData.append("description", data.description);
-    changeUserInfo(formData, data.file).then((res) => console.log(res));
+    const requestStr = JSON.stringify({
+      firstname: data.firstname,
+      lastname: data.lastname,
+      description: data.description,
+    });
+    formData.append("request", requestStr);
+    formData.append("file", selectedFile);
+    console.log(formData.get("file"));
+    changeUserInfo(formData).then((res) => {
+      setProfileAtom(res);
+      refetchUserInfo();
+    });
     handleClose();
   };
 
   const handleModalClose = () => {
     reset();
+    setSelectedFile(undefined);
     handleClose();
+  };
+
+  const handleSelectFile = (e: any) => {
+    setSelectedFile(e.target.files[0]);
   };
 
   return (
@@ -107,22 +119,42 @@ const EditProfileModal = ({ open, handleClose, image }: any) => {
                   className="w-full h-full rounded-t-md object-cover"
                 />
               </div>
-              <div className="pl-5">
-                {/* {isFileSuccess ? (
+              <div className="pl-5 flex relative">
+                {selectedFile ? (
                   <Avatar
                     className="transform -translate-y-24"
                     sx={{ width: "10rem", height: "10rem" }}
-                    src={URL.createObjectURL(file)}
+                    src={URL.createObjectURL(selectedFile)}
+                  />
+                ) : image && fileType ? (
+                  <Avatar
+                    className="transform -translate-y-24"
+                    sx={{ width: "10rem", height: "10rem" }}
+                    src={`data:${fileType};base64,${image}`}
                   />
                 ) : (
                   <Avatar
                     className="transform -translate-y-24"
                     sx={{ width: "10rem", height: "10rem" }}
                   />
-                )} */}
+                )}
+                <div className="w-[10rem] h-[10rem] absolute flex justify-center items-center backdrop-brightness-50 rounded-full -top-24">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    id="image-input"
+                    onChange={handleSelectFile}
+                  />
+                  <label htmlFor="image-input">
+                    <IconButton color="primary" component="span">
+                      <AddPhotoAlternateIcon />
+                    </IconButton>
+                  </label>
+                </div>
               </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-5">
               <TextField
                 fullWidth
                 id="firstname"
@@ -138,7 +170,7 @@ const EditProfileModal = ({ open, handleClose, image }: any) => {
                 })}
               />
               <span className="text-orange-500 text-xs">
-                {errors.firstname?.message}
+                {formState.errors.firstname?.message}
               </span>
               <TextField
                 fullWidth
@@ -153,7 +185,7 @@ const EditProfileModal = ({ open, handleClose, image }: any) => {
                 })}
               />
               <span className="text-orange-500 text-xs">
-                {errors.lastname?.message}
+                {formState.errors.lastname?.message}
               </span>
               <TextField
                 fullWidth

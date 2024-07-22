@@ -4,6 +4,8 @@ import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
 import com.example.user.response.UserResponse;
 import com.example.user.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -31,14 +33,16 @@ public class UserController {
 
     @PutMapping(value = "/change/info")
     public ResponseEntity<?> changeUserInfo(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("request") ChangeUserInfoRequest request,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("request") String request,
             Principal connectedUser,
             @RequestHeader("Authorization") String token
-    ) {
+    ) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ChangeUserInfoRequest changeRequest = objectMapper.readValue(request, ChangeUserInfoRequest.class);
         return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(
                 file,
-                request,
+                changeRequest,
                 connectedUser,
                 token)));
 

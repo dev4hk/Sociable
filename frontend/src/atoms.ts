@@ -15,6 +15,12 @@ export const profile = atom<IProfile>({
   effects_UNSTABLE: [persistAtom],
 });
 
+export const user = atom<IProfile>({
+  key: "user",
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
 export const chats = atom<IChat[]>({
   key: "chats",
   default: [],
@@ -26,6 +32,6 @@ export const messages = atom<IMessage[]>({
 });
 
 export const savedPosts = atom<IPost[]>({
-  key: "SavedPosts",
+  key: "savedPosts",
   default: [],
 });

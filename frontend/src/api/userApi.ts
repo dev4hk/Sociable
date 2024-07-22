@@ -20,19 +20,11 @@ export function getAnotherUserInfo(id: number, token: string) {
     .then((res) => res.data);
 }
 
-export function changeUserInfo(data: FormData, file: Blob) {
+export function changeUserInfo(data: FormData) {
   return axios
-    .put(
-      `${BASE_URL}/api/v1/users/change/info`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${getToken()}` },
-        params: {
-          request: data,
-          file: file,
-        },
-      }
-    )
+    .put(`${BASE_URL}/api/v1/users/change/info`, data, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
     .then((res) => res.data);
 }
 
