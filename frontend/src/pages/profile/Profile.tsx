@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PostCard from "../../components/post/PostCard";
 import EditProfileModal from "../../components/profile/EditProfileModal";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { posts, profile } from "../../atoms";
 import { IPost, IProfile } from "../../interfaces";
 import { useParams } from "react-router-dom";
@@ -62,10 +62,12 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (id === userAtom.id) {
+    if (+id! === userAtom.id) {
       refetchSavedPosts();
     }
   });
+
+  console.log(savedPosts);
 
   const [open, setOpen] = useState(false);
   const handleOpenProfileModal = () => setOpen(true);
@@ -148,7 +150,7 @@ const Profile = () => {
                       key={"myPost" + index}
                       className="border rounded-md border-slate-100"
                     >
-                      <PostCard post={post} refetch={refetch} />
+                      <PostCard post={post} />
                     </div>
                   )
                 )}
@@ -157,14 +159,14 @@ const Profile = () => {
 
             {value === "saved" && (
               <div className="space-y-5 w-[70%] my-10">
-                {/* {posts.map((item, index) => (
+                {savedPosts.map((post: IPost, index: number) => (
                   <div
                     key={"Saved" + index}
                     className="border rounded-md border-slate-100"
                   >
-                    <PostCard />
+                    <PostCard post={post} />
                   </div>
-                ))} */}
+                ))}
               </div>
             )}
           </div>

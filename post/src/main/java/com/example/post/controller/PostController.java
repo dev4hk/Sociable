@@ -55,12 +55,6 @@ public class PostController {
         return Response.success(PostResponse.fromPostDto(postService.likeUnlikePost(postId, token)));
     }
 
-    @PatchMapping("/save/{postId}")
-    public Response<Void> savePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
-        this.postService.savePost(postId, token);
-        return Response.success();
-    }
-
     @GetMapping("/saved")
     public Response<Page<PostResponse>> getSavedPosts(Pageable pageable, @RequestHeader("Authorization") String token) {
         return Response.success(this.postService.getSavedPosts(pageable, token).map(PostResponse::fromPostDto));

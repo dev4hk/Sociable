@@ -78,9 +78,9 @@ public class UserController {
     }
 
     @PutMapping("/post/save/{postId}")
-    public ResponseEntity<Void> savePost(@PathVariable Integer postId, Principal connectedUser) {
-        this.userService.savePost(postId, connectedUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserResponse> savePost(@PathVariable Integer postId, Principal connectedUser) {
+        return ResponseEntity.ok(UserResponse.fromUser(this.userService.savePost(postId, connectedUser)));
+
     }
 
     @GetMapping("/suggestions")

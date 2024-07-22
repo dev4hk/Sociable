@@ -8,7 +8,7 @@ import Profile from "../profile/Profile";
 import { IGetAllPosts, IPost } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { isTokenValid } from "../../service/AuthenticationService";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { posts, profile } from "../../atoms";
 import { getAllPosts } from "../../api/postApi";
 
@@ -18,13 +18,17 @@ const size = 10;
 const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const setPostsAtom = useSetRecoilState(posts);
   const getUserInfo = useRecoilValue(profile);
   const { isLoading, data, refetch, isError, isFetched } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getAllPosts(),
   });
-
+  const [postsAtom, setPostsAtom] = useRecoilState(posts);
+  useEffect(() => {
+    if (data) {
+      setPostsAtom(data.data.result.content);
+    }
+  }, [data]);
   return (
     <div className="px-20">
       <Grid container spacing={0}>
@@ -40,15 +44,7 @@ const HomePage = () => {
           lg={location.pathname === "/home" ? 6 : 9}
         >
           <Routes>
-            <Route
-              path="/"
-              element={
-                <HomeMiddle
-                  data={data?.data?.result?.content}
-                  refetch={refetch}
-                />
-              }
-            />
+            <Route path="/" element={<HomeMiddle />} />
             <Route path={`/profile/:id`} element={<Profile />} />
           </Routes>
         </Grid>

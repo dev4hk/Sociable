@@ -107,7 +107,7 @@ public class UserService {
         to.getFollowers().remove(from.getId());
     }
 
-    public void savePost(Integer postId, Principal connectedUser) {
+    public User savePost(Integer postId, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         if(user.getSavedPosts().contains(postId)) {
             user.getSavedPosts().remove(postId);
@@ -115,6 +115,7 @@ public class UserService {
         else {
             user.getSavedPosts().add(postId);
         }
+        return userRepository.save(user);
     }
 
     public List<User> getUserSuggestions(Principal connectedUser) {

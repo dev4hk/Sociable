@@ -21,21 +21,21 @@ import { IComment, ICommentsResponse, IPost } from "../../interfaces";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { posts, profile } from "../../atoms";
 import { createComment, getCommentsByPost } from "../../api/commentApi";
 import { likePost } from "../../api/postApi";
 import { getFile } from "../../api/fileApi";
+import { savePost } from "../../api/userApi";
 
 interface IPostCard {
   post: IPost;
-  refetch: () => void;
 }
 
 const page = 0;
 const size = 10;
 
-const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
+const PostCard = ({ post }: IPostCard) => {
   const [showComments, setShowComments] = useState(false);
   const handleShowComments = () => {
     setShowComments(!showComments);
@@ -67,9 +67,8 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
     }
   });
 
-  const userAtom = useRecoilValue(profile);
-  const setPostsAtom = useSetRecoilState(posts);
-  const postsAtom = useRecoilValue(posts);
+  const [userAtom, setUserAtom] = useRecoilState(profile);
+  const [postsAtom, setPostsAtom] = useRecoilState(posts);
   const { register, watch, getValues, resetField } = useForm();
 
   const handleCreateComment = () => {
@@ -82,9 +81,21 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
 
   const handleLike = () => {
     likePost(post.id).then((res) => {
+      console.log(res);
       const updated = res.data.result;
-      refetchPosts!();
+      setPostsAtom((prev) => {
+        return prev.map((post) => {
+          if (post.id === updated.id) {
+            return { ...post, likedBy: updated.likedBy };
+          }
+          return post;
+        });
+      });
     });
+  };
+
+  const handleSave = () => {
+    savePost(post.id).then((res) => setUserAtom(res.data));
   };
 
   return (
@@ -148,8 +159,12 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
         </div>
 
         <div>
-          <IconButton>
-            {true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          <IconButton onClick={handleSave}>
+            {userAtom.savedPosts?.includes(post.id) ? (
+              <BookmarkIcon />
+            ) : (
+              <BookmarkBorderIcon />
+            )}
           </IconButton>
         </div>
       </CardActions>
@@ -186,10 +201,8 @@ const PostCard = ({ post, refetch: refetchPosts }: IPostCard) => {
                     sx={{ height: "2rem", width: "2rem", fontSize: ".8rem" }}
                   >
                     {comment?.firstname[0].toUpperCase()}
-                    {/* {"S"} */}
                   </Avatar>
                   <p>{comment?.comment}</p>
-                  {/* <p>{comment}</p> */}
                 </div>
               )
             )}

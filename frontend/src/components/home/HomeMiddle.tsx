@@ -6,12 +6,10 @@ import ArticleIcon from "@mui/icons-material/Article";
 import PostCard from "../post/PostCard";
 import CreatePostModal from "../post/CreatePostModal";
 import { IPost } from "../../interfaces";
-import { useRecoilValue } from "recoil";
-import { profile, profileImage } from "../../atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { posts, profile, profileImage } from "../../atoms";
 
-const posts = [1, 1, 1, 1, 1];
-
-const HomeMiddle = ({ data, refetch }: any) => {
+const HomeMiddle = () => {
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
   const handleClose = () => setOpenCreatePostModal(false);
   const handleOpenCreatePostModal = () => {
@@ -19,6 +17,7 @@ const HomeMiddle = ({ data, refetch }: any) => {
   };
   const profileAtom = useRecoilValue(profile);
   const profileImageAtom = useRecoilValue(profileImage);
+  const [postsDataAtom, setPostsDataAtom] = useRecoilState(posts);
 
   return (
     <div className="px-20 w-full">
@@ -64,16 +63,12 @@ const HomeMiddle = ({ data, refetch }: any) => {
         </Card>
       </section>
       <section className="mt-5 space-y-5">
-        {data?.map((post: IPost, index: any) => (
-          <PostCard key={"postcard" + index} post={post} refetch={refetch} />
+        {postsDataAtom?.map((post: IPost, index: any) => (
+          <PostCard key={"postcard" + index} post={post} />
         ))}
       </section>
       <div>
-        <CreatePostModal
-          handleClose={handleClose}
-          open={openCreatePostModal}
-          refetch={refetch}
-        />
+        <CreatePostModal handleClose={handleClose} open={openCreatePostModal} />
       </div>
     </div>
   );

@@ -55,3 +55,15 @@ export function getUserSuggestions() {
     })
     .then((res) => res.data);
 }
+
+export function savePost(postId: number) {
+  return axios
+    .put(
+      `${BASE_URL}/api/v1/users/post/save/${postId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      }
+    )
+    .then((res) => res);
+}

@@ -36,22 +36,10 @@ export function likePost(postId: number) {
   );
 }
 
-export function savePost(postId: number) {
-  return axios
-    .patch(
-      `${BASE_URL}/api/v1/posts/save/${postId}`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      }
-    )
-    .then((res) => res);
-}
-
 export function getSavedPost() {
   return axios
     .get(`${BASE_URL}/api/v1/posts/saved`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     })
-    .then((res) => res.data.result);
+    .then((res) => res.data.result.content);
 }

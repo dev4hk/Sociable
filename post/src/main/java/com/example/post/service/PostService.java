@@ -114,15 +114,6 @@ public class PostService {
         return PostDto.fromEntity(postRepository.save(post));
     }
 
-    public void savePost(Integer postId, String token) {
-        Post post = getPost(postId);
-        try {
-            userService.saveUnsavePost(postId, token);
-        } catch (Exception e) {
-            throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     public Page<PostDto> getSavedPosts(Pageable pageable, String token) {
         User user = getUser(token);
         return this.postRepository.findAllSavedPosts(user.getSavedPosts(), pageable).map(PostDto::fromEntity);

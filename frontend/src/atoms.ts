@@ -7,6 +7,7 @@ const { persistAtom } = recoilPersist();
 export const posts = atom<IPost[]>({
   key: "postsAtom",
   default: [],
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const profile = atom<IProfile>({
