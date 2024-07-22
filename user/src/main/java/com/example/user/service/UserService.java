@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -114,5 +115,10 @@ public class UserService {
         else {
             user.getSavedPosts().add(postId);
         }
+    }
+
+    public List<User> getUserSuggestions(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return this.userRepository.findUserSuggestions(user.getId(), user.getFollowings());
     }
 }

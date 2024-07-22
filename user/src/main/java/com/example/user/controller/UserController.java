@@ -83,5 +83,10 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/suggestions")
+    public ResponseEntity<List<UserResponse>> getUserSuggestions(Principal connectedUser) {
+        return ResponseEntity.ok(this.userService.getUserSuggestions(connectedUser).stream().map(UserResponse::fromUser).toList());
+    }
+
 }
 

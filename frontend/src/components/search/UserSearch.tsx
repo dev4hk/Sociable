@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { chats } from "../../atoms";
 import { useQuery } from "@tanstack/react-query";
-import { IUser } from "../../interfaces";
+import { IProfile, IUser } from "../../interfaces";
 import { getOtherUsers } from "../../api/userApi";
 import { createChat } from "../../api/chatApi";
+import UserSearchCard from "../home/UserSearchCard";
 
 const UserSearch = () => {
   const [query, setQuery] = useState("");
@@ -14,7 +15,7 @@ const UserSearch = () => {
     isLoading: isUsersDataLoading,
     refetch: refetchUsersData,
     isSuccess: isUsersDataSuccess,
-  } = useQuery<IUser[]>({
+  } = useQuery<IProfile[]>({
     queryKey: ["users", query],
     queryFn: () => getOtherUsers(query),
     enabled: false,
@@ -39,7 +40,7 @@ const UserSearch = () => {
   console.log(usersData);
   return (
     <div>
-      <div className="py-5 relative">
+      <div className="py-5 relative ">
         <input
           type="text"
           className="bg-transparent border border-[#3b4054] outline-none w-full px-5 py-3 rounded-full text-white"
@@ -47,23 +48,11 @@ const UserSearch = () => {
           onChange={handleSearchUser}
           value={query}
         />
-        <div className="absolute w-full z-10 top-[4.5rem]">
+        <div className="absolute w-full z-10 top-[4.5rem] overflow-y-scroll max-h-[500px] no-scrollbar">
           {query &&
             isUsersDataSuccess &&
             usersData?.map((user) => (
-              <Card
-                key={"user" + user.id}
-                className="cursor-pointer hover:text-sky-400"
-                onClick={() => handleUserClick(user.id)}
-              >
-                <CardHeader
-                  title={"Firstname Lastname"}
-                  subheader={"@firstname_lastname"}
-                  avatar={
-                    <Avatar src="https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=800" />
-                  }
-                />
-              </Card>
+              <UserSearchCard user={user} handleUserClick={handleUserClick} />
             ))}
         </div>
       </div>

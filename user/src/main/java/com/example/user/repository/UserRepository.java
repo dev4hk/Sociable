@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u from User u WHERE u.id in :followers")
     List<User> getFollowers(@Param("followers") Set<Integer> followers);
+
+    @Query("SELECT u from User u WHERE u.id!=:id AND u.id NOT IN :followings ORDER BY RAND() LIMIT 5")
+    List<User> findUserSuggestions(@Param("id") Integer id, @Param("followings") Set<Integer> followings);
 }

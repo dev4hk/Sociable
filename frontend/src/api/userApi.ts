@@ -47,3 +47,11 @@ export function followUser(userId: number) {
     )
     .then((res) => res);
 }
+
+export function getUserSuggestions() {
+  return axios
+    .get(`${BASE_URL}/api/v1/users/suggestions`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    .then((res) => res.data);
+}
