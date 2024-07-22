@@ -1,5 +1,5 @@
 import { Avatar, Button, Card, Divider, Menu, MenuItem } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -8,9 +8,11 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MessageIcon from "@mui/icons-material/Message";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useRecoilValue } from "recoil";
-import { profile } from "../../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { profile, profileImage } from "../../atoms";
 import { logout } from "../../api/authApi";
+import { getFile } from "../../api/fileApi";
+import { useQuery } from "@tanstack/react-query";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },
@@ -24,10 +26,32 @@ const navigationMenu = [
 ];
 
 const SideNav = () => {
+  const setProfileImage = useSetRecoilState(profileImage);
+
   const userProfile = useRecoilValue(profile);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const { data: profileImageData, refetch: refetchProfileImageData } = useQuery(
+    {
+      queryKey: ["profileImageData", userProfile?.id],
+      queryFn: () => getFile(userProfile?.fileInfo?.filePath!),
+      enabled: false,
+    }
+  );
+
+  useEffect(() => {
+    if (userProfile.fileInfo) {
+      refetchProfileImageData();
+    }
+  }, [userProfile]);
+
+  useEffect(() => {
+    if (profileImageData) {
+      setProfileImage(profileImageData);
+    }
+  }, [profileImageData]);
+
   const handleOpen = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
@@ -76,7 +100,13 @@ const SideNav = () => {
         <Divider />
         <div className="pl-5 flex items-center justify-between pt-5">
           <div className="flex items-center space-x-3">
-            <Avatar />
+            {profileImageData ? (
+              <Avatar
+                src={`data:${userProfile?.fileInfo?.fileType};base64,${profileImageData}`}
+              />
+            ) : (
+              <Avatar />
+            )}
             <div>
               <p className="font-bold">{`${userProfile.firstname} ${userProfile.lastname}`}</p>
               <p className="opacity079">{`@${userProfile.firstname?.toLowerCase()}_${userProfile.lastname?.toLowerCase()}`}</p>

@@ -24,7 +24,9 @@ const Login = () => {
       .then((res) => {
         const token = res.access_token;
         localStorage.setItem("token", token);
-        getUserProfile(token).then((profile) => setProfile((prev) => profile));
+        getUserProfile(token).then((profile) => {
+          setProfile((prev) => profile);
+        });
         navigate("/home");
       })
       .catch((err) => {

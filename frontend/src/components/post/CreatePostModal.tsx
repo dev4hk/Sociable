@@ -16,8 +16,8 @@ import { useForm } from "react-hook-form";
 import { getValue } from "@testing-library/user-event/dist/utils";
 import { isTokenValid } from "../../service/AuthenticationService";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
-import { posts } from "../../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { posts, profile, profileImage } from "../../atoms";
 import { createPost } from "../../api/postApi";
 
 const style = {
@@ -37,6 +37,9 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [serverError, setServerError] = useState<string>();
   const setPosts = useSetRecoilState(posts);
+
+  const profileAtom = useRecoilValue(profile);
+  const profileImageAtom = useRecoilValue(profileImage);
 
   const navigate = useNavigate();
   const {
@@ -97,10 +100,23 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
         <form onSubmit={handleSubmit(onValid)}>
           <div>
             <div className="flex space-x-4 items-center">
-              <Avatar />
+              {profileImageAtom ? (
+                <Avatar
+                  src={`data:${profileAtom?.fileInfo?.fileType};base64,${profileImageAtom}`}
+                />
+              ) : (
+                <Avatar />
+              )}
               <div>
-                <p className="font-bold text-lg">Username</p>
-                <p className="text-sm">@Username</p>
+                <p className="font-bold text-lg">
+                  {profileAtom.firstname + " " + profileAtom.lastname}
+                </p>
+                <p className="text-sm">
+                  @
+                  {profileAtom.firstname?.toLowerCase() +
+                    "_" +
+                    profileAtom.lastname?.toLowerCase()}
+                </p>
               </div>
             </div>
             {}

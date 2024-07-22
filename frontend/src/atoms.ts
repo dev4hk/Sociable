@@ -5,24 +5,24 @@ import { recoilPersist } from "recoil-persist";
 const { persistAtom } = recoilPersist();
 
 export const posts = atom<IPost[]>({
-  key: "posts",
+  key: "postsAtom",
   default: [],
 });
 
 export const profile = atom<IProfile>({
-  key: "profile",
+  key: "profileAtom",
   default: {},
   effects_UNSTABLE: [persistAtom],
 });
 
 export const user = atom<IProfile>({
-  key: "user",
+  key: "userAtom",
   default: {},
   effects_UNSTABLE: [persistAtom],
 });
 
 export const chats = atom<IChat[]>({
-  key: "chats",
+  key: "chatsAtom",
   default: [],
 });
 
@@ -32,6 +32,12 @@ export const messages = atom<IMessage[]>({
 });
 
 export const savedPosts = atom<IPost[]>({
-  key: "savedPosts",
+  key: "savedPostsAtom",
   default: [],
+});
+
+export const profileImage = atom<Blob | undefined>({
+  key: "profileImageAtom",
+  default: undefined,
+  effects_UNSTABLE: [persistAtom],
 });

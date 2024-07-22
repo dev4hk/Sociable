@@ -114,7 +114,7 @@ const EditProfileModal = ({
             <div>
               <div className="h-[15rem]">
                 <img
-                  src="https://cdn.pixabay.com/photo/2018/01/12/14/24/night-3078326_1280.jpg"
+                  src="https://cdn.pixabay.com/photo/2017/01/08/20/25/abstract-1963884_1280.jpg"
                   alt=""
                   className="w-full h-full rounded-t-md object-cover"
                 />
