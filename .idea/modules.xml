@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chat.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chat.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/comment.main.iml" filepath="$PROJECT_DIR$/.idea/modules/comment.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/notification.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notification.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/post.main.iml" filepath="$PROJECT_DIR$/.idea/modules/post.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/sns-microservice.iml" filepath="$PROJECT_DIR$/sns-microservice.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/sns-microservice.storage.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sns-microservice.storage.main.iml" />
