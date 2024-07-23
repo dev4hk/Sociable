@@ -119,4 +119,9 @@ public class PostService {
         return this.postRepository.findAllSavedPosts(user.getSavedPosts(), pageable).map(PostDto::fromEntity);
     }
 
+    public User savePost(Integer postId, String token) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
+        return this.userService.savePost(postId, token).getBody();
+    }
 }

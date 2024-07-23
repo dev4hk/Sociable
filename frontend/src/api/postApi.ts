@@ -43,3 +43,15 @@ export function getSavedPost() {
     })
     .then((res) => res.data.result.content);
 }
+
+export function savePost(postId: number) {
+  return axios
+    .put(
+      `${BASE_URL}/api/v1/posts/save/${postId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      }
+    )
+    .then((res) => res);
+}

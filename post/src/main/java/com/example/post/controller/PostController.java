@@ -1,6 +1,7 @@
 package com.example.post.controller;
 
 import com.example.post.dto.PostDto;
+import com.example.post.model.User;
 import com.example.post.response.PostResponse;
 import com.example.post.response.Response;
 import com.example.post.service.PostService;
@@ -58,6 +59,11 @@ public class PostController {
     @GetMapping("/saved")
     public Response<Page<PostResponse>> getSavedPosts(Pageable pageable, @RequestHeader("Authorization") String token) {
         return Response.success(this.postService.getSavedPosts(pageable, token).map(PostResponse::fromPostDto));
+    }
+
+    @PutMapping("/save/{postId}")
+    public Response<User> savePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token) {
+        return Response.success(this.postService.savePost(postId, token));
     }
 
 }

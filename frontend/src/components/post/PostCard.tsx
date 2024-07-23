@@ -26,7 +26,7 @@ import { posts, profile } from "../../atoms";
 import { createComment, getCommentsByPost } from "../../api/commentApi";
 import { likePost } from "../../api/postApi";
 import { getFile } from "../../api/fileApi";
-import { savePost } from "../../api/userApi";
+import { savePost } from "../../api/postApi";
 
 interface IPostCard {
   post: IPost;
@@ -95,7 +95,11 @@ const PostCard = ({ post }: IPostCard) => {
   };
 
   const handleSave = () => {
-    savePost(post.id).then((res) => setUserAtom(res.data));
+    savePost(post.id).then((res) =>
+      setUserAtom((prev) => {
+        return { ...prev, savedPosts: res.data.result.savedPosts };
+      })
+    );
   };
 
   return (

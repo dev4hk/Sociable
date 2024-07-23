@@ -245,9 +245,9 @@ public class PostServiceTest {
         Integer userId = 1;
         Post post = PostFixture.get(1, userId);
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(userService.saveUnsavePost(postId, testToken)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        when(userService.savePost(postId, testToken)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
         postService.savePost(postId, testToken);
-        verify(userService, times(1)).saveUnsavePost(postId, testToken);
+        verify(userService, times(1)).savePost(postId, testToken);
     }
 
     @Test
@@ -263,9 +263,9 @@ public class PostServiceTest {
         Integer postId = 1;
         Integer userId = 1;
         Post post = PostFixture.get(1, userId);
-        Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/post/save/1", new HashMap<>(), null, new RequestTemplate());
+        Request request = Request.create(Request.HttpMethod.PUT, "/api/v1/users/post/save/1", new HashMap<>(), null, new RequestTemplate());
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(userService.saveUnsavePost(postId, testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
+        when(userService.savePost(postId, testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
         PostException exception = assertThrows(PostException.class, () -> postService.savePost(postId, testToken));
         assertEquals(ErrorCode.INTERNAL_SERVER_ERROR, exception.getErrorCode());
     }
