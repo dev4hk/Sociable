@@ -31,6 +31,11 @@ spring:
             lb://STORAGE-SERVICE
           predicates:
             - Path=/api/v1/files/**
+        - id: NOTIFICATIOn-SERVICE
+          uri:
+            lb://NOTIFICATIOn-SERVICE
+          predicates:
+            - Path=/api/v1/notifications/**
       default-filters:
         DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
