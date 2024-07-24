@@ -31,9 +31,9 @@ spring:
             lb://STORAGE-SERVICE
           predicates:
             - Path=/api/v1/files/**
-        - id: NOTIFICATIOn-SERVICE
+        - id: NOTIFICATION-SERVICE
           uri:
-            lb://NOTIFICATIOn-SERVICE
+            lb://NOTIFICATION-SERVICE
           predicates:
             - Path=/api/v1/notifications/**
       default-filters:
