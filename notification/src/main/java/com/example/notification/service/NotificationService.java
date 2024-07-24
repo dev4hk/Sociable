@@ -32,7 +32,7 @@ public class NotificationService {
 
     public Page<Notification> getNotificationsByUser(Pageable pageable, String token) {
         User user = getUser(token);
-        return this.notificationRepository.findAllByUser(user, pageable);
+        return this.notificationRepository.findAllByUserId(user.getId(), pageable);
     }
 
 
