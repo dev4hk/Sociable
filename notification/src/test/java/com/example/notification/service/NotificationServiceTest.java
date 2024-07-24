@@ -5,7 +5,6 @@ import com.example.notification.enums.ErrorCode;
 import com.example.notification.enums.NotificationType;
 import com.example.notification.exception.NotificationException;
 import com.example.notification.fixture.UserFixture;
-import com.example.notification.model.NotificationArgs;
 import com.example.notification.model.User;
 import com.example.notification.repository.NotificationRepository;
 import com.example.notification.request.NotificationRequest;
@@ -71,7 +70,7 @@ class NotificationServiceTest {
     @Test
     void create_notification() {
         when(notificationRepository.save(any(Notification.class))).thenReturn(any(Notification.class));
-        assertDoesNotThrow(() -> notificationService.createNotification(request));
+        assertDoesNotThrow(() -> notificationService.createAndSendNotification(request));
         verify(notificationRepository, times(1)).save(any());
     }
 }

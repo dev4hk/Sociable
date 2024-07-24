@@ -1,4 +1,4 @@
-package com.example.notification.model;
+package com.example.post.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
 public class NotificationArgs {
 
     private Integer sourceUserId;
-    private Integer targetContentId;
+    private Integer targetUserId;
 
 }

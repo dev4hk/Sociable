@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notifications")
@@ -17,13 +18,17 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping
-    public Response<Void> createNotification(@RequestBody NotificationRequest request) {
-        this.notificationService.createNotification(request);
-        return Response.success();
+    public Response<NotificationResponse> createAndSendNotification(@RequestBody NotificationRequest request) {
+        return Response.success(NotificationResponse.fromNotification(this.notificationService.createAndSendNotification(request)));
     }
 
     @GetMapping
     public Response<Page<NotificationResponse>> getNotifications(Pageable pageable, @RequestHeader("Authorization") String token) {
         return Response.success(this.notificationService.getNotificationsByUser(pageable, token).map(NotificationResponse::fromNotification));
+    }
+
+    @GetMapping("/subscribe")
+    public SseEmitter subscribe(@RequestParam("token") String token) {
+        return this.notificationService.connect(token);
     }
 }

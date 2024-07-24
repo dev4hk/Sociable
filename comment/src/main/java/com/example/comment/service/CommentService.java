@@ -2,8 +2,11 @@ package com.example.comment.service;
 
 import com.example.comment.dto.CommentDto;
 import com.example.comment.entity.Comment;
+import com.example.comment.enums.NotificationType;
 import com.example.comment.exception.CommentException;
 import com.example.comment.exception.ErrorCode;
+import com.example.comment.model.Notification;
+import com.example.comment.model.NotificationRequest;
 import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import com.example.comment.repository.CommentRepository;
@@ -23,13 +26,29 @@ public class CommentService {
     private final UserService userService;
     private final PostService postService;
     private final CommentRepository commentRepository;
+    private final NotificationService notificationService;
 
     public CommentDto create(Integer postId, String comment, String token) {
         User user = getUser(token);
         Post post = this.postService.getPostById(postId, token).getResult();
         Comment toCreate = Comment.of(user, post.getId(), comment);
+        User targetUser = getOtherUser(post.getUserId(), token);
+        NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, token);
+        Notification notification = createAndSendNotification(notificationRequest);
         return CommentDto.fromEntity(commentRepository.save(toCreate));
 
+    }
+
+    private Notification createAndSendNotification(NotificationRequest notificationRequest) {
+        try {
+            return this.notificationService.createAndSendNotification(notificationRequest).getResult();
+        } catch (Exception e) {
+            throw new CommentException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, String token) {
+        return new NotificationRequest(sourceUser, targetUser, NotificationType.NEW_COMMENT_ON_POST);
     }
 
     public Page<CommentDto> findAllByPostId(Integer postId, Pageable pageable, String token) {
@@ -69,4 +88,15 @@ public class CommentService {
         }
     }
 
+    private User getOtherUser(Integer userId, String token) {
+        try {
+            return userService.getOtherUserInfo(userId, token).getBody();
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new CommentException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new CommentException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
 }

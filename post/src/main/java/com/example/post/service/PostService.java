@@ -3,8 +3,11 @@ package com.example.post.service;
 import com.example.post.dto.PostDto;
 import com.example.post.entity.Post;
 import com.example.post.enums.ErrorCode;
+import com.example.post.enums.NotificationType;
 import com.example.post.exception.PostException;
 import com.example.post.model.FileInfo;
+import com.example.post.model.Notification;
+import com.example.post.model.NotificationRequest;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
 import feign.FeignException;
@@ -23,6 +26,7 @@ public class PostService {
     private final UserService userService;
     private final FileService fileService;
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -102,6 +106,7 @@ public class PostService {
         return PostDto.fromEntity(this.getPost(postId));
     }
 
+    @Transactional
     public PostDto likeUnlikePost(Integer postId, String token) {
         User user = getUser(token);
         Post post = postRepository.findById(postId)
@@ -110,8 +115,23 @@ public class PostService {
             post.getLikedBy().remove(user.getId());
         } else {
             post.getLikedBy().add(user.getId());
+            User targetUser = getOtherUser(post.getUserId(), token);
+            NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, token);
+            Notification notification = createAndSendNotification(notificationRequest);
         }
         return PostDto.fromEntity(postRepository.save(post));
+    }
+
+    private Notification createAndSendNotification(NotificationRequest notificationRequest) {
+        try {
+            return this.notificationService.createAndSendNotification(notificationRequest).getResult();
+        } catch (Exception e) {
+            throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, String token) {
+        return new NotificationRequest(sourceUser, targetUser, NotificationType.NEW_LIKE_ON_POST);
     }
 
     public Page<PostDto> getSavedPosts(Pageable pageable, String token) {
@@ -124,4 +144,17 @@ public class PostService {
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
         return this.userService.savePost(postId, token).getBody();
     }
+
+    private User getOtherUser(Integer userId, String token) {
+        try {
+            return userService.getOtherUserInfo(userId, token).getBody();
+        } catch (Exception e) {
+            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
+                throw new PostException(ErrorCode.USER_NOT_FOUND);
+            } else {
+                throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
 }

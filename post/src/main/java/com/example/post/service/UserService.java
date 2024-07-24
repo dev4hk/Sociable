@@ -13,4 +13,8 @@ public interface UserService {
 
     @PutMapping("/api/v1/users/post/save/{postId}")
     ResponseEntity<User> savePost(@PathVariable Integer postId, @RequestHeader("Authorization") String token);
+
+    @GetMapping("/api/v1/users/{id}/profile")
+    ResponseEntity<User> getOtherUserInfo(@PathVariable Integer id, @RequestHeader("Authorization") String token);
+
 }

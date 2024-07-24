@@ -5,26 +5,20 @@ import com.example.notification.fixture.UserFixture;
 import com.example.notification.model.User;
 import com.example.notification.request.NotificationRequest;
 import com.example.notification.service.NotificationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
-
 import static org.apache.http.client.methods.RequestBuilder.post;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,7 +52,7 @@ class NotificationControllerTest {
 
     @Test
     void create_notification() throws Exception {
-        doNothing().when(notificationService).createNotification(request);
+        doNothing().when(notificationService).createAndSendNotification(request);
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/notifications")
                                 .contentType(MediaType.APPLICATION_JSON)
