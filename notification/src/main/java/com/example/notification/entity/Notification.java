@@ -2,7 +2,6 @@ package com.example.notification.entity;
 
 import com.example.notification.enums.NotificationType;
 import com.example.notification.model.NotificationArgs;
-import com.example.notification.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,8 +22,6 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_id")
     private Long id;
-
-    private User user;
 
     private NotificationArgs args;
 
