@@ -13,5 +13,6 @@ public class NotificationArgs {
 
     private Integer sourceUserId;
     private Integer targetUserId;
+    private Integer contentId;
 
 }

@@ -14,6 +14,7 @@ import lombok.Setter;
 public class NotificationArgs {
 
     private Integer sourceUserId;
-    private Integer targetContentId;
+    private Integer targetUserId;
+    private Integer contentId;
 
 }

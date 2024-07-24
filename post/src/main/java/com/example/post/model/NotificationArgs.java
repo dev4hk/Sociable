@@ -1,6 +1,5 @@
 package com.example.post.model;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,6 @@ import lombok.Setter;
 public class NotificationArgs {
 
     private Integer sourceUserId;
-    private Integer targetUserId;
+    private Integer targetContentId;
 
 }

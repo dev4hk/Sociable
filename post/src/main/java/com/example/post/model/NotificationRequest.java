@@ -11,7 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationRequest {
-    private User sourceUser;
-    private User targetUser;
+    private Integer sourceUserId;
+    private Integer targetUserId;
     private NotificationType type;
+    private Integer contentId;
 }

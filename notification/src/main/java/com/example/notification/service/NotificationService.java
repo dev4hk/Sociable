@@ -40,10 +40,9 @@ public class NotificationService {
     public Notification createAndSendNotification(NotificationRequest request) {
         Notification notification = new Notification();
         notification.setNotificationType(request.getType());
-        notification.setArgs(new NotificationArgs(request.getSourceUser().getId(), request.getTargetUser().getId()));
-        notification.setUser(request.getTargetUser());
+        notification.setArgs(new NotificationArgs(request.getSourceUserId(), request.getTargetUserId(), request.getContentId()));
         Notification saved = notificationRepository.save(notification);
-        this.send(saved.getId(), request.getTargetUser().getId());
+        this.send(saved.getId(), request.getTargetUserId());
         return saved;
     }
 
@@ -75,12 +74,12 @@ public class NotificationService {
         return sseEmitter;
     }
 
-    public void send(Long notificationId, Integer targettUserId) {
-        emitterRepository.get(targettUserId).ifPresentOrElse(sseEmitter -> {
+    public void send(Long notificationId, Integer targetUserId) {
+        emitterRepository.get(targetUserId).ifPresentOrElse(sseEmitter -> {
             try {
                 sseEmitter.send(SseEmitter.event().id(notificationId.toString()).name(NOTIFICATION_NAME).data("new notification"));
             } catch (IOException e) {
-                emitterRepository.delete(targettUserId);
+                emitterRepository.delete(targetUserId);
                 throw new NotificationException(ErrorCode.NOTIFICATION_CONNECT_ERROR);
             }
         }, () -> log.info("No emitter found"));

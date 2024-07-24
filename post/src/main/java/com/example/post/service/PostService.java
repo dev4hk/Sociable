@@ -116,7 +116,7 @@ public class PostService {
         } else {
             post.getLikedBy().add(user.getId());
             User targetUser = getOtherUser(post.getUserId(), token);
-            NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, token);
+            NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
             Notification notification = createAndSendNotification(notificationRequest);
         }
         return PostDto.fromEntity(postRepository.save(post));
@@ -130,8 +130,8 @@ public class PostService {
         }
     }
 
-    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, String token) {
-        return new NotificationRequest(sourceUser, targetUser, NotificationType.NEW_LIKE_ON_POST);
+    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
+        return new NotificationRequest(sourceUser.getId(), targetUser.getId(), NotificationType.NEW_LIKE_ON_POST, contentId);
     }
 
     public Page<PostDto> getSavedPosts(Pageable pageable, String token) {

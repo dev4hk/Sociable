@@ -33,7 +33,7 @@ public class CommentService {
         Post post = this.postService.getPostById(postId, token).getResult();
         Comment toCreate = Comment.of(user, post.getId(), comment);
         User targetUser = getOtherUser(post.getUserId(), token);
-        NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, token);
+        NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
         Notification notification = createAndSendNotification(notificationRequest);
         return CommentDto.fromEntity(commentRepository.save(toCreate));
 
@@ -47,8 +47,8 @@ public class CommentService {
         }
     }
 
-    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, String token) {
-        return new NotificationRequest(sourceUser, targetUser, NotificationType.NEW_COMMENT_ON_POST);
+    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
+        return new NotificationRequest(sourceUser.getId(), targetUser.getId(), NotificationType.NEW_COMMENT_ON_POST, contentId);
     }
 
     public Page<CommentDto> findAllByPostId(Integer postId, Pageable pageable, String token) {
