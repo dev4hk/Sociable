@@ -1,5 +1,12 @@
 import { atom } from "recoil";
-import { IChat, IMessage, IPost, IProfile, IToken } from "./interfaces";
+import {
+  IChat,
+  IMessage,
+  INotification,
+  IPost,
+  IProfile,
+  IToken,
+} from "./interfaces";
 import { recoilPersist } from "recoil-persist";
 
 const { persistAtom } = recoilPersist();
@@ -40,5 +47,11 @@ export const savedPosts = atom<IPost[]>({
 export const profileImage = atom<Blob | undefined>({
   key: "profileImageAtom",
   default: undefined,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const notifications = atom<INotification[]>({
+  key: "notifications",
+  default: [],
   effects_UNSTABLE: [persistAtom],
 });

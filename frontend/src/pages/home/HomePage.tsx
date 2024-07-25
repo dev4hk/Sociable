@@ -1,19 +1,18 @@
 import { Grid } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import SideNav from "../../components/sidenav/SideNav";
 import HomeMiddle from "../../components/home/HomeMiddle";
 import HomeRight from "../../components/home/HomeRight";
 import Profile from "../profile/Profile";
-import { IGetAllPosts, IPost } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
-import { isTokenValid } from "../../service/AuthenticationService";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { posts, profile } from "../../atoms";
+import { notifications, posts, profile } from "../../atoms";
 import { getAllPosts } from "../../api/postApi";
-
-const page = 0;
-const size = 10;
+import { INotification } from "../../interfaces";
+import { getNotification } from "../../api/notificationApi";
+import { getToken } from "../../api/authApi";
+import Notifications from "../notification/Notifications";
 
 const HomePage = () => {
   const location = useLocation();
@@ -26,9 +25,53 @@ const HomePage = () => {
   const [postsAtom, setPostsAtom] = useRecoilState(posts);
   useEffect(() => {
     if (data) {
+      console.log(data);
       setPostsAtom(data.data.result.content);
     }
   }, [data]);
+
+  const [notificationEvent, setNotificationEvent] = useState<EventSource>();
+  const [notificationsAtom, setNotificationsAtom] =
+    useRecoilState(notifications);
+
+  const { data: notificationsData, refetch: refetchNotification } = useQuery<
+    INotification[]
+  >({
+    queryKey: ["notifications", getUserInfo.id],
+    queryFn: getNotification,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    refetchNotification();
+    const eventSource = new EventSource(
+      `http://localhost:8888/api/v1/notifications/subscribe?token=${getToken()}`
+    );
+    setNotificationEvent(eventSource);
+    eventSource.addEventListener("open", function (event) {
+      console.log("connection opened");
+    });
+
+    eventSource.addEventListener("notification", function (event) {
+      console.log(event.data);
+      refetchNotification();
+    });
+
+    eventSource.addEventListener("error", function (event: any) {
+      console.log(event.target.readyState);
+      if (event.target.readyState === EventSource.CLOSED) {
+        console.log("eventsource closed (" + event.target.readyState + ")");
+      }
+      eventSource.close();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (notificationsData) {
+      setNotificationsAtom(notificationsData);
+    }
+  }, [notificationsData]);
+
   return (
     <div className="px-20">
       <Grid container spacing={0}>
@@ -46,6 +89,7 @@ const HomePage = () => {
           <Routes>
             <Route path="/" element={<HomeMiddle />} />
             <Route path={`/profile/:id`} element={<Profile />} />
+            <Route path={`/notifications`} element={<Notifications />} />
           </Routes>
         </Grid>
         {location.pathname === "/home" && (

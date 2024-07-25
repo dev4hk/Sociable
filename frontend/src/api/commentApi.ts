@@ -12,7 +12,7 @@ export function getCommentsByPost<ICommentsResponse>(
     .get<ICommentsResponse>(
       `${BASE_URL}/api/v1/comments/post/${postId}?sort=registeredAt,desc`,
       {
-        headers: { Authorization: `Bearer ${getToken()}` },
+        headers: { Authorization: getToken() },
       }
     )
     .then((res) => res.data);
@@ -21,7 +21,7 @@ export function getCommentsByPost<ICommentsResponse>(
 export function createComment(request: any, postId: number) {
   return axios
     .post(`${BASE_URL}/api/v1/comments/post/${postId}`, request, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }

@@ -139,6 +139,7 @@ export interface IUser {
   firstname: string;
   lastname: string;
   email: string;
+  fileInfo: IFileInfo;
 }
 
 export interface IMessage {
@@ -151,4 +152,18 @@ export interface IMessage {
 export interface IFileInfo {
   filePath: string;
   fileType: string;
+}
+
+export interface INotification {
+  id: number;
+  notificationType: string;
+  args: INotificationArgs;
+  notificationText: string;
+  registeredAt: string;
+}
+
+export interface INotificationArgs {
+  sourceUser: IUser;
+  targetUserId: number;
+  contentId: number;
 }

@@ -7,7 +7,7 @@ const BASE_URL = "http://localhost:8888";
 export function getUserProfile(token: string) {
   return axios
     .get(`${BASE_URL}/api/v1/users/profile`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }
@@ -15,7 +15,7 @@ export function getUserProfile(token: string) {
 export function getAnotherUserInfo(id: number, token: string) {
   return axios
     .get(`${BASE_URL}/api/v1/users/${id}/profile`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }
@@ -23,7 +23,7 @@ export function getAnotherUserInfo(id: number, token: string) {
 export function changeUserInfo(data: FormData) {
   return axios
     .put(`${BASE_URL}/api/v1/users/change/info`, data, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }
@@ -31,7 +31,7 @@ export function changeUserInfo(data: FormData) {
 export function getOtherUsers(query: string) {
   return axios
     .get(`${BASE_URL}/api/v1/users?query=${query}`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }
@@ -42,7 +42,7 @@ export function followUser(userId: number) {
       `${BASE_URL}/api/v1/users/${userId}`,
       {},
       {
-        headers: { Authorization: `Bearer ${getToken()}` },
+        headers: { Authorization: getToken() },
       }
     )
     .then((res) => res);
@@ -51,7 +51,7 @@ export function followUser(userId: number) {
 export function getUserSuggestions() {
   return axios
     .get(`${BASE_URL}/api/v1/users/suggestions`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: getToken() },
     })
     .then((res) => res.data);
 }

@@ -8,11 +8,13 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MessageIcon from "@mui/icons-material/Message";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { profile, profileImage } from "../../atoms";
-import { logout } from "../../api/authApi";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { notifications, profile, profileImage } from "../../atoms";
+import { getToken, logout } from "../../api/authApi";
 import { getFile } from "../../api/fileApi";
 import { useQuery } from "@tanstack/react-query";
+import { getNotification } from "../../api/notificationApi";
+import { INotification } from "../../interfaces";
 
 const navigationMenu = [
   { title: "Home", icon: <HomeIcon />, path: "/home" },

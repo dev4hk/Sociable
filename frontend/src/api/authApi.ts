@@ -16,11 +16,11 @@ export function loginUser(data: ILogin) {
 }
 
 export function getToken() {
-  return localStorage.getItem("token");
+  return "Bearer " + localStorage.getItem("token");
 }
 
 export function logout() {
   return axios.get(`${BASE_URL}/api/v1/auth/logout`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
+    headers: { Authorization: getToken() },
   });
 }

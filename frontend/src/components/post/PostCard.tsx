@@ -193,7 +193,9 @@ const PostCard = ({ post }: IPostCard) => {
               {...register("comment")}
             />
           </div>
-          <Divider />
+          {comments?.result.content && comments.result.content.length > 0 && (
+            <Divider />
+          )}
           <div className="mx-3 space-y-2 my-5 text-sm">
             {comments?.result.content.map(
               (comment: IComment, index: number) => (
