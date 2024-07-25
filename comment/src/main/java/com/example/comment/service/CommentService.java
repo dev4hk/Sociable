@@ -33,9 +33,11 @@ public class CommentService {
         User user = getUser(token);
         Post post = this.postService.getPostById(postId, token).getResult();
         Comment toCreate = Comment.of(user, post.getId(), comment);
-        User targetUser = getOtherUser(post.getUserId(), token);
-        NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
-        Notification notification = createAndSendNotification(notificationRequest);
+        if (!Objects.equals(user.getId(), post.getUserId())) {
+            User targetUser = getOtherUser(post.getUserId(), token);
+            NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
+            Notification notification = createAndSendNotification(notificationRequest);
+        }
         return CommentDto.fromEntity(commentRepository.save(toCreate));
 
     }
@@ -61,7 +63,7 @@ public class CommentService {
         User user = getUser(token);
         Comment comment = this.commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND, String.format("%s not found", commentId)));
-        if(!Objects.equals(comment.getUserId(), user.getId())) {
+        if (!Objects.equals(comment.getUserId(), user.getId())) {
             throw new CommentException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), commentId));
         }
         this.commentRepository.delete(comment);
@@ -71,7 +73,7 @@ public class CommentService {
     public void deleteCommentsByPostId(Integer postId, String token) {
         User user = getUser(token);
         Post post = this.postService.getPostById(postId, token).getResult();
-        if(!Objects.equals(user.getId(), post.getUserId())) {
+        if (!Objects.equals(user.getId(), post.getUserId())) {
             throw new CommentException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", user.getEmail(), postId));
         }
         this.commentRepository.deleteAllByPostId(postId);

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Service
 public class PostService {
@@ -115,9 +117,11 @@ public class PostService {
             post.getLikedBy().remove(user.getId());
         } else {
             post.getLikedBy().add(user.getId());
-            User targetUser = getOtherUser(post.getUserId(), token);
-            NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
-            Notification notification = createAndSendNotification(notificationRequest);
+            if (!Objects.equals(user.getId(), post.getUserId())) {
+                User targetUser = getOtherUser(post.getUserId(), token);
+                NotificationRequest notificationRequest = generateNotificationRequest(user, targetUser, postId);
+                Notification notification = createAndSendNotification(notificationRequest);
+            }
         }
         return PostDto.fromEntity(postRepository.save(post));
     }
