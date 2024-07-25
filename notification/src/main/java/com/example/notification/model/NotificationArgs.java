@@ -1,6 +1,6 @@
 package com.example.notification.model;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,11 @@ import lombok.Setter;
 @Embeddable
 public class NotificationArgs {
 
-    private Integer sourceUserId;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "source_user_id"))
+    })
+    private User sourceUser;
     private Integer targetUserId;
     private Integer contentId;
 

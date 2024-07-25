@@ -1,7 +1,7 @@
 package com.example.post.service;
 
 import com.example.post.model.Notification;
-import com.example.post.model.NotificationRequest;
+import com.example.post.request.NotificationRequest;
 import com.example.post.response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

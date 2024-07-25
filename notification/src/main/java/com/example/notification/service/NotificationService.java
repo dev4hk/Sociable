@@ -40,7 +40,7 @@ public class NotificationService {
     public Notification createAndSendNotification(NotificationRequest request) {
         Notification notification = new Notification();
         notification.setNotificationType(request.getType());
-        notification.setArgs(new NotificationArgs(request.getSourceUserId(), request.getTargetUserId(), request.getContentId()));
+        notification.setArgs(new NotificationArgs(request.getSourceUser(), request.getTargetUserId(), request.getContentId()));
         Notification saved = notificationRepository.save(notification);
         this.send(saved.getId(), request.getTargetUserId());
         return saved;

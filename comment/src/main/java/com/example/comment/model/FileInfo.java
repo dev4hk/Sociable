@@ -1,5 +1,6 @@
 package com.example.comment.model;
 
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private Integer id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private FileInfo fileInfo;
+@Embeddable
+public class FileInfo {
+    private String filePath;
+    private String fileType;
 }
-

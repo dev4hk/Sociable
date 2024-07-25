@@ -1,7 +1,7 @@
 package com.example.comment.service;
 
 import com.example.comment.model.Notification;
-import com.example.comment.model.NotificationRequest;
+import com.example.comment.request.NotificationRequest;
 import com.example.comment.response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

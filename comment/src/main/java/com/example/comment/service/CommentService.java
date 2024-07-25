@@ -5,8 +5,9 @@ import com.example.comment.entity.Comment;
 import com.example.comment.enums.NotificationType;
 import com.example.comment.exception.CommentException;
 import com.example.comment.exception.ErrorCode;
+import com.example.comment.model.FileInfo;
 import com.example.comment.model.Notification;
-import com.example.comment.model.NotificationRequest;
+import com.example.comment.request.NotificationRequest;
 import com.example.comment.model.Post;
 import com.example.comment.model.User;
 import com.example.comment.repository.CommentRepository;
@@ -48,7 +49,7 @@ public class CommentService {
     }
 
     private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
-        return new NotificationRequest(sourceUser.getId(), targetUser.getId(), NotificationType.NEW_COMMENT_ON_POST, contentId);
+        return new NotificationRequest(sourceUser, targetUser.getId(), NotificationType.NEW_COMMENT_ON_POST, contentId);
     }
 
     public Page<CommentDto> findAllByPostId(Integer postId, Pageable pageable, String token) {

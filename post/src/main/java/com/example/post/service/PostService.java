@@ -7,7 +7,7 @@ import com.example.post.enums.NotificationType;
 import com.example.post.exception.PostException;
 import com.example.post.model.FileInfo;
 import com.example.post.model.Notification;
-import com.example.post.model.NotificationRequest;
+import com.example.post.request.NotificationRequest;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
 import feign.FeignException;
@@ -131,7 +131,7 @@ public class PostService {
     }
 
     private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
-        return new NotificationRequest(sourceUser.getId(), targetUser.getId(), NotificationType.NEW_LIKE_ON_POST, contentId);
+        return new NotificationRequest(sourceUser, targetUser.getId(), NotificationType.NEW_LIKE_ON_POST, contentId);
     }
 
     public Page<PostDto> getSavedPosts(Pageable pageable, String token) {

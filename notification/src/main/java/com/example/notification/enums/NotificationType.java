@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum NotificationType {
     NEW_COMMENT_ON_POST("New Comment!"),
-    NEW_LIKE_ON_POST("New Like")
+    NEW_LIKE_ON_POST("New Like!")
     ;
 
     private final String notificationText;
