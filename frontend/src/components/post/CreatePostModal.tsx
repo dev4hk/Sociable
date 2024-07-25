@@ -50,9 +50,14 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
     setValue,
     getValues,
     reset,
-    setError,
     formState,
-  } = useForm<IPostForm>();
+  } = useForm<IPostForm>({
+    defaultValues: {
+      body: "",
+      image: "",
+      video: "",
+    },
+  });
 
   const closeModal = () => {
     reset();
@@ -76,8 +81,8 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
     }
     console.log(formData);
     createPost(formData)
-      .then((response) => {
-        refetch();
+      .then((res) => {
+        setPosts((prev) => [res.result, ...prev]);
         closeModal();
       })
       .catch((err) => {
@@ -173,29 +178,31 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
                 <span>Video</span>
               </div>
             </div>
-            {!formState.isSubmitting &&
-              !formState.isSubmitted &&
-              getValues("image") && (
-                <div className="flex justify-center my-8">
-                  <img
-                    className="h-[15rem]"
-                    src={URL.createObjectURL(watch().image)}
-                    alt=""
+            {getValues("image") && (
+              <div className="flex justify-center my-8">
+                <img
+                  className="h-[15rem]"
+                  // src={`data:${getValues("image").type};base64,${getValues(
+                  //   "image"
+                  // )}`}
+                  src={URL.createObjectURL(getValues("image"))}
+                  alt=""
+                />
+              </div>
+            )}
+            {getValues("video") && (
+              <div className="flex justify-center my-8">
+                <video className="h-[15rem]" controls>
+                  <source
+                    // src={`data:${getValues("video").type};base64,${getValues(
+                    //   "video"
+                    // )}`}
+                    src={URL.createObjectURL(getValues("video"))}
+                    type={getValues("video").type}
                   />
-                </div>
-              )}
-            {!formState.isSubmitting &&
-              !formState.isSubmitted &&
-              getValues("video") && (
-                <div className="flex justify-center my-8">
-                  <video className="h-[15rem]" controls>
-                    <source
-                      src={URL.createObjectURL(getValues("video"))}
-                      type={getValues("video").type}
-                    />
-                  </video>
-                </div>
-              )}
+                </video>
+              </div>
+            )}
 
             <div className="flex w-full justify-end">
               <Button
