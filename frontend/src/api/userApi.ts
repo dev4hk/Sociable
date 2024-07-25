@@ -12,7 +12,7 @@ export function getUserProfile(token: string) {
     .then((res) => res.data);
 }
 
-export function getAnotherUserInfo(id: number, token: string) {
+export function getAnotherUserInfo(id: number) {
   return axios
     .get(`${BASE_URL}/api/v1/users/${id}/profile`, {
       headers: { Authorization: getToken() },

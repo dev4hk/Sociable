@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllPostByUserId, getSavedPost } from "../../api/postApi";
 import { getAnotherUserInfo } from "../../api/userApi";
 import { getFile } from "../../api/fileApi";
+import UserListModal from "../../components/profile/UserListModal";
 
 const tabs = [
   { value: "post", name: "Post" },
@@ -30,7 +31,7 @@ const Profile = () => {
     refetch: refetchUserInfo,
   } = useQuery<IProfile>({
     queryKey: ["userInfo"],
-    queryFn: () => getAnotherUserInfo(+id!, token!),
+    queryFn: () => getAnotherUserInfo(+id!),
   });
 
   const {
@@ -69,10 +70,16 @@ const Profile = () => {
 
   console.log(savedPosts);
 
-  const [open, setOpen] = useState(false);
-  const handleOpenProfileModal = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleChange = (event: any, newValue: any) => {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const handleOpenEditModal = () => setEditModalOpen(true);
+  const handleCloseEditModal = () => setEditModalOpen(false);
+
+  const [userListModalOpen, setUserListModalOpen] = useState(false);
+  const handleOpenUserListModal = () => setUserListModalOpen(true);
+  const handleCloseUserListModal = () => setUserListModalOpen(false);
+  const [isFollowing, setIsFollowing] = useState(true);
+
+  const handleTapChange = (event: any, newValue: any) => {
     setValue(newValue);
   };
 
@@ -104,7 +111,7 @@ const Profile = () => {
             <Button
               variant="outlined"
               sx={{ borderRadius: "20px" }}
-              onClick={handleOpenProfileModal}
+              onClick={handleOpenEditModal}
             >
               Edit Profile
             </Button>
@@ -121,8 +128,22 @@ const Profile = () => {
           </div>
           <div className="flex gap-2 item-center py-3">
             <span>{userPosts?.data.result.content.length} post</span>
-            <span>{userInfo?.followers?.length} followers</span>
-            <span>{userInfo?.followings?.length} followings</span>
+            <span
+              onClick={() => {
+                setIsFollowing(false);
+                handleOpenUserListModal();
+              }}
+            >
+              {userInfo?.followers?.length} followers
+            </span>
+            <span
+              onClick={() => {
+                setIsFollowing(true);
+                handleOpenUserListModal();
+              }}
+            >
+              {userInfo?.followings?.length} followings
+            </span>
           </div>
           <div>
             <p>{userInfo?.description}</p>
@@ -133,7 +154,7 @@ const Profile = () => {
             <Tabs
               value={value}
               aria-label="wrapped label tabs example"
-              onChange={handleChange}
+              onChange={handleTapChange}
             >
               <Tab value="post" label="Post" wrapped />
               {id === userAtom?.id?.toString() && (
@@ -174,11 +195,20 @@ const Profile = () => {
       </div>
       <section>
         <EditProfileModal
-          open={open}
-          handleClose={handleClose}
+          open={editModalOpen}
+          handleClose={handleCloseEditModal}
           image={profileImage}
           fileType={userInfo?.fileInfo?.fileType}
           refetchUserInfo={refetchUserInfo}
+        />
+      </section>
+
+      <section>
+        <UserListModal
+          open={userListModalOpen}
+          handleClose={handleCloseUserListModal}
+          userIds={isFollowing ? userInfo?.followings! : userInfo?.followers!}
+          isFollowing={isFollowing}
         />
       </section>
     </Card>
