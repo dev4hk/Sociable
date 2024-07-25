@@ -17,6 +17,8 @@ const NotificationCard = ({ notification }: INotificationCardProps) => {
   const subMessage =
     notification.notificationType === "NEW_LIKE_ON_POST"
       ? "liked your post"
+      : notification.notificationType === "FOLLOW_USER"
+      ? "followed you"
       : "made a comment on one of your posts";
 
   const { data: sourceUserImage, refetch: refetchImage } = useQuery<Blob>({

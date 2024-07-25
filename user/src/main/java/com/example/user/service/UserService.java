@@ -3,11 +3,14 @@ package com.example.user.service;
 import com.example.user.config.JwtService;
 import com.example.user.entity.User;
 import com.example.user.enums.ErrorCode;
+import com.example.user.enums.NotificationType;
 import com.example.user.exception.UserException;
 import com.example.user.model.FileInfo;
 import com.example.user.repository.UserRepository;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
+import com.example.user.request.NotificationRequest;
+import com.example.user.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final FileService fileService;
+    private final NotificationService notificationService;
     private static final String AUTH_PREFIX = "Bearer ";
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
@@ -73,18 +77,36 @@ public class UserService {
     }
 
     @Transactional
-    public void followUser(Principal connectedUser, Integer userId) {
+    public User followUser(Principal connectedUser, Integer userId) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         var otherUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         if(!user.getFollowings().contains(userId)) {
             followUser(user, otherUser);
+            createNotification(user, otherUser);
         }
         else {
             unfollowUser(user, otherUser);
         }
-        userRepository.save(user);
         userRepository.save(otherUser);
+        return userRepository.save(user);
+    }
+
+    private void createNotification(User sourceUser, User targetUser) {
+        NotificationRequest notificationRequest = generateNotificationRequest(sourceUser, targetUser);
+        createAndSendNotification(notificationRequest);
+    }
+
+    private void createAndSendNotification(NotificationRequest notificationRequest) {
+        try {
+            this.notificationService.createAndSendNotification(notificationRequest);
+        } catch (Exception e) {
+            throw new UserException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser) {
+        return new NotificationRequest(UserResponse.fromUser(sourceUser), targetUser.getId(), NotificationType.FOLLOW_USER);
     }
 
     public List<User> getFollowings(Principal connectedUser) {

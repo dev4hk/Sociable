@@ -4,12 +4,17 @@ import React, { useEffect } from "react";
 import { IProfile, IUser } from "../../interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { getFile } from "../../api/fileApi";
+import { followUser } from "../../api/userApi";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { profile } from "../../atoms";
 
 interface IUserCardProps {
   user: IProfile;
 }
 
 const UserCard = ({ user }: IUserCardProps) => {
+  const [userAtom, setUserAtom] = useRecoilState(profile);
+
   const { data, refetch } = useQuery<Blob>({
     queryKey: ["user", "profile", "image", user.id],
     queryFn: () => getFile(user.fileInfo?.filePath!),
@@ -21,6 +26,10 @@ const UserCard = ({ user }: IUserCardProps) => {
       refetch();
     }
   }, [user]);
+
+  const handleFollow = () => {
+    followUser(user.id!).then((res) => setUserAtom(res.data));
+  };
 
   return (
     <div>
@@ -34,7 +43,11 @@ const UserCard = ({ user }: IUserCardProps) => {
             </Avatar>
           )
         }
-        action={<Button size="small">Follow</Button>}
+        action={
+          <Button size="small" onClick={handleFollow}>
+            {userAtom.followings?.includes(user.id!) ? "UNFOLLOW" : "FOLLOW"}
+          </Button>
+        }
         title={user.firstname + " " + user.lastname}
         subheader={`@${user.firstname?.toLowerCase()}_${user.lastname?.toLowerCase()}`}
       />

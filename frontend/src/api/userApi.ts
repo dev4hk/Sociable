@@ -38,8 +38,8 @@ export function getOtherUsers(query: string) {
 
 export function followUser(userId: number) {
   return axios
-    .patch(
-      `${BASE_URL}/api/v1/users/${userId}`,
+    .put(
+      `${BASE_URL}/api/v1/users/follow/${userId}`,
       {},
       {
         headers: { Authorization: getToken() },

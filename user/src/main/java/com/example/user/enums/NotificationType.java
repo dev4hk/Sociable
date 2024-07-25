@@ -1,4 +1,4 @@
-package com.example.notification.enums;
+package com.example.user.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum NotificationType {
-    NEW_COMMENT_ON_POST("New Comment!"),
-    NEW_LIKE_ON_POST("New Like!"),
-    FOLLOW_USER("User Followed!")
-    ;
+    FOLLOW_USER("User Followed!");
 
     private final String notificationText;
 }

@@ -72,9 +72,8 @@ public class UserController {
     }
 
     @PutMapping("/follow/{userId}")
-    public ResponseEntity<Void> followUser(@PathVariable Integer userId, Principal connectedUser) {
-        this.userService.followUser(connectedUser, userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserResponse> followUser(@PathVariable Integer userId, Principal connectedUser) {
+        return ResponseEntity.ok(UserResponse.fromUser(this.userService.followUser(connectedUser, userId)));
     }
 
     @PutMapping("/post/save/{postId}")
