@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -7,6 +8,8 @@ import {
   CardMedia,
   Divider,
   IconButton,
+  Menu,
+  MenuItem,
   Typography,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
@@ -24,7 +27,7 @@ import { useForm } from "react-hook-form";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { posts, profile } from "../../atoms";
 import { createComment, getCommentsByPost } from "../../api/commentApi";
-import { likePost } from "../../api/postApi";
+import { deletePost, likePost } from "../../api/postApi";
 import { getFile } from "../../api/fileApi";
 import { savePost } from "../../api/postApi";
 
@@ -36,6 +39,8 @@ const page = 0;
 const size = 10;
 
 const PostCard = ({ post }: IPostCard) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const [showComments, setShowComments] = useState(false);
   const handleShowComments = () => {
     setShowComments(!showComments);
@@ -102,6 +107,20 @@ const PostCard = ({ post }: IPostCard) => {
     );
   };
 
+  const handleOpen = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDelete = () => {
+    deletePost(post.id).then((res) =>
+      setPostsAtom((prev) => prev.filter((item) => item.id !== post.id))
+    );
+  };
+
   return (
     <Card>
       <CardHeader
@@ -111,9 +130,30 @@ const PostCard = ({ post }: IPostCard) => {
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+          post.userId === userAtom.id && (
+            <div>
+              <Button
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleOpen}
+              >
+                <MoreVertIcon />
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem onClick={handleDelete}>Delete</MenuItem>
+              </Menu>
+            </div>
+          )
         }
         title={`${post.firstname} ${post.lastname}`}
         subheader={`@${post.firstname.toLowerCase()}_${post.lastname.toLowerCase()}`}

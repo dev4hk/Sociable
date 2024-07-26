@@ -55,3 +55,9 @@ export function savePost(postId: number) {
     )
     .then((res) => res);
 }
+
+export function deletePost(postId: number) {
+  return axios.delete(`${BASE_URL}/api/v1/posts/${postId}`, {
+    headers: { Authorization: getToken() },
+  });
+}
