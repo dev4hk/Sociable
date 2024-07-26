@@ -47,11 +47,11 @@ const UserListModal = ({
           </IconButton>
         </div>
         <div className="max-h-[425px] overflow-y-scroll no-scrollbar">
-          {userIds.length === 0 ? (
+          {userIds?.length === 0 ? (
             <p className="text-center text-white">No Users Found</p>
           ) : (
             userIds?.map((id: number, index: number) => (
-              <UserCard userId={id} />
+              <UserCard userId={id} handleClose={handleClose} />
             ))
           )}
         </div>

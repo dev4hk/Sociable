@@ -8,17 +8,19 @@ import { followUser, getAnotherUserInfo } from "../../api/userApi";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
 import { getToken } from "../../api/authApi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface IUserCardProps {
   user?: IProfile;
   userId?: number;
+  handleClose?: () => void;
 }
 
-const UserCard = ({ user, userId }: IUserCardProps) => {
+const UserCard = ({ user, userId, handleClose }: IUserCardProps) => {
   const [userAtom, setUserAtom] = useRecoilState(profile);
   const [userState, setUserState] = useState<IProfile>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { data: userData, refetch: refetchUser } = useQuery({
     queryKey: ["user", "profile", userId],
@@ -51,6 +53,9 @@ const UserCard = ({ user, userId }: IUserCardProps) => {
   };
 
   const handleUserClick = () => {
+    if (location.pathname.includes("profile")) {
+      handleClose!();
+    }
     navigate(`/home/profile/${userState?.id}`);
   };
 

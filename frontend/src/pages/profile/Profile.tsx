@@ -44,6 +44,10 @@ const Profile = () => {
     queryFn: () => getAllPostByUserId(+id!),
   });
 
+  useEffect(() => {
+    refetchUserInfo();
+  }, [id]);
+
   const { data: profileImage, refetch: refetchProfileImage } = useQuery({
     queryKey: ["profileImage", userInfo?.id],
     queryFn: () => getFile(userInfo?.fileInfo?.filePath!),
@@ -67,8 +71,6 @@ const Profile = () => {
       refetchSavedPosts();
     }
   });
-
-  console.log(savedPosts);
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const handleOpenEditModal = () => setEditModalOpen(true);
