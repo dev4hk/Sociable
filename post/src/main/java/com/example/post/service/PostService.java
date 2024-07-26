@@ -74,6 +74,10 @@ public class PostService {
 
         postRepository.delete(post);
         commentService.deleteAllByPost(postId, token);
+        if(post.getFileInfo() != null) {
+            fileService.deleteFile(post.getFileInfo().getFilePath());
+        }
+        notificationService.deletePostNotifications(postId);
     }
 
     public Page<PostDto> getAllPosts(Pageable pageable, String token) {

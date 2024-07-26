@@ -31,4 +31,10 @@ public class NotificationController {
     public SseEmitter subscribe(@RequestParam("token") String token) {
         return this.notificationService.connect(token);
     }
+
+    @DeleteMapping("/post")
+    public Response<Void> deletePostNotifications(@RequestParam("postId") Integer postId) {
+        this.notificationService.deletePostNotifications(postId);
+        return Response.success();
+    }
 }

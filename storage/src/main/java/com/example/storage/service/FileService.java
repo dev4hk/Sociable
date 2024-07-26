@@ -91,4 +91,8 @@ public class FileService {
             }
         }
     }
+
+    public boolean deleteFile(String filePath) throws IOException {
+        return Files.deleteIfExists(Paths.get(filePath));
+    }
 }

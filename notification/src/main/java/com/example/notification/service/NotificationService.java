@@ -2,12 +2,14 @@ package com.example.notification.service;
 
 import com.example.notification.entity.Notification;
 import com.example.notification.enums.ErrorCode;
+import com.example.notification.enums.NotificationType;
 import com.example.notification.exception.NotificationException;
 import com.example.notification.model.NotificationArgs;
 import com.example.notification.model.User;
 import com.example.notification.repository.EmitterRepository;
 import com.example.notification.repository.NotificationRepository;
 import com.example.notification.request.NotificationRequest;
+import com.example.notification.response.Response;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,5 +85,10 @@ public class NotificationService {
                 throw new NotificationException(ErrorCode.NOTIFICATION_CONNECT_ERROR);
             }
         }, () -> log.info("No emitter found"));
+    }
+
+    @Transactional
+    public void deletePostNotifications(Integer postId) {
+        this.notificationRepository.deleteByPostId(postId);
     }
 }
