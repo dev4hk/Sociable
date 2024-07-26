@@ -1,5 +1,6 @@
 package com.example.user.controller;
 
+import com.example.user.entity.User;
 import com.example.user.request.ChangePasswordRequest;
 import com.example.user.request.ChangeUserInfoRequest;
 import com.example.user.response.UserResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,20 +51,19 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse>  getUserProfile(@RequestHeader("Authorization") String token) {
-
+    public ResponseEntity<UserResponse>  getUserProfile(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         return ResponseEntity.ok(
                 UserResponse.fromUser(
-                        this.userService.getUserProfile(token)
+                        user
                 ));
     }
 
     @GetMapping("/{id}/profile")
-    public ResponseEntity<UserResponse>  getOtherUserInfo(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
-
+    public ResponseEntity<UserResponse>  getOtherUserInfo(@PathVariable Integer id) {
         return ResponseEntity.ok(
                 UserResponse.fromUser(
-                        this.userService.getOtherUserInfo(id, token)
+                        this.userService.getOtherUserInfo(id)
                 ));
     }
 

@@ -47,15 +47,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User getUserProfile(String token) {
-        String jwt = token.substring(AUTH_PREFIX.length());
-        String username = this.jwtService.extractUsername(jwt);
-        return this.userRepository.findByEmail(username)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
-    }
 
-    public User getOtherUserInfo(Integer id, String token) {
-        this.getUserProfile(token);
+    public User getOtherUserInfo(Integer id) {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
     }
