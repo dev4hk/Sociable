@@ -40,7 +40,7 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
 
   const profileAtom = useRecoilValue(profile);
   const profileImageAtom = useRecoilValue(profileImage);
-
+  const fileLimit = 500 * 1000 * 1000;
   const navigate = useNavigate();
   const {
     register,
@@ -51,6 +51,7 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
     getValues,
     reset,
     formState,
+    setError,
   } = useForm<IPostForm>({
     defaultValues: {
       body: "",
@@ -67,6 +68,20 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
   const onValid = (data: IPostForm) => {
     if (!isTokenValid(localStorage.getItem("token"))) {
       navigate("/login");
+    }
+
+    if (!data.body && !data.image && !data.video) {
+      return;
+    }
+
+    if (data.image?.size > fileLimit) {
+      setError("image", { message: "File should be no more than 500MB" });
+      return;
+    }
+
+    if (data.video?.size > fileLimit) {
+      setError("video", { message: "File should be no more than 500MB" });
+      return;
     }
 
     const formData = new FormData();
@@ -128,6 +143,12 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
             {serverError && (
               <span className="text-orange-500 text-xs">{serverError}</span>
             )}
+            <span className="text-orange-500 text-xs">
+              {formState.errors.image?.message}
+            </span>
+            <span className="text-orange-500 text-xs">
+              {formState.errors.video?.message}
+            </span>
             <textarea
               className="outline-none w-full mt-5 p-2 bg-transparent border border-[#3b4054] rounded-sm"
               id="caption"
@@ -182,9 +203,6 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
               <div className="flex justify-center my-8">
                 <img
                   className="h-[15rem]"
-                  // src={`data:${getValues("image").type};base64,${getValues(
-                  //   "image"
-                  // )}`}
                   src={URL.createObjectURL(getValues("image"))}
                   alt=""
                 />
@@ -194,9 +212,6 @@ const CreatePostModal = ({ handleClose, open, refetch }: any) => {
               <div className="flex justify-center my-8">
                 <video className="h-[15rem]" controls>
                   <source
-                    // src={`data:${getValues("video").type};base64,${getValues(
-                    //   "video"
-                    // )}`}
                     src={URL.createObjectURL(getValues("video"))}
                     type={getValues("video").type}
                   />
