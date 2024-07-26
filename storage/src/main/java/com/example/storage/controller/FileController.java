@@ -17,6 +17,7 @@ import java.io.IOException;
 public class FileController {
     private final FileService fileService;
 
+    @CrossOrigin(origins = {"http://localhost:8081", "http://localhost:8082", "http://localhost:8084"})
     @PostMapping
     public Response<FileResponse> upload(@RequestParam("file") MultipartFile file, @RequestHeader("Authorization") String token) {
         return Response.success(this.fileService.upload(file, token));
@@ -27,6 +28,7 @@ public class FileController {
         return Response.success(this.fileService.download(filePath, token));
     }
 
+    @CrossOrigin(origins = {"http:/localhost:8082"})
     @DeleteMapping
     public Response<Boolean> deleteFile(@RequestParam("filePath") String filePath) throws IOException {
         return Response.success(fileService.deleteFile(filePath));
