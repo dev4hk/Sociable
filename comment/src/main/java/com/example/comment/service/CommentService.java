@@ -43,11 +43,7 @@ public class CommentService {
     }
 
     private Notification createAndSendNotification(NotificationRequest notificationRequest) {
-        try {
-            return this.notificationService.createAndSendNotification(notificationRequest).getResult();
-        } catch (Exception e) {
-            throw new CommentException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        return this.notificationService.createAndSendNotification(notificationRequest).getResult();
     }
 
     private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
@@ -80,26 +76,10 @@ public class CommentService {
     }
 
     private User getUser(String token) {
-        try {
-            return userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new CommentException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new CommentException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return userService.getUserProfile(token).getBody();
     }
 
     private User getOtherUser(Integer userId, String token) {
-        try {
-            return userService.getOtherUserInfo(userId, token).getBody();
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new CommentException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new CommentException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return userService.getOtherUserInfo(userId, token).getBody();
     }
 }

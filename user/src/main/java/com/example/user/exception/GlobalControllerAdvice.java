@@ -2,6 +2,7 @@ package com.example.user.exception;
 
 import com.example.user.enums.ErrorCode;
 import com.example.user.response.Response;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +24,11 @@ public class GlobalControllerAdvice {
     public ResponseEntity<?> handleException(LockedException ex) {
         return ResponseEntity.status(UNAUTHORIZED)
                 .body(Response.error(ErrorCode.INVALID_PERMISSION.name()));
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<?> applicationHandler(FeignException error) {
+        return ResponseEntity.status(error.status()).body(error.responseBody());
     }
 
     @ExceptionHandler(DisabledException.class)

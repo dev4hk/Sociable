@@ -67,15 +67,7 @@ public class MessageService {
     }
 
     private User getUser(String token) {
-        try {
-            return UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new ChatException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new ChatException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return UserModel.toEntity(Objects.requireNonNull(userService.getUserProfile(token).getBody()));
     }
 
 }

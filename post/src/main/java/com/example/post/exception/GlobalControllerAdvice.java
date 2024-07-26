@@ -2,6 +2,7 @@ package com.example.post.exception;
 
 import com.example.post.enums.ErrorCode;
 import com.example.post.response.Response;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +22,11 @@ public class GlobalControllerAdvice {
     public ResponseEntity<?> applicationHandler(PostException error) {
         return ResponseEntity.status(error.getErrorCode().getStatus())
                 .body(Response.error(error.getErrorCode().name()));
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<?> applicationHandler(FeignException error) {
+        return ResponseEntity.status(error.status()).body(error.responseBody());
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

@@ -36,10 +36,10 @@ public class UserService {
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new UserException(ErrorCode.BAD_CREDENTIAL, "Wrong Password");
         }
-        if(!request.getNewPassword().equals(request.getConfirmPassword())) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new UserException(ErrorCode.INVALID_REQUEST, "Passwords are not matching");
         }
 
@@ -52,6 +52,7 @@ public class UserService {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
     }
+
     public List<User> getOtherUsersInfo(String query, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         return this.userRepository.findOtherUsers(user.getId(), query);
@@ -62,7 +63,7 @@ public class UserService {
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         user.setDescription(request.getDescription());
-        if(image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             FileInfo fileInfo = fileService.upload(image, token).getResult();
             user.setFileInfo(fileInfo);
         }
@@ -74,11 +75,10 @@ public class UserService {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         var otherUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
-        if(!user.getFollowings().contains(userId)) {
+        if (!user.getFollowings().contains(userId)) {
             followUser(user, otherUser);
             createNotification(user, otherUser);
-        }
-        else {
+        } else {
             unfollowUser(user, otherUser);
         }
         userRepository.save(otherUser);
@@ -91,11 +91,7 @@ public class UserService {
     }
 
     private void createAndSendNotification(NotificationRequest notificationRequest) {
-        try {
-            this.notificationService.createAndSendNotification(notificationRequest);
-        } catch (Exception e) {
-            throw new UserException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        this.notificationService.createAndSendNotification(notificationRequest);
     }
 
     private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser) {
@@ -124,10 +120,9 @@ public class UserService {
 
     public User savePost(Integer postId, Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        if(user.getSavedPosts().contains(postId)) {
+        if (user.getSavedPosts().contains(postId)) {
             user.getSavedPosts().remove(postId);
-        }
-        else {
+        } else {
             user.getSavedPosts().add(postId);
         }
         return userRepository.save(user);

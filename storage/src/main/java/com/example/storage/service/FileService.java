@@ -81,15 +81,7 @@ public class FileService {
     }
 
     private User getUser(String token) {
-        try {
-            return userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new FileException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new FileException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return userService.getUserProfile(token).getBody();
     }
 
     public boolean deleteFile(String filePath) throws IOException {

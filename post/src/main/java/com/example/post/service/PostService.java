@@ -74,7 +74,7 @@ public class PostService {
 
         postRepository.delete(post);
         commentService.deleteAllByPost(postId, token);
-        if(post.getFileInfo() != null) {
+        if (post.getFileInfo() != null) {
             fileService.deleteFile(post.getFileInfo().getFilePath());
         }
         notificationService.deletePostNotifications(postId);
@@ -91,15 +91,7 @@ public class PostService {
     }
 
     private User getUser(String token) {
-        try {
-            return userService.getUserProfile(token).getBody();
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new PostException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return userService.getUserProfile(token).getBody();
     }
 
     private Post getPost(Integer postId) {
@@ -131,11 +123,7 @@ public class PostService {
     }
 
     private Notification createAndSendNotification(NotificationRequest notificationRequest) {
-        try {
-            return this.notificationService.createAndSendNotification(notificationRequest).getResult();
-        } catch (Exception e) {
-            throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        return this.notificationService.createAndSendNotification(notificationRequest).getResult();
     }
 
     private NotificationRequest generateNotificationRequest(User sourceUser, User targetUser, Integer contentId) {
@@ -154,15 +142,7 @@ public class PostService {
     }
 
     private User getOtherUser(Integer userId, String token) {
-        try {
-            return userService.getOtherUserInfo(userId, token).getBody();
-        } catch (Exception e) {
-            if (e instanceof FeignException && ((FeignException) e).status() == 404) {
-                throw new PostException(ErrorCode.USER_NOT_FOUND);
-            } else {
-                throw new PostException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
+        return userService.getOtherUserInfo(userId, token).getBody();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.comment.exception;
 
 import com.example.comment.response.Response;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class GlobalControllerAdvice {
         log.error("Error occurs {}", error.toString());
         return ResponseEntity.status(error.getErrorCode().getStatus())
                 .body(Response.error(error.getErrorCode().name()));
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<?> applicationHandler(FeignException error) {
+        return ResponseEntity.status(error.status()).body(error.responseBody());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
