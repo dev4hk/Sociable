@@ -18,24 +18,18 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <Routes>
+        <Route path="/home/message" element={<Message />} />
         <Route
           path="/home/*"
           element={
-            // <AuthenticatedRoute>
-            <HomePage />
-            // </AuthenticatedRoute>
+            <AuthenticatedRoute>
+              <HomePage />
+            </AuthenticatedRoute>
           }
         />
-        <Route path="/home/message" element={<Message />} />
         <Route
-          path="/*"
-          element={
-            hasValidToken() ? (
-              <Navigate to={"/home"} replace />
-            ) : (
-              <Authentication />
-            )
-          }
+          path="/"
+          element={hasValidToken() ? <HomePage /> : <Authentication />}
         />
       </Routes>
     </ThemeProvider>

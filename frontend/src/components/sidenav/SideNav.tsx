@@ -75,7 +75,7 @@ const SideNav = () => {
   const handleLogout = () => {
     logout().then((res) => {
       localStorage.clear();
-      navigate("/login");
+      navigate("/");
     });
   };
 

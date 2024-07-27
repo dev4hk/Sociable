@@ -18,6 +18,8 @@ import {
   getAllChats,
   getMessagesInChat,
 } from "../../api/chatApi";
+import { getFile } from "../../api/fileApi";
+import { red } from "@mui/material/colors";
 
 const Message = () => {
   const profileAtom = useRecoilValue(profile);
@@ -144,6 +146,26 @@ const Message = () => {
     }
   }, [messages]);
 
+  const targetUser =
+    profileAtom.id === currentChat?.users[0].id
+      ? currentChat?.users[1]
+      : currentChat?.users[0];
+
+  const {
+    data: targetUserProfileImage,
+    refetch: refetchTargetUserProfileImage,
+  } = useQuery({
+    queryKey: ["chatRoom", targetUser?.id],
+    queryFn: () => getFile(targetUser?.fileInfo.filePath!),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (targetUser?.fileInfo) {
+      refetchTargetUserProfileImage();
+    }
+  }, [targetUser]);
+
   return (
     <div className="text-white">
       <Grid container className="h-screen overflow-y-hidden">
@@ -181,16 +203,21 @@ const Message = () => {
             <div>
               <div className="flex justify-between items-center border-l p-5">
                 <div className="flex items-center space-x-3">
-                  <Avatar src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=800" />
-                  <p>
-                    {profileAtom?.id === currentChat.users[0].id
-                      ? currentChat.users[1].firstname +
-                        " " +
-                        currentChat.users[1].lastname
-                      : currentChat.users[0].firstname +
-                        " " +
-                        currentChat.users[0].lastname}
-                  </p>
+                  {targetUser?.fileInfo ? (
+                    <Avatar
+                      src={`data:${targetUser?.fileInfo?.fileType};base64,${targetUserProfileImage}`}
+                      sx={{
+                        width: "3.5rem",
+                        height: "3.5rem",
+                        fontSize: "1.5rem",
+                      }}
+                    />
+                  ) : (
+                    <Avatar sx={{ bgcolor: red[500] }}>
+                      {targetUser?.firstname[0].toUpperCase()}
+                    </Avatar>
+                  )}
+                  <p>{targetUser?.firstname + " " + targetUser?.lastname}</p>
                 </div>
               </div>
               <div

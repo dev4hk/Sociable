@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { profile } from "../../atoms";
 import { Avatar, Card, CardHeader, IconButton } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IChat } from "../../interfaces";
+import { useQuery } from "@tanstack/react-query";
+import { getFile } from "../../api/fileApi";
+import { red } from "@mui/material/colors";
 
 interface IUserChatCardProps {
   chat: IChat;
@@ -11,14 +14,25 @@ interface IUserChatCardProps {
 
 const UserChatCard = ({ chat }: IUserChatCardProps) => {
   const profileAtom = useRecoilValue(profile);
+  const targetUser =
+    profileAtom.id === chat.users[0].id ? chat.users[1] : chat.users[0];
+
+  const { data, refetch } = useQuery({
+    queryKey: ["chat", chat.id, targetUser.id],
+    queryFn: () => getFile(targetUser.fileInfo.filePath),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (targetUser.fileInfo) {
+      refetch();
+    }
+  }, [targetUser]);
+
   return (
     <Card className="cursor-pointer">
       <CardHeader
-        title={
-          profileAtom?.id === chat.users[0].id
-            ? chat.users[1].firstname + " " + chat.users[1].lastname
-            : chat.users[0].firstname + " " + chat.users[0].lastname
-        }
+        title={targetUser.firstname + " " + targetUser.lastname}
         subheader="new message"
         action={
           <IconButton>
@@ -26,16 +40,20 @@ const UserChatCard = ({ chat }: IUserChatCardProps) => {
           </IconButton>
         }
         avatar={
-          <Avatar
-            src="https://images.pexels.com/photos/428364/pexels-photo-428364.jpeg?auto=compress&cs=tinysrgb&w=800"
-            sx={{
-              width: "3.5rem",
-              height: "3.5rem",
-              fontSize: "1.5rem",
-              backgroundColor: "#191c29",
-              color: "rgb(88, 199, 250)",
-            }}
-          />
+          targetUser.fileInfo ? (
+            <Avatar
+              src={`data:${targetUser.fileInfo?.fileType};base64,${data}`}
+              sx={{
+                width: "3.5rem",
+                height: "3.5rem",
+                fontSize: "1.5rem",
+              }}
+            />
+          ) : (
+            <Avatar sx={{ bgcolor: red[500] }}>
+              {targetUser.firstname[0].toUpperCase()}
+            </Avatar>
+          )
         }
       ></CardHeader>
     </Card>

@@ -18,7 +18,7 @@ const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const getUserInfo = useRecoilValue(profile);
-  const { isLoading, data, refetch, isError, isFetched } = useQuery({
+  const { isLoading, data, refetch, isError, isFetched, error } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getAllPosts(),
   });

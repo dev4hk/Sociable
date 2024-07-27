@@ -22,7 +22,12 @@ const UserCard = ({ user, userId, handleClose }: IUserCardProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data: userData, refetch: refetchUser } = useQuery({
+  const {
+    data: userData,
+    refetch: refetchUser,
+    error,
+    isError,
+  } = useQuery({
     queryKey: ["user", "profile", userId],
     queryFn: () => getAnotherUserInfo(userId!),
     enabled: false,
