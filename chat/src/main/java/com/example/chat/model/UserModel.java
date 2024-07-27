@@ -13,6 +13,7 @@ public class UserModel {
     private String firstname;
     private String lastname;
     private String email;
+    private FileInfo fileInfo;
 
     public static User toEntity(UserModel model) {
         User user = new User();
@@ -20,6 +21,7 @@ public class UserModel {
         user.setFirstname(model.getFirstname());
         user.setLastname(model.getLastname());
         user.setEmail(model.getEmail());
+        user.setFileInfo(model.getFileInfo());
         return user;
     }
 }

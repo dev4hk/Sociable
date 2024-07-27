@@ -19,4 +19,6 @@ public class User {
     private String lastname;
 
     private String email;
+
+    private FileInfo fileInfo;
 }

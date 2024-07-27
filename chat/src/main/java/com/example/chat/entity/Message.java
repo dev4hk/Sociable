@@ -22,6 +22,11 @@ public class Message {
 
     private String content;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "filePath", column = @Column(name = "content_file_path")),
+            @AttributeOverride(name = "fileType", column = @Column(name = "content_file_type"))
+    })
     private FileInfo fileInfo;
 
     private String contentType;
