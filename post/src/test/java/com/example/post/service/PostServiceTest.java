@@ -6,6 +6,7 @@ import com.example.post.exception.PostException;
 import com.example.post.fixture.FileFixture;
 import com.example.post.fixture.PostFixture;
 import com.example.post.fixture.UserFixture;
+import com.example.post.model.Notification;
 import com.example.post.model.User;
 import com.example.post.repository.PostRepository;
 import com.example.post.response.Response;
@@ -46,6 +47,9 @@ public class PostServiceTest {
     private CommentService commentService;
 
     @Mock
+    private NotificationService notificationService;
+
+    @Mock
     private FileService fileService;
 
     private String testToken;
@@ -81,7 +85,8 @@ public class PostServiceTest {
         when(userService.getUserProfile(testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
         when(postRepository.save(any())).thenReturn(mock(Post.class));
 
-        PostException exception = Assertions.assertThrows(PostException.class, () -> postService.create(body, file, testToken));
+        FeignException exception = Assertions.assertThrows(FeignException.class, () -> postService.create(body, file, testToken));
+        assertEquals(404, exception.status());
     }
 
     @Test
@@ -156,10 +161,11 @@ public class PostServiceTest {
         Integer postId = 1;
 
         Post post = PostFixture.get(postId, userId);
-
-        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
+        when(userService.getUserProfile(this.testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-        when(commentService.deleteAllByPost(postId, this.testToken)).thenReturn(Response.success());
+        doNothing().when(postRepository).delete(any(Post.class));
+        when(commentService.deleteAllByPost(postId, testToken)).thenReturn(Response.success());
+        when(notificationService.deletePostNotifications(eq(postId))).thenReturn(any(Response.class));
 
         Assertions.assertDoesNotThrow(() -> postService.delete(this.testToken, postId));
     }
@@ -171,7 +177,7 @@ public class PostServiceTest {
 
         Post post = PostFixture.get(postId, userId);
 
-        when(userService.getUserProfile(testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
+        when(userService.getUserProfile(this.testToken)).thenReturn(ResponseEntity.of(Optional.of(this.testUser)));
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         PostException exception = Assertions.assertThrows(PostException.class, () -> postService.delete(this.testToken, postId));
@@ -266,8 +272,8 @@ public class PostServiceTest {
         Request request = Request.create(Request.HttpMethod.PUT, "/api/v1/users/post/save/1", new HashMap<>(), null, new RequestTemplate());
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(userService.savePost(postId, testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
-        PostException exception = assertThrows(PostException.class, () -> postService.savePost(postId, testToken));
-        assertEquals(ErrorCode.INTERNAL_SERVER_ERROR, exception.getErrorCode());
+        FeignException exception = assertThrows(FeignException.class, () -> postService.savePost(postId, testToken));
+        assertEquals(404, exception.status());
     }
 
 }

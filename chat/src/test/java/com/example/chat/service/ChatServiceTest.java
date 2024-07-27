@@ -98,7 +98,8 @@ public class ChatServiceTest {
     void create_chat_for_non_existing_user_throws_exception() {
         Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/profile", new HashMap<>(), null, new RequestTemplate());
         when(userService.getUserProfile(testToken)).thenThrow(new FeignException.NotFound(null, request, null, null));
-        assertThrows(ChatException.class, () -> chatService.create(2, testToken));
+        FeignException exception = assertThrows(FeignException.class, () -> chatService.create(2, testToken));
+        assertEquals(404, exception.status());
     }
 
 }

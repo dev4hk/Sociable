@@ -1,6 +1,8 @@
 package com.example.notification.controller;
 
 import com.example.notification.enums.NotificationType;
+import com.example.notification.fixture.FileFixture;
+import com.example.notification.fixture.NotificationFixture;
 import com.example.notification.fixture.UserFixture;
 import com.example.notification.model.User;
 import com.example.notification.request.NotificationRequest;
@@ -8,6 +10,7 @@ import com.example.notification.service.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,9 +38,7 @@ class NotificationControllerTest {
     @MockBean
     private NotificationService notificationService;
 
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     String token = "AABB";
     User user1 = UserFixture.getUser(1, "firstname1", "lastname1", "email1@email.com");
@@ -47,18 +48,16 @@ class NotificationControllerTest {
 
     @BeforeEach
     void setup() {
-        request = new NotificationRequest(user1, user2, type);
+        request = new NotificationRequest(user1, user2.getId(), type, 1, FileFixture.get());
     }
 
     @Test
     void create_notification() throws Exception {
-        doNothing().when(notificationService).createAndSendNotification(request);
+        when(notificationService.createAndSendNotification(any(NotificationRequest.class))).thenReturn(NotificationFixture.get());
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/notifications")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(request))
-                                .header(HttpHeaders.AUTHORIZATION, this.token)
-
                 )
                 .andDo(print())
                 .andExpect(status().isOk());

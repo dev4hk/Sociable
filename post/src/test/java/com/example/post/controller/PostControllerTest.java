@@ -4,6 +4,7 @@ import com.example.post.dto.PostDto;
 import com.example.post.enums.ErrorCode;
 import com.example.post.exception.PostException;
 import com.example.post.fixture.PostFixture;
+import com.example.post.fixture.UserFixture;
 import com.example.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,7 +173,7 @@ public class PostControllerTest {
     @Test
     void save_post() throws Exception {
         Integer postId = 1;
-        doNothing().when(postService).savePost(postId, testToken);
+        when(postService.savePost(postId, testToken)).thenReturn(UserFixture.get(1));
         mockMvc.perform(
                         put("/api/v1/posts/save/1")
                                 .header(HttpHeaders.AUTHORIZATION, this.testToken)

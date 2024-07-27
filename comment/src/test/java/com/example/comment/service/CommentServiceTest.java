@@ -79,8 +79,8 @@ public class CommentServiceTest {
         Integer postId = 1;
         Request request = Request.create(Request.HttpMethod.GET, "/api/v1/users/profile", new HashMap<>(), null, new RequestTemplate());
         when(userService.getUserProfile(null)).thenThrow(new FeignException.NotFound(null, request, null, null));
-        CommentException exception = Assertions.assertThrows(CommentException.class, () -> commentService.create(postId, comment, null));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getErrorCode().getStatus());
+        FeignException exception = Assertions.assertThrows(FeignException.class, () -> commentService.create(postId, comment, null));
+        assertEquals(404, exception.status());
     }
 
     @Test
