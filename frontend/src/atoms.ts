@@ -6,6 +6,7 @@ import {
   IPost,
   IProfile,
   IToken,
+  IUser,
 } from "./interfaces";
 import { recoilPersist } from "recoil-persist";
 
@@ -32,6 +33,16 @@ export const user = atom<IProfile>({
 export const chats = atom<IChat[]>({
   key: "chatsAtom",
   default: [],
+});
+
+export const chat = atom<IChat>({
+  key: "currentChat",
+  default: undefined,
+});
+
+export const chatUser = atom<IUser>({
+  key: "chatuser",
+  default: undefined,
 });
 
 export const messages = atom<IMessage[]>({
