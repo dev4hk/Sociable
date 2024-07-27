@@ -24,14 +24,12 @@ import { red } from "@mui/material/colors";
 const Message = () => {
   const profileAtom = useRecoilValue(profile);
   const navigate = useNavigate();
-  const handleUserCardClick = (item: IChat) => {
-    setCurrentChat(item);
-  };
+
   const handleHomeClick = () => {
     navigate("/home");
   };
 
-  // Chats
+  //////////// Chats //////////////////
   const [currentChat, setCurrentChat] = useState<IChat>();
   const [chatsAtom, setChatsAtom] = useRecoilState(chats);
   const {
@@ -50,8 +48,59 @@ const Message = () => {
     }
   }, [chatsData]);
 
+  const targetUser =
+    profileAtom.id === currentChat?.users[0].id
+      ? currentChat?.users[1]
+      : currentChat?.users[0];
+
+  const {
+    data: targetUserProfileImage,
+    refetch: refetchTargetUserProfileImage,
+  } = useQuery({
+    queryKey: ["chatRoom", targetUser?.id],
+    queryFn: () => getFile(targetUser?.fileInfo.filePath!),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (targetUser?.fileInfo) {
+      refetchTargetUserProfileImage();
+    }
+  }, [targetUser]);
+
+  const handleUserCardClick = (item: IChat) => {
+    setCurrentChat(item);
+  };
+
+  /////////////// Input //////////////////////
   const [content, setContent] = useState("");
   const [selectedFile, setSelectedFile] = useState<any>();
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setContent(e.currentTarget.value);
+  };
+
+  const handleSelectFile = ({
+    currentTarget,
+  }: ChangeEvent<HTMLInputElement>) => {
+    if (currentTarget.files) {
+      setSelectedFile(currentTarget.files[0]);
+    }
+  };
+
+  const handleCreateMessage = () => {
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("file", selectedFile);
+    createMessage(formData, currentChat!.id).then((res) =>
+      // setMessagesAtom((prev) => [...prev, res])
+      sendMessageToServer(res)
+    );
+    setContent("");
+    setSelectedFile("");
+  };
+
+  ////////////// Messages ////////////////////
   // const [messagesAtom, setMessagesAtom] = useRecoilState(messages);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const {
@@ -71,6 +120,8 @@ const Message = () => {
       setMessages(messagesData);
     }
   }, [messagesData]);
+
+  ////////////    Web Socket //////////////////
 
   const [stompClient, setStompClient] = useState<Client>();
   useEffect(() => {
@@ -114,30 +165,6 @@ const Message = () => {
     setMessages([...messages, receivedMessage]);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setContent(e.currentTarget.value);
-  };
-
-  const handleSelectFile = ({
-    currentTarget,
-  }: ChangeEvent<HTMLInputElement>) => {
-    if (currentTarget.files) {
-      setSelectedFile(currentTarget.files[0]);
-    }
-  };
-
-  const handleCreateMessage = () => {
-    const formData = new FormData();
-    formData.append("content", content);
-    formData.append("file", selectedFile);
-    createMessage(formData, currentChat!.id).then((res) =>
-      // setMessagesAtom((prev) => [...prev, res])
-      sendMessageToServer(res)
-    );
-    setContent("");
-    setSelectedFile("");
-  };
-
   const chatContainerRef = useRef<any>(null);
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -145,26 +172,6 @@ const Message = () => {
         chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
-
-  const targetUser =
-    profileAtom.id === currentChat?.users[0].id
-      ? currentChat?.users[1]
-      : currentChat?.users[0];
-
-  const {
-    data: targetUserProfileImage,
-    refetch: refetchTargetUserProfileImage,
-  } = useQuery({
-    queryKey: ["chatRoom", targetUser?.id],
-    queryFn: () => getFile(targetUser?.fileInfo.filePath!),
-    enabled: false,
-  });
-
-  useEffect(() => {
-    if (targetUser?.fileInfo) {
-      refetchTargetUserProfileImage();
-    }
-  }, [targetUser]);
 
   return (
     <div className="text-white">
