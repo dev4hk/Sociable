@@ -74,6 +74,9 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new UserException(ErrorCode.BAD_CREDENTIAL);
+        }
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
