@@ -3,13 +3,13 @@ package com.example.user.request;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChangePasswordRequest {
 
     @NotEmpty(message = "Old Password is mandatory")
