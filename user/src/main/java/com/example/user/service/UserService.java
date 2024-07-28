@@ -33,8 +33,8 @@ public class UserService {
     private final NotificationService notificationService;
     private static final String AUTH_PREFIX = "Bearer ";
 
-    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public void changePassword(ChangePasswordRequest request, User user) {
+
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new UserException(ErrorCode.BAD_CREDENTIAL, "Wrong Password");
@@ -53,13 +53,12 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, "User Not Found"));
     }
 
-    public List<User> getOtherUsersInfo(String query, Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public List<User> getOtherUsersInfo(String query, User user) {
         return this.userRepository.findOtherUsers(user.getId(), query);
     }
 
-    public User changeUserInfo(MultipartFile image, ChangeUserInfoRequest request, Principal connectedUser, String token) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public User changeUserInfo(MultipartFile image, ChangeUserInfoRequest request, User user, String token) {
+
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         user.setDescription(request.getDescription());
@@ -71,8 +70,8 @@ public class UserService {
     }
 
     @Transactional
-    public User followUser(Principal connectedUser, Integer userId) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public User followUser(User user, Integer userId) {
+
         var otherUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         if (!user.getFollowings().contains(userId)) {
@@ -118,8 +117,7 @@ public class UserService {
         to.getFollowers().remove(from.getId());
     }
 
-    public User savePost(Integer postId, Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public User savePost(Integer postId, User user) {
         if (user.getSavedPosts().contains(postId)) {
             user.getSavedPosts().remove(postId);
         } else {
@@ -128,8 +126,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> getUserSuggestions(Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public List<User> getUserSuggestions(User user) {
         return this.userRepository.findUserSuggestions(user.getId(), user.getFollowings());
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,8 +29,8 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping("/change/password")
-    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, Principal connectedUser) {
-        userService.changePassword(request, connectedUser);
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, @AuthenticationPrincipal User user) {
+        userService.changePassword(request, user);
         return ResponseEntity.accepted().build();
     }
 
@@ -37,7 +38,7 @@ public class UserController {
     public ResponseEntity<?> changeUserInfo(
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam("request") String request,
-            Principal connectedUser,
+            @AuthenticationPrincipal User user,
             @RequestHeader("Authorization") String token
     ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -45,14 +46,13 @@ public class UserController {
         return ResponseEntity.ok(UserResponse.fromUser(userService.changeUserInfo(
                 file,
                 changeRequest,
-                connectedUser,
+                user,
                 token)));
 
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse>  getUserProfile(Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    public ResponseEntity<UserResponse>  getUserProfile(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(
                 UserResponse.fromUser(
                         user
@@ -68,24 +68,24 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, Principal connectedUser) {
-        return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, connectedUser).stream().map(UserResponse::fromUser).toList());
+    public ResponseEntity<List<UserResponse>> getOtherUsersInfo(@RequestParam String query, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.userService.getOtherUsersInfo(query, user).stream().map(UserResponse::fromUser).toList());
     }
 
     @PutMapping("/follow/{userId}")
-    public ResponseEntity<UserResponse> followUser(@PathVariable Integer userId, Principal connectedUser) {
-        return ResponseEntity.ok(UserResponse.fromUser(this.userService.followUser(connectedUser, userId)));
+    public ResponseEntity<UserResponse> followUser(@PathVariable Integer userId, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(UserResponse.fromUser(this.userService.followUser(user, userId)));
     }
 
     @PutMapping("/post/save/{postId}")
-    public ResponseEntity<UserResponse> savePost(@PathVariable Integer postId, Principal connectedUser) {
-        return ResponseEntity.ok(UserResponse.fromUser(this.userService.savePost(postId, connectedUser)));
+    public ResponseEntity<UserResponse> savePost(@PathVariable Integer postId, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(UserResponse.fromUser(this.userService.savePost(postId, user)));
 
     }
 
     @GetMapping("/suggestions")
-    public ResponseEntity<List<UserResponse>> getUserSuggestions(Principal connectedUser) {
-        return ResponseEntity.ok(this.userService.getUserSuggestions(connectedUser).stream().map(UserResponse::fromUser).toList());
+    public ResponseEntity<List<UserResponse>> getUserSuggestions(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.userService.getUserSuggestions(user).stream().map(UserResponse::fromUser).toList());
     }
 
 }
