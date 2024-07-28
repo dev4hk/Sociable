@@ -109,7 +109,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void login_with_wring_password_throws_error() throws Exception {
+    void login_with_wrong_password_throws_error() throws Exception {
         String email = "email@email.com";
         String password = "password";
 
