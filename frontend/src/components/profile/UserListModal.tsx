@@ -51,7 +51,7 @@ const UserListModal = ({
             <p className="text-center text-white">No Users Found</p>
           ) : (
             userIds?.map((id: number, index: number) => (
-              <UserCard userId={id} handleClose={handleClose} />
+              <UserCard key={index} userId={id} handleClose={handleClose} />
             ))
           )}
         </div>
