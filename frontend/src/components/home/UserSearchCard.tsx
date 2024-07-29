@@ -30,7 +30,7 @@ const UserSearchCard = ({ user, handleUserClick }: IUserSearchCardProps) => {
     if (location.pathname.includes("/message")) {
       handleUserClick(user.id!);
     } else {
-      navigate(`/home/profile/${user.id}`);
+      navigate(`/profile/${user.id}`);
     }
   };
 

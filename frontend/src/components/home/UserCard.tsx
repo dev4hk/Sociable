@@ -61,7 +61,7 @@ const UserCard = ({ user, userId, handleClose }: IUserCardProps) => {
     if (location.pathname.includes("profile")) {
       handleClose!();
     }
-    navigate(`/home/profile/${userState?.id}`);
+    navigate(`/profile/${userState?.id}`);
   };
 
   return (

@@ -84,7 +84,7 @@ const HomePage = () => {
           item
           className="px-5 flex justify-center"
           xs={12}
-          lg={location.pathname === "/home" ? 6 : 9}
+          lg={location.pathname === "/" ? 6 : 9}
         >
           <Routes>
             <Route path="/" element={<HomeMiddle />} />
@@ -92,7 +92,7 @@ const HomePage = () => {
             <Route path={`/notifications`} element={<Notifications />} />
           </Routes>
         </Grid>
-        {location.pathname === "/home" && (
+        {location.pathname === "/" && (
           <Grid item lg={3} className="relative">
             <div className="sticky top-0 w-full">
               <HomeRight />

@@ -35,7 +35,7 @@ const Register = () => {
           getUserProfile(token).then((profile) =>
             setProfile((prev) => profile)
           );
-          navigate("/home");
+          navigate("/");
         })
         .catch((err: any) => {
           setServerErrors(err.response.data.resultCode);

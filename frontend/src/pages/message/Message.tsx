@@ -26,7 +26,7 @@ const Message = () => {
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/home");
+    navigate("/");
   };
 
   //////////// Chats //////////////////

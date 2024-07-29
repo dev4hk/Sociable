@@ -9,28 +9,32 @@ import Login from "./pages/authentication/Login";
 import { isTokenValid } from "./service/AuthenticationService";
 import HomePage from "./pages/home/HomePage";
 import Message from "./pages/message/Message";
+import { useRecoilValue } from "recoil";
+import { profile } from "./atoms";
 
 function App() {
   const hasValidToken = () => {
     return isTokenValid(localStorage.getItem("token"));
   };
 
+  const userAtom = useRecoilValue(profile);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <Routes>
-        <Route path="/home/message" element={<Message />} />
         <Route
-          path="/home/*"
+          path="/*"
           element={
-            <AuthenticatedRoute>
-              <HomePage />
-            </AuthenticatedRoute>
+            userAtom && hasValidToken() ? <HomePage /> : <Authentication />
           }
         />
         <Route
-          path="/"
-          element={hasValidToken() ? <HomePage /> : <Authentication />}
+          path="/message"
+          element={
+            userAtom && hasValidToken() ? <Message /> : <Authentication />
+          }
         />
+        <Route path="/*" element={<Authentication />} />
       </Routes>
     </ThemeProvider>
   );

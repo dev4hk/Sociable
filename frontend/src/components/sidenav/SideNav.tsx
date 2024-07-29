@@ -17,20 +17,20 @@ import { getNotification } from "../../api/notificationApi";
 import { INotification } from "../../interfaces";
 
 const navigationMenu = [
-  { title: "Home", icon: <HomeIcon />, path: "/home" },
+  { title: "Home", icon: <HomeIcon />, path: "/" },
   {
     title: "Notifications",
     icon: <NotificationsIcon />,
-    path: "/home/notifications",
+    path: "/notifications",
   },
-  { title: "Message", icon: <MessageIcon />, path: "/home/message" },
-  { title: "Profile", icon: <AccountCircleIcon />, path: "/home/profile" },
+  { title: "Message", icon: <MessageIcon />, path: "/message" },
+  { title: "Profile", icon: <AccountCircleIcon />, path: "/profile" },
 ];
 
 const SideNav = () => {
   const setProfileImage = useSetRecoilState(profileImage);
 
-  const userProfile = useRecoilValue(profile);
+  const [userProfile, setUserProfile] = useRecoilState(profile);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -69,11 +69,12 @@ const SideNav = () => {
   };
 
   const toProfilePage = () => {
-    navigate(`/home/profile/${userProfile.id}`);
+    navigate(`/profile/${userProfile.id}`);
   };
 
   const handleLogout = () => {
     logout().then((res) => {
+      setUserProfile({});
       localStorage.clear();
       navigate("/");
     });
