@@ -42,9 +42,8 @@ This project is for users to interact each other by posting their stories and ph
 ![Static Badge](https://img.shields.io/badge/MUI-blue)
 ![Static Badge](https://img.shields.io/badge/TailwindCSS-blue)
 
-
 ## Microservices Diagram
-  ![](images/SNS_Diagram.png)
+![](images/SNS_DIagram.png)
 
 ## Demo
 - User Signup
