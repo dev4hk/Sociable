@@ -44,7 +44,7 @@ This project is for users to interact each other by posting their stories and ph
 
 
 ## Microservices Diagram
-![ERD](images/SNS_Diagram.png)
+  ![](images/SNS_Diagram.png)
 
 ## Demo
 - User Signup
