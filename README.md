@@ -1,4 +1,4 @@
-# Simple SNS Microservices
+# Sociable
 
 This project is for users to interact each other by posting their stories and photos & videos
 
